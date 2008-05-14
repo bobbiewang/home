@@ -37,6 +37,7 @@
 .viminfo
 .w3m/*
 .xmms/*
+bin/cscope-indexer
 devspace/*
 repos/*
 tmp/*
