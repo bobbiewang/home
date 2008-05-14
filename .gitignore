@@ -10,6 +10,7 @@
 .emacs.d/auto-save-list/*
 .emacs.d/elisp-3rdparty
 .emacs.d/elisp-3rdparty/*
+.emacs.d/.diary
 .emacs.d/info/*
 .esd_auth
 .eshell/*
