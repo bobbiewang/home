@@ -16,8 +16,19 @@ TZ='Asia/Shanghai'; export TZ
 ## Emacs
 ######################################################################
 
-alias em="emacs -nw"
-alias en="emacsclient -n"
+if [ -n "$HAVE_DTACH" ]; then
+    alias e="connect-emacs-dtach editor"
+    alias et="connect-emacs-dtach editor -t"
+    bin/preload-emacs-dtach editor
+elif [ -n "$HAVE_SCREEN" ]; then
+    alias e="connect-emacs-screen editor"
+    alias et="connect-emacs-screen editor -t"
+    bin/preload-emacs-screen editor
+else
+    alias e="emacs -nw"
+    alias en="emacsclient -n"
+fi
+export EDITOR=et
 
 ######################################################################
 ## Ruby
@@ -58,6 +69,12 @@ function get_git_modified {
         echo ""
     fi
 }
+
+######################################################################
+## Screen
+######################################################################
+
+alias sc='screen'
 
 ######################################################################
 ## ls 的色彩和别名
@@ -186,7 +203,6 @@ function set_prompts()
 set_prompts
 export PS1 PS2 PS4
 
-
 # Local Variables:
 # coding: utf-8-unix
 # mode: outline-minor

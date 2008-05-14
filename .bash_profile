@@ -5,6 +5,13 @@
 # 缺省的 umask 在文件 /etc/login.defs 中设置
 #umask 022
 
+# 判断一些程序是否已安装，并设置相应的环境变量
+
+HAVE_DTACH=`which dtach`
+HAVE_SCREEN=`which screen`
+
+export HAVE_DTACH HAVE_SCREEN
+
 # .privatebashrc 负责一些不适合公开的设置，比如 Proxy 账号、密码等。
 # 这个文件的属性应该设为 600，不进行版本控制（因为可能使用 Public Repos）
 if [ -f ~/.privatebashrc ]; then

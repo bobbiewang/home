@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Usage: connect-emacs <name> <args>...
+#
+# Connects to the Emacs instance called NAME.  Starts up the instance
+# if it is not already running.  The rest of the arguments are passed
+# to emacsclient.
+
+name="$1"
+shift
+
+if [ -z "$name" ]; then
+    echo "Usage: connect-emacs <name> <args>..." >&2
+    exit 1
+fi
+preload-emacs-dtach "$name" wait
+emacsclient -s "$name" "$@"
