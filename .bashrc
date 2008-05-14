@@ -13,6 +13,20 @@ export RI="-f ANSI --width 70 -T"
 PATH=$PATH:/var/lib/gems/1.8/bin/
 
 # Git
+
+# 根据是否需要 Proxy，设置 Git 命令的别名
+if [ -n "$http_proxy" ]; then
+  alias gpush='git_push_via_socks'
+  alias gpull='git_pull_via_socks'
+  alias gspush='git_svn_push_via_socks'
+  alias gspull='git_svn_pull_via_socks'
+else
+  alias gpush='git push'
+  alias gpull='git pull'
+  alias gspush='git-svn dcommit'
+  alias gspull='git-svn rebase'
+fi
+
 function get_git_branch {
     git branch 2> /dev/null | \
         sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'

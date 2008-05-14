@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+export http_proxy=
+proxychains git push
