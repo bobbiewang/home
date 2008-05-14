@@ -2,13 +2,8 @@
 # see /usr/share/doc/bash/examples/startup-files for examples.
 # the files are located in the bash-doc package.
 
-# the default umask is set in /etc/login.defs
+# 缺省的 umask 在文件 /etc/login.defs 中设置
 #umask 022
-
-# include .bashrc if it exists
-if [ -f ~/.bashrc ]; then
-    . ~/.bashrc
-fi
 
 # .privatebashrc 负责一些不适合公开的设置，比如 Proxy 账号、密码等。
 # 这个文件的属性应该设为 600，不进行版本控制（因为可能使用 Public Repos）
@@ -16,7 +11,12 @@ if [ -f ~/.privatebashrc ]; then
     . ~/.privatebashrc
 fi
 
-# set PATH so it includes user's private bin if it exists
+# .bashrc 要在 .privatebashrc 后加载，因为可能要用到前者的一些设置
+if [ -f ~/.bashrc ]; then
+    . ~/.bashrc
+fi
+
+# 如果用户有自己的 ~/bin，加到 PATH 中
 if [ -d ~/bin ] ; then
     PATH=~/bin:"${PATH}"
 fi
