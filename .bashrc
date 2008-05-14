@@ -1,6 +1,10 @@
-# ~/.bashrc: executed by bash(1) for non-login shells.
+## ~/.bashrc: executed by bash(1) for non-login shells.
 
 umask 022
+
+######################################################################
+## 语言、时区
+######################################################################
 
 export LANG=en_US.UTF-8
 export LC_CTYPE=zh_CN.UTF-8
@@ -8,11 +12,23 @@ export LANGUAGE=en_US:en
 
 TZ='Asia/Shanghai'; export TZ
 
-# Ruby
+######################################################################
+## Emacs
+######################################################################
+
+alias em="emacs -nw"
+alias en="emacsclient -n"
+
+######################################################################
+## Ruby
+######################################################################
+
 export RI="-f ANSI --width 70 -T"
 PATH=$PATH:/var/lib/gems/1.8/bin/
 
-# Git
+######################################################################
+## Git
+######################################################################
 
 # 根据是否需要 Proxy，设置 Git 命令的别名
 if [ -n "$http_proxy" ]; then
@@ -43,7 +59,49 @@ function get_git_modified {
     fi
 }
 
-# 自定义 Bash Prompt
+######################################################################
+## ls 的色彩和别名
+######################################################################
+export LS_OPTIONS='--color=auto'
+eval `dircolors`
+alias ls='ls $LS_OPTIONS'
+alias ll='ls $LS_OPTIONS -l'
+alias l='ls $LS_OPTIONS -lA'
+alias lsd='ls -d */.'
+
+######################################################################
+## apt 命令别名
+######################################################################
+
+alias ac='apt-cache'
+alias ag='apt-get'
+alias acs='apt-cache search'
+alias acp='apt-cache policy'
+alias agu='sudo apt-get update'
+alias agg='sudo apt-get upgrade'
+alias agd='sudo apt-get dist-upgrade'
+alias agi='sudo apt-get install'
+alias agr='sudo apt-get remove'
+
+######################################################################
+## 其他常用命令别名
+######################################################################
+
+alias so="source"
+alias j="jobs"
+alias k="kill -9"
+
+######################################################################
+## 修改一些危险命令的缺省行为
+######################################################################
+
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+######################################################################
+## 自定义 Bash Prompt
+######################################################################
 
 function smiley ()
 {
@@ -128,32 +186,9 @@ function set_prompts()
 set_prompts
 export PS1 PS2 PS4
 
-# You may uncomment the following lines if you want `ls' to be colorized:
-export LS_OPTIONS='--color=auto'
-eval `dircolors`
-alias ls='ls $LS_OPTIONS'
-alias ll='ls $LS_OPTIONS -l'
-alias l='ls $LS_OPTIONS -lA'
-alias lsd='ls -d */.'
-
-alias so="source"
-alias j="jobs"
-alias k="kill -9"
-
-alias ac='apt-cache'
-alias ag='apt-get'
-alias acs='apt-cache search'
-alias acp='apt-cache policy'
-alias agu='sudo apt-get update'
-alias agg='sudo apt-get upgrade'
-alias agd='sudo apt-get dist-upgrade'
-alias agi='sudo apt-get install'
-alias agr='sudo apt-get remove'
-
-# Some more alias to avoid making mistakes:
-alias rm='rm -i'
-alias cp='cp -i'
-alias mv='mv -i'
-
-alias em="emacs -nw"
-alias en="emacsclient -n"
+
+# Local Variables:
+# coding: utf-8-unix
+# mode: outline-minor
+# outline-regexp: "^## "
+# End:
