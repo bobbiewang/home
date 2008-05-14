@@ -1,0 +1,106 @@
+;; 加载 .emacs 过程中的 log 函数
+
+(defun deh-log-info (msg)
+  (save-excursion
+    (set-buffer (get-buffer-create "*Messages*"))
+    ;; 输出信息到 minibuffer，这个函数同时将信息输出到 *Messages*
+    (message msg)
+    ;; 删除 *Messages* 中的信息
+    (previous-line)
+    (kill-whole-line 1)
+    ;; 在 *Messages* 中输出彩色信息
+    (put-text-property 0 (length msg) 'face 'font-lock-builtin-face msg)
+    (insert msg)
+    (insert "\n")))
+
+(defun deh-log-warn (msg)
+  (save-excursion
+    (set-buffer (get-buffer-create "*Messages*"))
+    ;; 输出信息到 minibuffer，这个函数同时将信息输出到 *Messages*
+    (message msg)
+    ;; 删除 *Messages* 中的信息
+    (previous-line)
+    (kill-whole-line 1)
+    ;; 在 *Messages* 中输出彩色信息
+    (put-text-property 0 (length msg) 'face 'font-lock-warning-face msg)
+    (insert msg)
+    (insert "\n")))
+    
+;; 输入 .emacs 加载时间
+
+(defvar *emacs-load-start-time* (current-time))
+
+(defun deh-current-load-time (msg)
+  (deh-log-info (format "[%ds] %s."
+                        (time-to-seconds (time-since *emacs-load-start-time*)) msg)))
+
+
+;; 强壮的加载 library 的 macro，即使 library 不存在也不会出错
+(defmacro robust-require (symbol &rest body)
+  `(condition-case nil
+       (progn
+         (deh-current-load-time (format "To load %s" ',symbol))
+         (require ',symbol)
+         ,@body)
+     (error (deh-log-warn (format "[WARNING] Failed to require %s!" ',symbol))
+            nil)))
+(put 'robust-require 'lisp-indent-function 1)
+
+(defmacro with-library (library &rest body)
+  (declare (indent 1))
+  `(if (locate-library ',library)
+       (progn
+         (deh-current-load-time (format "To load %s" ',library))
+         ,@body)
+     (deh-log-warn (format "[WARNING] No library %s. Skipped." ',library))))
+
+(defmacro with-without-library (library with-body without-body)
+  (declare (indent 1))
+  `(if (locate-library ',library)
+       (progn
+         ,@with-body)
+     (progn
+       (deh-log-warn (format "[WARNING] No library %s. Skipped." ',library))
+       ,@without-body)))
+
+;; 捕获启动 Emacs 过程中的过错
+;; 参考：http://ourcomments.org/Emacs/DL/elisp/dot-emacs/
+
+(defun deh-emacs--debug-init() (interactive)
+  (call-process (concat exec-directory "emacs") nil 0 nil "--debug-init")
+  (message "Started 'emacs --debug-init' - it will be ready soon ..."))
+
+(defun deh-display-dot-emacs-error(the-error)
+  (let ((message-log-max nil))
+    (save-excursion
+      (set-buffer (get-buffer-create "*Messages*"))
+      (let ((s
+             (concat
+              "\n\n"
+              (format "An error has occurred while loading `%s':\n\n"
+                      user-init-file)
+              (format "%s%s%s"
+                      (get (car the-error) 'error-message)
+                      (if (cdr the-error) ": " "")
+                      (mapconcat (lambda (s) (prin1-to-string s t)) (cdr the-error) ", "))
+              "\n\n"
+              "To ensure normal operation, you should investigate and remove the\n"
+              "cause of the error in your initialization file.  Start Emacs with\n"
+              "the `--debug-init' option to view a complete error backtrace.\n\n"
+              "Click here to do that: ")))
+        (put-text-property
+         0 (length s)
+         'face 'font-lock-warning-face
+         s)
+        (insert s)
+        (insert-text-button "emacs --debug-init"
+                            'action (lambda(btn) (deh-emacs--debug-init))
+                            'follow-link 'mouse-face)
+        (insert "\n") ;; Needed to get normal face again.
+        (message "Error in init file: %s%s%s"
+                 (get (car the-error) 'error-message)
+                 (if (cdr the-error) ": " "")
+                 (mapconcat 'prin1-to-string (cdr the-error) ", "))
+        (display-buffer "*Messages*") ;; display-buffer does the job.
+        (redisplay t)
+        (setq init-file-had-error t)))))

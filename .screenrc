@@ -1,0 +1,57 @@
+# 和256色相关的配置
+term xterm-256color
+attrcolor b ".I"
+termcapinfo xterm-256color 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
+defbce "on"
+
+# 编码转换
+encoding GBK UTF-8
+
+# 使用visual bell
+vbell on
+
+# 断线的时候自动detach
+autodetach on
+
+# 不要出来那个烦人的 greeting 信息
+startup_message off
+
+# make the shell in every window a login shell
+# 意思是会去执行 ~/.bash_profile
+shell -$SHELL
+
+# 在 copy/paste 模式下可以回溯到 5000 行的历史
+defscrollback 5000
+
+# 用 C-l 作为命令前导
+escape ^L^L
+
+# 移除一些不方便甚至危险的键绑定
+bind k
+bind ^k
+bind .
+bind ^\
+bind \\
+bind ^h
+bind h
+
+# 设置一些舒服的键绑定
+bind 'K' kill
+bind 'I' login on
+bind 'O' login off
+bind '}' history
+
+# 自动打开一些窗口，在打开前可以用 chdir 切换到指定目录（不指定为 $HOME)
+screen -t emacs 0 emacs -nw
+screen -t shell 1
+chdir $HOME/devspace
+screen -t devspace 2
+screen -t su 3 sudo su -
+select 0
+
+# 用于显示额外信息的外部程序
+backtick 1 5 5 $HOME/bin/sc_sysload
+backtick 2 5 5 $HOME/bin/sc_free
+
+# 在屏幕底端显示 Hardware Status Line
+hardstatus alwayslastline '%{Yk}%-w%{.Yk}%n %t%{-}%+w %=%{.w} %{.Yr}%1` %{.Yb}%2`M %{kY}%0c'

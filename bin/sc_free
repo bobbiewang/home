@@ -1,0 +1,2 @@
+#!/bin/bash
+free -m | tail -n 3 | head -n 1 | cut -c38-40
