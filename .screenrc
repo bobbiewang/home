@@ -1,5 +1,8 @@
 # -*- conf -*-
 
+# screen 的初始化文件
+# 系统的全局初始化文件在 /etc/screenrc
+
 # 和256色相关的配置
 term xterm-256color
 attrcolor b ".I"
@@ -45,12 +48,12 @@ bind '}' history
 
 # 自动打开一些窗口，在打开前可以用 chdir 切换到指定目录
 # （如果不指定目录，缺省为 $HOME)
-# screen -t emacs 0 emacs -nw
-# screen -t shell 1
-# chdir $HOME/devspace
-# screen -t devspace 2
-# screen -t su 3 sudo su -
-# select 0
+screen -t emacs 0
+screen -t shell 1
+chdir $HOME/devspace
+screen -t devspace 2
+screen -t su 3 sudo su -
+select 0
 
 # 用于显示额外信息的外部程序
 backtick 1 5 5 $HOME/bin/sc_sysload

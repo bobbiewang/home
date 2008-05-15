@@ -13,7 +13,7 @@ serverdir="/tmp/emacs$UID"
 emacs="/usr/bin/emacs" # Or wherever you installed your multi-tty Emacs
 
 if [ -z "$name" ]; then
-    echo "Usage: preload_emacs <name> [<waitp>]" >&2
+    echo "Usage: preload-emacs <name> [<waitp>]" >&2
     exit 1
 fi
 
@@ -22,7 +22,7 @@ if [ ! -e "$screendir"/*."$name" ]; then
 # Delete leftover socket (for the wait option)
         rm "$serverdir/$name"
     fi
- screen -dmS "$name" "$emacs" -nw --no-splash --eval "(setq server-name \"$name\")" -f server-start
+ screen -c /etc/screenrc -dmS "$name" "$emacs" -nw --no-splash --eval "(setq server-name \"$name\")" -f server-start
 fi
 if [ ! -z "$waitp" ]; then
     while [ ! -e "$serverdir/$name" ]; do sleep 0.1; done
