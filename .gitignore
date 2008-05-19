@@ -20,6 +20,7 @@
 .gitconfig
 .gitk
 .gnome/*
+.gnuplot_history
 .ido.last
 .irb_history
 .lesshst
