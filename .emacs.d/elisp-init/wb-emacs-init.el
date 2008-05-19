@@ -638,7 +638,7 @@ replace. Replace the text that you're presently isearching for."
       (occur (if isearch-regexp isearch-string
                (regexp-quote isearch-string))))))
 
-(defun isearch-yank-symbol ()
+(defun isearch-yank-symbol-simple ()
   "*Put symbol at current point into search string."
   (interactive)
   (let ((sym (symbol-at-point)))
@@ -651,7 +651,6 @@ replace. Replace the text that you're presently isearching for."
       (ding)))
   (isearch-search-and-update))
 
-;; F3 向下搜索当前光标所在的单词，C-F3 则向上搜索
 (defun isearch-yank-regexp (regexp)
   "Pull REGEXP into search regexp."
   (let ((isearch-regexp nil)) ;; Dynamic binding of global.
@@ -699,6 +698,8 @@ replace. Replace the text that you're presently isearching for."
     (isearch-backward-regexp nil 1)
     (isearch-yank-symbol partialp)))
 
+;; F3 向下正则搜索当前光标所在的单词，C-F3 则向上正则搜索
+;; 如果不希望正则搜索，可以用 C-u F3 或者 C-u C-F3
 (global-set-key [f3] 'isearch-current-symbol)
 (global-set-key [(control f3)] 'isearch-backward-current-symbol)
 (define-key isearch-mode-map [f3] 'isearch-repeat-forward)
@@ -712,7 +713,7 @@ replace. Replace the text that you're presently isearching for."
 (define-key isearch-mode-map '[prior] 'isearch-repeat-backward)
 
 ;; 启动 isearch 后，用 C-a 搜索当前单词
-(define-key isearch-mode-map "\C-a" 'isearch-yank-symbol)
+(define-key isearch-mode-map "\C-a" 'isearch-yank-symbol-simple)
 (define-key isearch-mode-map "\M-%" 'isearch-to-query-replace)
 
 ;; 因为 occor 只搜索出匹配行，所以不希望折行
@@ -1063,12 +1064,69 @@ do kill lines as `dd' in vim."
 ;;;; wb-muse.el
 
 (robust-require muse-autoloads
-  (eval-after-load "muse"
+  (eval-after-load "muse-mode"
     '(progn
+       ;; 加载需要的格式和其他辅助 library
+       (require 'muse-html)         ; load (X)HTML publishing style
+       (require 'muse-latex)        ; load LaTeX/PDF publishing styles
+       (require 'muse-project)      ; publish files in projects
+       (require 'muse-latex2png)    ; publish <latex> tags
+       (require 'muse-colors)       ; load coloring/font-lock module
+       (require 'muse-wiki)         ; load Wiki support
+
+       ;; 设置输出 HTML 编码
+       (setq muse-html-charset-default "utf-8")
+       (setq muse-html-encoding-default 'utf-8)
+
+       ;; Muse 项目的源文件和输出文件目录
+       (defvar wb-muse-sd "~/muse/source/"  "My muse source directory.")
+       (defvar wb-muse-pd "~/muse/publish/" "My muse publish directory.")
+
+       ;; 自定义输出格式
+       (muse-derive-style "wiki-xhtml" "xhtml"
+                          :header (concat wb-muse-pd "common/templates/header.html")
+                          :footer (concat wb-muse-pd "common/templates/footer.html"))
+
+       ;; Muse 项目
+       (setq muse-project-alist
+             `(("Programming"
+                (,(concat wb-muse-sd "programming")
+                 :default "index"
+                 :force-publish ("WikiIndex"))
+                (:base "wiki-xhtml" :path ,(concat wb-muse-pd "programming")))
+               ("Linux"
+                (,(concat wb-muse-sd "linux")
+                 :default "index"
+                 :force-publish ("WikiIndex"))
+                (:base "wiki-xhtml" :path ,(concat wb-muse-pd "linux")))
+               ("Emacs"
+                (,(concat wb-muse-sd "emacs")
+                 :default "index"
+                 :force-publish ("WikiIndex"))
+                (:base "wiki-xhtml" :path ,(concat wb-muse-pd "emacs")))
+               ("WiKi" (,@(muse-project-alist-dirs wb-muse-sd)
+                           :default "index"
+                           :force-publish ("WikiIndex"))
+                ,@(muse-project-alist-styles wb-muse-sd
+                                             wb-muse-pd
+                                             "wiki-xhtml"))))
+
+       ;; 其他 Muse 设置
+       (setq muse-colors-autogen-headings 'outline)
+       (setq muse-colors-evaluate-lisp-tags nil)
+
+       ;; 需要在 Muse  Hook 中加载的设置
        (add-hook 'muse-mode-hook
                  '(lambda ()
                     (outline-minor-mode 1)))
-       (setq muse-colors-autogen-headings 'outline))))
+
+       ;; 辅助函数
+       (defun wb-muse-relative-path (file)
+         (concat
+          (file-relative-name
+           wb-muse-pd
+           (file-name-directory muse-publishing-current-output-path))
+          file)))))
 
 ;;;; wb-modes.el
 
@@ -1545,7 +1603,11 @@ Returns nil if it is not visible in the current calendar window."
 
 ;;; Org Mode
 
+(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 (setq org-return-follows-link t)
+(setq org-log-done t)
+(define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-ca" 'org-agenda)
 
 ;;;; wb-tools.el
 
