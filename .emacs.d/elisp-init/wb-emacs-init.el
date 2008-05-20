@@ -906,8 +906,10 @@ do kill lines as `dd' in vim."
 
 (robust-require ido
   (ido-mode t)
+  (setq ido-enable-flex-matching t) ; 可以用 wei 匹配文件名 wb-emacs-init.el
   (add-hook 'ido-setup-hook
             (lambda ()
+              ;(define-key ido-completion-map [tab] 'ido-complete)
               (define-key ido-completion-map "\C-h" 'ido-delete-backward-updir)
               ;; 缺省为 C-s 和 C-r，不习惯，增加 C-n 和 C-p
               (define-key ido-completion-map "\C-n" 'ido-next-match)
