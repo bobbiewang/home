@@ -1671,7 +1671,8 @@ Returns nil if it is not visible in the current calendar window."
 ;;; w3m
 
 (with-library "w3m"
-  (require 'w3m-load)  
+  (require 'w3m-load)
+  (setq w3m-fill-column 80)
   (setq w3m-key-binding 'info))
 
 ;;; Git
