@@ -1114,7 +1114,12 @@ do kill lines as `dd' in vim."
                                              "wiki-xhtml"))))
 
        ;; 其他 Muse 设置
+
+       ;; 禁止把 Project 名作为链接，我不喜欢不受控制的到处高亮
+       (setq muse-wiki-ignore-bare-project-names t)
+       ;; 象 Outline 那样用颜色表示标题，在终端上特别好用
        (setq muse-colors-autogen-headings 'outline)
+       ;; 禁止 evaluate 在 <lisp> 标签中的 lisp 语句
        (setq muse-colors-evaluate-lisp-tags nil)
 
        ;; 需要在 Muse  Hook 中加载的设置
@@ -1368,7 +1373,8 @@ do kill lines as `dd' in vim."
 (setq compilation-finish-functions
       (lambda (buf str)
         ;; grep 结果不能自动关闭，这里也可以用 (equal major-mode 'c++-mode) 判断
-        (when (not (string-match "*grep*" (buffer-name buf)))
+        (when (not (or (string-match "*grep*" (buffer-name buf))
+                       (string-match "*search*" (buffer-name buf))))
           (if (string-match "exited abnormally" str)
               ;;there were errors
               (message "compilation errors, press C-x ` to visit")
