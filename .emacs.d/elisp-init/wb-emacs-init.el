@@ -1091,21 +1091,21 @@ do kill lines as `dd' in vim."
 
        ;; Muse 项目
        (setq muse-project-alist
-             `(("Programming"
-                (,(concat wb-muse-sd "programming")
+             `(("Computer"
+                (,(concat wb-muse-sd "computer")
                  :default "index"
                  :force-publish ("WikiIndex"))
-                (:base "wiki-xhtml" :path ,(concat wb-muse-pd "programming")))
-               ("Linux"
-                (,(concat wb-muse-sd "linux")
-                 :default "index"
-                 :force-publish ("WikiIndex"))
-                (:base "wiki-xhtml" :path ,(concat wb-muse-pd "linux")))
+                (:base "wiki-xhtml" :path ,(concat wb-muse-pd "computer")))
                ("Emacs"
                 (,(concat wb-muse-sd "emacs")
                  :default "index"
                  :force-publish ("WikiIndex"))
                 (:base "wiki-xhtml" :path ,(concat wb-muse-pd "emacs")))
+               ("Programming"
+                (,(concat wb-muse-sd "programming")
+                 :default "index"
+                 :force-publish ("WikiIndex"))
+                (:base "wiki-xhtml" :path ,(concat wb-muse-pd "programming")))
                ("WiKi" (,@(muse-project-alist-dirs wb-muse-sd)
                            :default "index"
                            :force-publish ("WikiIndex"))
