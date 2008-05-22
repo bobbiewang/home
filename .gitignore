@@ -41,6 +41,7 @@
 .xmms/*
 bin/cscope-indexer
 devspace/*
+muse/*
 repos/*
 tmp/*
 windows
