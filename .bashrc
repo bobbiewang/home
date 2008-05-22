@@ -38,6 +38,11 @@ export EDITOR=et
 export RI="-f ANSI --width 70 -T"
 PATH=$PATH:/var/lib/gems/1.8/bin/
 
+# gems
+alias sgi="sudo gem install"
+alias sgu="sudo gem uninstall"
+alias gsr="gem search --remote"
+
 ######################################################################
 ## Git
 ######################################################################
@@ -54,6 +59,11 @@ else
   alias gspush='git-svn dcommit'
   alias gspull='git-svn rebase'
 fi
+
+# 设置其他 Git 命令别名
+alias gst="git status"
+alias gci="git commit -a -v"
+alias gco="git checkout"
 
 function get_git_branch {
     git branch 2> /dev/null | \
@@ -82,6 +92,7 @@ alias scr='screen -r'
 ######################################################################
 ## ls 的色彩和别名
 ######################################################################
+
 export LS_OPTIONS='--color=auto'
 eval `dircolors`
 alias ls='ls $LS_OPTIONS'
@@ -110,6 +121,8 @@ alias agr='sudo apt-get remove'
 alias so="source"
 alias j="jobs"
 alias k="kill -9"
+alias grep="grep --color=auto"
+alias pgrep="ps awx | grep"
 
 ######################################################################
 ## 修改一些危险命令的缺省行为
