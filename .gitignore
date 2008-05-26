@@ -30,6 +30,7 @@
 .netrc
 .privatebashrc
 .pulse-cookie
+.qt/*
 .recently-used.xbel
 .sdcv_history
 .ssh
