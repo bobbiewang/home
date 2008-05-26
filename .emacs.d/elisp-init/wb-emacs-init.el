@@ -559,17 +559,17 @@ selected rectangle."
 (setq scroll-margin 3
       scroll-conservatively 10000)
 
-;;(when (> (display-color-cells) 16)
-;;  (with-without-library "color-theme"
-;;    ((require 'color-theme)
-;;     (color-theme-initialize)
-;;     (color-theme-dark-laptop))
-;;    ((setq default-frame-alist
-;;           '((foreground-color . "Wheat")
-;;             (background-color . "DarkSlateGray")
-;;             (cursor-color . "Orchid")
-;;             (mouse-color . "slateblue"))))))
-;;
+(when (> (display-color-cells) 16)
+  (with-without-library "color-theme"
+    ((require 'color-theme)
+     (color-theme-initialize)
+     (color-theme-dark-laptop))
+    ((setq default-frame-alist
+           '((foreground-color . "Wheat")
+             (background-color . "DarkSlateGray")
+             (cursor-color . "Orchid")
+             (mouse-color . "slateblue"))))))
+;; 单独设置背景色
 ;; (set-background-color "darkblue")
 
 ;;; View, Navigator
