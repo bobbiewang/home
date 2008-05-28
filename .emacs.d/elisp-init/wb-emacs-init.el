@@ -869,16 +869,7 @@ do kill lines as `dd' in vim."
 
 ;; Chmod of scripts to u+x
 (add-hook 'after-save-hook
-          '(lambda ()
-             (progn
-               (and (save-excursion
-                      (save-restriction
-                        (widen)
-                        (goto-char (point-min))
-                        (save-match-data
-                          (looking-at "^#!"))))
-                    (shell-command (concat "chmod u+x " buffer-file-name))
-                    (message (concat "Saved as script: " buffer-file-name))))))
+          'executable-make-buffer-file-executable-if-script-p)
 
 ;;; Register, Bookmark
 
