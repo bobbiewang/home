@@ -3,6 +3,7 @@
 .config/*
 .cvspass
 .dbus/*
+.emacs.bmk
 .emacs.desktop
 .emacs.desktop.lock
 .session
