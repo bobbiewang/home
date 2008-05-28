@@ -1433,7 +1433,10 @@ the length of the whitespace"
                (inf-ruby-keys)
                (ruby-electric-mode t)
                (local-set-key "\C-c\C-c" 'ruby-eval-buffer)
-               (local-set-key "\C-[#"    'ruby-hash-header))))
+               (local-set-key "\C-[#"    'ruby-hash-header)))
+
+  ;; Rails
+  (add-to-list 'auto-mode-alist '("\.rhtml$". html-mode)))
 
 ;;;; wb-pythonde.el
 
