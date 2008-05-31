@@ -1113,10 +1113,13 @@ do kill lines as `dd' in vim."
        ;; 禁止 evaluate 在 <lisp> 标签中的 lisp 语句
        (setq muse-colors-evaluate-lisp-tags nil)
 
-       ;; 需要在 Muse  Hook 中加载的设置
+       ;; 需要在 Muse 各种 Hook 中加载的设置
        (add-hook 'muse-mode-hook
                  '(lambda ()
                     (outline-minor-mode 1)))
+       (add-hook 'muse-after-publish-hook
+                 'wb-remove-html-cjk-space)
+
 
        ;; 辅助函数
        (defun wb-muse-relative-path (file)
@@ -1124,7 +1127,16 @@ do kill lines as `dd' in vim."
           (file-relative-name
            wb-muse-pd
            (file-name-directory muse-publishing-current-output-path))
-          file)))))
+          file))
+
+       (defun wb-remove-html-cjk-space ()
+         "删除输出 HTML 时两行中文之间的空格。"
+         (when (string= (muse-style-element :base muse-publishing-current-style) "html")
+         (save-excursion
+           (goto-char (point-min))
+           (while (re-search-forward "\\(\\cc\\)\n\\(\\cc\\)" nil t)
+             (unless (get-text-property (match-beginning 0) 'read-only)
+               (replace-match "\\1\\2")))))))))
 
 ;;;; wb-modes.el
 
