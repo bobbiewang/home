@@ -1104,6 +1104,11 @@ do kill lines as `dd' in vim."
                                              wb-muse-pd
                                              "wiki-xhtml"))))
 
+       ;; 键绑定
+       (define-key muse-mode-map (kbd "C-c C-c") 'wb-muse-preview-source)
+       (define-key muse-mode-map (kbd "C-c C-j") 'wb-muse-preview-html)
+       (define-key muse-mode-map (kbd "C-c C-m") 'wb-muse-preview-with-w3m)
+
        ;; 其他 Muse 设置
 
        ;; 禁止把 Project 名作为链接，我不喜欢不受控制的到处高亮
@@ -1120,7 +1125,6 @@ do kill lines as `dd' in vim."
        (add-hook 'muse-after-publish-hook
                  'wb-remove-html-cjk-space)
 
-
        ;; 辅助函数
        (defun wb-muse-relative-path (file)
          (concat
@@ -1136,7 +1140,42 @@ do kill lines as `dd' in vim."
            (goto-char (point-min))
            (while (re-search-forward "\\(\\cc\\)\n\\(\\cc\\)" nil t)
              (unless (get-text-property (match-beginning 0) 'read-only)
-               (replace-match "\\1\\2")))))))))
+               (replace-match "\\1\\2"))))))
+
+       (defun wb-muse-output-file ()
+         "Get output file name"
+         (let ((styles (muse-project-applicable-styles buffer-file-name
+                                                       (cddr (muse-project))))
+               output-dir)
+           (while (and styles
+                       (progn
+                         (setq output-dir (muse-style-element :path (car styles)))
+                         (not (file-exists-p output-dir))))
+             (setq styles (cdr styles)))
+           (when output-dir
+             (muse-publish-output-file
+              buffer-file-name
+              output-dir
+              "html"))))
+
+       (defun wb-muse-preview-with-w3m ()
+         "Preview the html file with w3m."
+         (interactive)
+         (muse-project-publish-this-file)
+         (let ((file (wb-muse-output-file)))
+           (w3m-goto-url (concat "file://" file))))
+
+       (defun wb-muse-preview-html ()
+         "Preview the html file with web browser."
+         (interactive)
+         (muse-project-publish-this-file)
+         (browse-url (wb-muse-output-file)))
+
+       (defun wb-muse-preview-source ()
+         "Find and open the html file in emacs."
+         (interactive)
+         (muse-project-publish-this-file)
+         (find-file (wb-muse-output-file))))))
 
 ;;;; wb-modes.el
 
