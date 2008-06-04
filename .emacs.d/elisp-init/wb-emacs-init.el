@@ -238,6 +238,11 @@ when a region-mark is active."
       (narrow-to-region (region-beginning) (region-end))
     (widen)))
 
+(defun wb-insert-date ()
+  "插入当前日期"
+  (interactive)
+  (insert (format-time-string "%Y 年 %m 月 %d 日")))
+
 ;;; Buffer
 
 (defun wb-quit-buffer ()
@@ -1753,6 +1758,16 @@ Returns nil if it is not visible in the current calendar window."
 ;; goto-line 默认绑定了两个按键 M-g g 和 M-g M-g，将其中一个绑定为按百
 ;; 分率跳转到某一行
 (global-set-key (kbd "M-g g") 'wb-goto-line)
+
+;; C-c i 前缀用于插入一些文本
+
+;; 定义 wb-insert-map 并绑定为 C-c i
+(defvar wb-insert-map nil)
+(setq wb-insert-map (make-sparse-keymap))
+(global-set-key "\C-ci" wb-insert-map)
+
+;; 绑定一些插入文本的函数
+(global-set-key "\C-cid" 'wb-insert-date)
 
 ;;; 局部键绑定
 
