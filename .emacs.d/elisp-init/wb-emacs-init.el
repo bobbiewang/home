@@ -888,10 +888,11 @@ do kill lines as `dd' in vim."
 
 ;; bm：支持当个文件内的 bookmark，高亮设置 bookmark 的行
 (robust-require bm
-  (global-set-key (kbd "<C-f2>") 'bm-toggle)
-  (global-set-key (kbd "<M-f2>") 'bm-show)
-  (global-set-key (kbd "<f2>")   'bm-next)
-  (global-set-key (kbd "<S-f2>") 'bm-previous))
+  (global-set-key (kbd "<C-f2>")   'bm-toggle)
+  (global-set-key (kbd "<M-f2>")   'bm-show)
+  (global-set-key (kbd "ESC <f2>") 'bm-show)
+  (global-set-key (kbd "<f2>")     'bm-next)
+  (global-set-key (kbd "<S-f2>")   'bm-previous))
 
 ;;; Buffers, Files, Dired
 
@@ -1033,9 +1034,6 @@ do kill lines as `dd' in vim."
 ;; Color support
 (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
-
-;; Binding set-mark command
-(global-set-key (kbd "C-\\") 'set-mark-command)
 
 ;;;; wb-template.el
 
