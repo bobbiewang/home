@@ -1178,7 +1178,19 @@ do kill lines as `dd' in vim."
          "Find and open the html file in emacs."
          (interactive)
          (muse-project-publish-this-file)
-         (find-file (wb-muse-output-file))))))
+         (find-file (wb-muse-output-file)))
+
+       ;; Muse Mode 的 Skeleton
+       (define-skeleton skeleton-muse-src
+         "Insert muse src tag"
+         "Lang: "
+         "<src lang=\"" str "\">\n"
+         _
+         "\n</src>")
+
+       ;; 绑定 skeleton 到 abbrev
+       (define-abbrev-table 'muse-mode-abbrev-table 
+         '(("src" "" skeleton-muse-src 1))))))
 
 ;;;; wb-modes.el
 
