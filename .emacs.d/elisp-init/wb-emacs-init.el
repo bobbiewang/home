@@ -1189,12 +1189,28 @@ do kill lines as `dd' in vim."
          "Auto insert to new muse file." "Title: "
          "#title " str \n \n "<contents>" \n \n "* " _)
 
+       (defvar muse-src-tag-lang-last nil)
+       (defvar muse-src-tag-lang-history nil)
+
+       (setq muse-src-tag-lang-alist
+             '(("emacs-lisp")
+               ("python")
+               ("ruby")
+               ("sh")))
+
        (define-skeleton skeleton-muse-mode-tag-src
-         "Insert muse mode src tag"
-         "Lang: "
-         "<src lang=\"" str "\">\n"
-         _
-         "\n</src>")
+         "test"
+         (identity
+          (setq muse-src-tag-lang-last
+                (completing-read
+                 (if (> (length muse-src-tag-lang-last) 0)
+                     (format "Lang (default %s): " muse-src-tag-lang-last)
+                   "Lang: ")
+                 muse-src-tag-lang-alist nil nil nil
+                 'muse-src-tag-lang-history muse-src-tag-lang-last)))
+         "<src lang=\"" str "\">" \n
+         _ \n
+         "</src>" \n \n)
 
        (define-skeleton skeleton-muse-mode-tag-example
          "Insert muse mode example tag"
