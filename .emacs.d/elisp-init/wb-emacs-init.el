@@ -1040,6 +1040,9 @@ do kill lines as `dd' in vim."
 (setq abbrev-file-name "~/.emacs.d/.abbrev_defs")
 (setq save-abbrevs nil)
 
+(robust-require autoinsert
+  (auto-insert-mode))
+
 ;; 设置 hippie-expand 的行为
 (setq hippie-expand-try-functions-list
       '(try-expand-dabbrev
@@ -1124,7 +1127,8 @@ do kill lines as `dd' in vim."
        ;; 需要在 Muse 各种 Hook 中加载的设置
        (add-hook 'muse-mode-hook
                  '(lambda ()
-                    (outline-minor-mode 1)))
+                    (outline-minor-mode 1)
+                    (setq abbrev-mode 1)))
        (add-hook 'muse-after-publish-hook
                  'wb-remove-html-cjk-space)
 
@@ -1181,16 +1185,33 @@ do kill lines as `dd' in vim."
          (find-file (wb-muse-output-file)))
 
        ;; Muse Mode 的 Skeleton
-       (define-skeleton skeleton-muse-src
-         "Insert muse src tag"
+       (define-skeleton skeleton-muse-mode-auto-insert
+         "Auto insert to new muse file." "Title: "
+         "#title " str \n \n "<contents>" \n \n "* " _)
+
+       (define-skeleton skeleton-muse-mode-tag-src
+         "Insert muse mode src tag"
          "Lang: "
          "<src lang=\"" str "\">\n"
          _
          "\n</src>")
 
+       (define-skeleton skeleton-muse-mode-tag-example
+         "Insert muse mode example tag"
+         nil
+         "<example>" \n
+         _ \n
+         "</example>")
+
+       ;; 绑定 skeleton 到 auto insert
+       (define-auto-insert '(muse-mode . "muse document")
+         'skeleton-muse-mode-auto-insert)
+
        ;; 绑定 skeleton 到 abbrev
        (define-abbrev-table 'muse-mode-abbrev-table 
-         '(("src" "" skeleton-muse-src 1))))))
+         '(("src" "" skeleton-muse-mode-tag-src)
+           ("ex"  "" skeleton-muse-mode-tag-example)))
+       )))
 
 ;;;; wb-modes.el
 
