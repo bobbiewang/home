@@ -1057,6 +1057,8 @@ do kill lines as `dd' in vim."
         try-expand-whole-kill))
 (global-set-key "\M-/" 'hippie-expand)
 
+(robust-require snippet)
+
 ;;;; wb-muse.el
 
 (robust-require muse-autoloads
