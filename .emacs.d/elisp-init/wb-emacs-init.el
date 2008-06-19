@@ -890,7 +890,6 @@ do kill lines as `dd' in vim."
 (robust-require bm
   (global-set-key (kbd "<C-f2>")   'bm-toggle)
   (global-set-key (kbd "<M-f2>")   'bm-show)
-  (global-set-key (kbd "ESC <f2>") 'bm-show)
   (global-set-key (kbd "<f2>")     'bm-next)
   (global-set-key (kbd "<S-f2>")   'bm-previous))
 
@@ -1790,6 +1789,16 @@ Returns nil if it is not visible in the current calendar window."
     "Minor mode for incremental blame for Git." t))
 
 ;;;; wb-kbd.el
+
+;;; 终端下 Keyboard 设置
+
+;; 在 PuTTY 设置 Keyboard 为 SCO 可以识别 C/S-f2
+(add-hook 'term-setup-hook
+          (lambda ()
+            (define-key function-key-map (kbd "\e[N")   [f2])
+            (define-key function-key-map (kbd "\e[l")   [C-f2])
+            (define-key function-key-map (kbd "\e[Z")   [S-f2])
+            (define-key function-key-map (kbd "\e\e[N") [M-f2])))
 
 ;;; 全局键绑定
 
