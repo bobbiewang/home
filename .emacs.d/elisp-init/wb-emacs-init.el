@@ -574,6 +574,7 @@ selected rectangle."
              (background-color . "DarkSlateGray")
              (cursor-color . "Orchid")
              (mouse-color . "slateblue"))))))
+
 ;; 单独设置背景色
 ;; (set-background-color "darkblue")
 
@@ -586,8 +587,9 @@ selected rectangle."
 
 (robust-require hideshow
   ;; 在需要的 mode 中使用 hideshow
-  ;(dolist (hook '(c++-mode-hook c-mode-hook))
-  ;  (add-hook hook 'hs-minor-mode))
+  ;; (dolist (hook '(c++-mode-hook c-mode-hook))
+  ;;   (add-hook hook 'hs-minor-mode))
+
   ;; 为 Hideshow Mode 设置和 Outline Mode 相似的键绑定
   (define-key hs-minor-mode-map (kbd "C-o C-a") 'hs-show-all)
   (define-key hs-minor-mode-map (kbd "C-o C-t") 'hs-hide-all)
@@ -1721,6 +1723,10 @@ Returns nil if it is not visible in the current calendar window."
 (setq todo-file-do "~/.emacs.d/.todo-do"
       todo-file-done "~/.emacs.d/.todo-done"
       todo-file-top "~/.emacs.d/.todo-top")
+
+;;; Gnus
+
+(setq gnus-init-file "~/.emacs.d/elisp-init/wb-gnus.el")
 
 ;;; Org Mode
 
