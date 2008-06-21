@@ -1803,10 +1803,14 @@ Returns nil if it is not visible in the current calendar window."
 ;; 在 PuTTY 设置 Keyboard 为 SCO 可以识别 C/S-f2
 (add-hook 'term-setup-hook
           (lambda ()
+            ;; F1 ~ F12
             (define-key function-key-map (kbd "\e[N")   [f2])
             (define-key function-key-map (kbd "\e[l")   [C-f2])
             (define-key function-key-map (kbd "\e[Z")   [S-f2])
-            (define-key function-key-map (kbd "\e\e[N") [M-f2])))
+            (define-key function-key-map (kbd "\e\e[N") [M-f2])
+            ;; PageUp 和 PageDown
+            (define-key function-key-map (kbd "\e[I")   [prior])
+            (define-key function-key-map (kbd "\e[G")   [next])))
 
 ;;; 全局键绑定
 
