@@ -18,6 +18,10 @@
 
 (setq gnus-select-method '(nntp "news.cn99.com"))
 
+(add-to-list 'gnus-secondary-select-methods '(nnimap "gmail"
+                                                     (nnimap-address "imap.gmail.com")
+                                                     (nnimap-server-port 993)
+                                                     (nnimap-stream ssl)))
 (gnus-demon-init)
 (gnus-demon-add-handler 'gnus-demon-scan-news 10 t)
 (gnus-demon-add-handler 'gnus-demon-scan-mail 10 t)
