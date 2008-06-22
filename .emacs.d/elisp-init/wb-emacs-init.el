@@ -1855,10 +1855,15 @@ Returns nil if it is not visible in the current calendar window."
 ;;;; .emacs tail
 
 (robust-require desktop
-  (desktop-save-mode t)                ; enable desktop save mode
-  (setq desktop-save t)                ; always save desktop
-  (setq desktop-load-locked-desktop t) ; load desktop even if locked
-  )
+  ;; 启用 desktop save mode
+  (desktop-save-mode t)
+  ;; 设置 desktop 相关文件的路径
+  (setq desktop-base-file-name "~/.emacs.d/.emacs.desktop")
+  (setq desktop-base-lock-name "~/.emacs.d/.emacs.desktop.lock")
+  ;; 始终保存 desktop 文件，不管文件原来是否存在，也不询问用户
+  (setq desktop-save t)
+  ;; 不管 desktop 文件是否被 lock，都加载 desktop 文件
+  (setq desktop-load-locked-desktop t))
 
 ;; session 是用来保存一些全局变量
 (robust-require session
