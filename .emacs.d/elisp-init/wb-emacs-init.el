@@ -96,6 +96,12 @@
         (setq symbol (read-string msg-prompt symbol))))
     (when symbol (substring-no-properties symbol))))
 
+(defun touch-file (filename)
+  "Touch FILENAME, that is set its modification time (modtime) to
+current time."
+  (interactive "fFile to touch: ")
+  (set-file-times filename (current-time)))
+
 ;;; Move, Edit, View
 
 ;; 按百分率跳转到某一行
@@ -242,6 +248,10 @@ when a region-mark is active."
   "插入当前日期"
   (interactive)
   (insert (format-time-string "%Y 年 %m 月 %d 日")))
+
+;; 自动换行显示
+(setq truncate-lines nil)
+(setq truncate-partial-width-windows nil)
 
 ;;; Buffer
 
@@ -883,10 +893,13 @@ do kill lines as `dd' in vim."
 ;; 设置常用的文件和目录，可以用 "C-x r j R" 快速访问
 (set-register ?e '(file . "~/.emacs.d/elisp-init/wb-emacs-init.el"))
 
-;; 使用 Emacs 内置的 bookmark
+;; Emacs 内置的 bookmark
 ;; bookmark-set    C-x r m
 ;; bookmark-jump   C-x r b
 ;; list-bookmarks  C-x r l
+(setq bookmark-save-flag 1) ; 设置 bookmark 同时 save
+
+;; 参考命令
 
 ;; bm：支持当个文件内的 bookmark，高亮设置 bookmark 的行
 (robust-require bm
