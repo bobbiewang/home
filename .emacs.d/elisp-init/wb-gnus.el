@@ -47,7 +47,7 @@
       '(("^cn\\.bbs\\.comp\\."
          (posting-style
           (name "firebird")
-          (address "火鸟@水木.社区")
+          (address "firebird@newsmth.net")
           (signature "凤翱翔于千仞兮，非梧不栖")
           (eval (setq mm-coding-system-priorities
                  '(iso-8859-1 gb2312 utf-8))))
