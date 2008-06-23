@@ -50,11 +50,14 @@
           (address "firebird@newsmth.net")
           (signature "凤翱翔于千仞兮，非梧不栖")
           (eval (setq mm-coding-system-priorities
-                 '(iso-8859-1 gb2312 utf-8))))
-         (gnus-visible-headers "^From:\\|^Subject:")
-         (gnus-ignored-headers "^Newsgroup\\|^Date:\\|^Organization:"))))
+                 '(iso-8859-1 gb2312 utf-8)))))))
 
-
+(add-hook 'gnus-startup-hook
+          '(lambda ()
+             (setq gnus-visible-headers "^From:\\|^Subject:")
+             (setq gnus-ignored-headers
+                   (concat "^Newsgroup:\\|To:\\|^Organization:\\|"
+                           "Mail-Followup-To:\\|" gnus-visible-headers))))
 
 (add-hook 'gnus-article-prepare-hook
           (lambda ()
