@@ -1,7 +1,3 @@
-(require 'gnus)
-
-(setq gnus-verbose 10)
-
 (setq gnus-startup-file "~/.emacs.d/gnus/newsrc")
 (setq gnus-save-newsrc-file nil)
 (setq gnus-read-newsrc-file nil)
@@ -19,6 +15,10 @@
 ;; (setq gnus-secondary-select-methods
 ;;       '( (nnml "" (nnml-directory "~/.emacs.d/gnus/mails/"))
 ;;          ...other.servers... ))
+
+(require 'gnus)
+
+(setq gnus-verbose 10)
 
 (setq gnus-select-method '(nntp "news.cn99.com"))
 

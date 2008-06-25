@@ -538,7 +538,7 @@ selected rectangle."
 ;; 在 Modeline 显示当前时间
 (setq display-time-24hr-format t)     ; 以 24 小时格式显示时间
 (setq display-time-day-and-date nil)  ; 不显示日期以节省空间
-(display-time)
+;; (display-time)
 
 (setq visible-bell t)
 
@@ -1739,6 +1739,26 @@ Returns nil if it is not visible in the current calendar window."
       todo-file-top "~/.emacs.d/.todo-top")
 
 ;;; Gnus
+
+(setq gnus-verbose 10)
+
+(setq gnus-startup-file "~/.emacs.d/gnus/newsrc")
+(setq gnus-save-newsrc-file nil)
+(setq gnus-read-newsrc-file nil)
+
+(setq gnus-default-directory "~/.emacs.d/gnus/news/")
+(setq gnus-directory "~/.emacs.d/gnus/news/")
+(setq gnus-article-save-directory "~/.emacs.d/gnus/news/")
+(setq gnus-cache-directory "~/.emacs.d/gnus/news/cache/")
+(setq gnus-kill-files-directory "~/.emacs.d/gnus/news/")
+(setq gnus-dribble-directory "~/.emacs.d/gnus/news")
+(setq gnus-agent-directory "~/.emacs.d/gnus/news/agent/")
+
+(setq message-auto-save-directory "~/.emacs.d/gnus/mails/drafts/")
+(setq message-directory "~/.emacs.d/gnus/mails/")
+;; (setq gnus-secondary-select-methods
+;;       '( (nnml "" (nnml-directory "~/.emacs.d/gnus/mails/"))
+;;          ...other.servers... ))
 
 (setq gnus-init-file "~/.emacs.d/elisp-init/wb-gnus.el")
 
