@@ -1,3 +1,5 @@
+(require 'gnus)
+
 (setq gnus-verbose 10)
 
 (setq gnus-startup-file "~/.emacs.d/gnus/newsrc")
@@ -31,6 +33,8 @@
 (gnus-demon-add-handler 'gnus-demon-scan-news 10 t)
 (gnus-demon-add-handler 'gnus-demon-scan-mail 10 t)
 
+(setq gnus-group-line-format "%M%S%p%P%5y:%B%(%g%) (%F) %O\n")
+
 (setq gnus-user-date-format-alist
       '(((gnus-seconds-today) . "%H:%M")    ; 当天的新闻/邮件
         (604800 . "W%w %H:%M")              ; 七天之内的新闻/邮件
@@ -57,7 +61,8 @@
           (eval (setq mm-coding-system-priorities
                  '(iso-8859-1 gb2312 utf-8)))))))
 
-(setq gnus-agent-synchronize-flags 't)
+(setq gnus-agent-go-online t)
+(setq gnus-agent-synchronize-flags t)
 
 (add-hook 'gnus-startup-hook
           '(lambda ()
