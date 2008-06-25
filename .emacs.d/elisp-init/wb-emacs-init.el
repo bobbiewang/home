@@ -1209,7 +1209,8 @@ do kill lines as `dd' in vim."
        (defvar muse-src-tag-lang-history nil)
 
        (setq muse-src-tag-lang-alist
-             '(("emacs-lisp")
+             '(("conf")
+               ("emacs-lisp")
                ("python")
                ("ruby")
                ("sh")))
