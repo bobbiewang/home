@@ -1,3 +1,5 @@
+(setq gnus-verbose 10)
+
 (setq gnus-startup-file "~/.emacs.d/gnus/newsrc")
 (setq gnus-save-newsrc-file nil)
 (setq gnus-read-newsrc-file nil)
@@ -18,10 +20,12 @@
 
 (setq gnus-select-method '(nntp "news.cn99.com"))
 
-;; (add-to-list 'gnus-secondary-select-methods '(nnimap "gmail"
-;;                                                      (nnimap-address "imap.gmail.com")
-;;                                                      (nnimap-server-port 993)
-;;                                                      (nnimap-stream ssl)))
+(add-to-list 'gnus-secondary-select-methods
+             '(nnimap "gmail"
+                      (nnimap-address "imap.gmail.com")
+                      (nnimap-server-port 993)
+                      (nnimap-stream ssl)
+                      (nnimap-list-pattern ("*"))))
 
 (gnus-demon-init)
 (gnus-demon-add-handler 'gnus-demon-scan-news 10 t)
@@ -45,12 +49,15 @@
 
 (setq gnus-parameters
       '(("^cn\\.bbs\\.comp\\."
+         (visible . t)
          (posting-style
           (name "firebird")
           (address "firebird@newsmth.net")
           (signature "凤翱翔于千仞兮，非梧不栖")
           (eval (setq mm-coding-system-priorities
                  '(iso-8859-1 gb2312 utf-8)))))))
+
+(setq gnus-agent-synchronize-flags 't)
 
 (add-hook 'gnus-startup-hook
           '(lambda ()
