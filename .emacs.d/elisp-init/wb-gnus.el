@@ -61,8 +61,19 @@
           (eval (setq mm-coding-system-priorities
                  '(iso-8859-1 gb2312 utf-8)))))))
 
+(require 'gnus-agent)
+
 (setq gnus-agent-go-online t)
 (setq gnus-agent-synchronize-flags t)
+
+(defun wb-gnus-agent-article-old-p ()
+  "Say whether an article is old."
+  (< (time-to-days (date-to-time (mail-header-date gnus-headers)))
+     (- (time-to-days (current-time)) gnus-agent-expire-days)))
+
+(setq gnus-category-predicate-alist
+      (append gnus-category-predicate-alist
+              '((old . wb-gnus-agent-article-old-p))))
 
 (add-hook 'gnus-startup-hook
           '(lambda ()
