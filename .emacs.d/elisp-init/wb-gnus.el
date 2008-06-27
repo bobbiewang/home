@@ -56,13 +56,13 @@
          (visible . t)
          (posting-style
           (name "firebird")
-          (address "firebird@newsmth.net")
+          (address "firebird@newsmth.net-SPAN.no")
           (signature "凤翱翔于千仞兮，非梧不栖")
           (eval (setq mm-coding-system-priorities
                  '(iso-8859-1 gb2312 utf-8)))))))
 
-(setq gnus-agent-go-online t)
-(setq gnus-agent-synchronize-flags t)
+(setq gnus-agent-go-online 'ask)
+(setq gnus-agent-synchronize-flags nil)
 
 (add-hook 'gnus-startup-hook
           '(lambda ()
