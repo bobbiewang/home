@@ -538,7 +538,8 @@ selected rectangle."
 ;; 在 Modeline 显示当前时间
 (setq display-time-24hr-format t)     ; 以 24 小时格式显示时间
 (setq display-time-day-and-date nil)  ; 不显示日期以节省空间
-;; (display-time)
+(display-time)                        ; 在 Modeline 显示时间
+(set-time-zone-rule "Asia/Shanghai")  ; 设置正确的时区
 
 (setq visible-bell t)
 
