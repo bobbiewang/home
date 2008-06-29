@@ -17,19 +17,22 @@ TZ='Asia/Shanghai'; export TZ
 ######################################################################
 
 if [ -n "$HAVE_DTACH" ]; then
-    alias e="connect-emacs-dtach editor"
+    alias e="connect-emacs-dtach editor -d $DISPLAY -c"
     alias et="connect-emacs-dtach editor -t"
+    export EDITOR="connect-emacs-dtach editor -t"
     ~/bin/preload-emacs-dtach editor
 elif [ -n "$HAVE_SCREEN" ]; then
-    alias e="connect-emacs-screen editor"
+    alias e="connect-emacs-screen editor -d $DISPLAY -c"
     alias et="connect-emacs-screen editor -t"
+    export EDITOR="connect-emacs-screen editor -t"
     ~/bin/preload-emacs-screen editor
 else
     alias e="emacs -nw"
     alias et="emacs -nw"
     alias en="emacsclient -n"
+    export EDITOR="emacs -nw"
 fi
-export EDITOR=et
+alias emq="emacs -nw --no-desktop"
 
 ######################################################################
 ## Ruby
