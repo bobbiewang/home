@@ -62,7 +62,7 @@
                  '(iso-8859-1 gb2312 utf-8)))))
         ("^nnimap\\+gmail:cpug"
          (agent-predicate and true (not old))
-         (gnus-list-identifiers "\\[python-.*+\\]"))
+         (gnus-list-identifiers '("\\[python-.*+\\]" "\\[CPyUG.*?\\]")))
         ("^nnimap\\+gmail:toplanguage"
          (gnus-list-identifiers "\\[TopLanguage\\]"))))
 
