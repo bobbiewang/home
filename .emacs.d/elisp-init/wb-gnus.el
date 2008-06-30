@@ -59,12 +59,17 @@
           (address "firebird@newsmth.net-SPAN.no")
           (signature "凤翱翔于千仞兮，非梧不栖")
           (eval (setq mm-coding-system-priorities
-                 '(iso-8859-1 gb2312 utf-8)))))))
+                 '(iso-8859-1 gb2312 utf-8)))))
+        ("^nnimap\\+gmail:cpug"
+         (agent-predicate and true (not old))
+         (gnus-list-identifiers '("\\[python-.*+\\]" "\\[CPyUG.*?\\]")))
+        ("^nnimap\\+gmail:toplanguage"
+         (gnus-list-identifiers "\\[TopLanguage\\]"))))
 
 (require 'gnus-agent)
 
 (setq gnus-agent-go-online 'ask)
-(setq gnus-agent-synchronize-flags nil)
+(setq gnus-agent-synchronize-flags t)
 
 (defun wb-gnus-agent-article-old-p ()
   "Say whether an article is old."

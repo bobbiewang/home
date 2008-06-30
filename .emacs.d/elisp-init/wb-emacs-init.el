@@ -1140,6 +1140,8 @@ do kill lines as `dd' in vim."
        (setq muse-colors-autogen-headings 'outline)
        ;; 禁止 evaluate 在 <lisp> 标签中的 lisp 语句
        (setq muse-colors-evaluate-lisp-tags nil)
+       ;; C-c TAB u 插入 url 时不自动插入 http://
+       (setq muse-insert-url-initial-input "")
 
        ;; 需要在 Muse 各种 Hook 中加载的设置
        (add-hook 'muse-mode-hook
