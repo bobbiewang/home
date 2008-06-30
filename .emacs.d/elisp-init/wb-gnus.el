@@ -18,16 +18,25 @@
 
 (require 'gnus)
 
+(setq user-full-name "firebird")
+(setq user-mail-address "firbir@gmail-SPAM.no")
+
 (setq gnus-verbose 10)
 
+;; 设置 NNTP 服务
 (setq gnus-select-method '(nntp "news.cn99.com"))
 
+;; 设置 IMAG 服务
 (add-to-list 'gnus-secondary-select-methods
              '(nnimap "gmail"
                       (nnimap-address "imap.gmail.com")
                       (nnimap-server-port 993)
                       (nnimap-stream ssl)
                       (nnimap-list-pattern ("*"))))
+
+;; 设置 SMTP 服务
+(setq sendmail-program "msmtp")
+(setq mail-host-address "gmail.com")
 
 (gnus-demon-init)
 (gnus-demon-add-handler 'gnus-demon-scan-news 10 t)
@@ -56,7 +65,7 @@
          (visible . t)
          (posting-style
           (name "firebird")
-          (address "firebird@newsmth.net-SPAN.no")
+          (address "firebird@newsmth.net-SPAM.no")
           (signature "凤翱翔于千仞兮，非梧不栖")
           (eval (setq mm-coding-system-priorities
                  '(iso-8859-1 gb2312 utf-8)))))
