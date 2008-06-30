@@ -1037,9 +1037,6 @@ do kill lines as `dd' in vim."
 
 ;;; misc
 
-(setq user-full-name "Bo Wang")
-(setq user-mail-address "Bobbie.Wang@Gmail.com")
-
 (setq default-directory "~/")
 
 ;; "y or n" instead of "yes or no"
