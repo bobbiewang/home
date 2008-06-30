@@ -1889,6 +1889,7 @@ Returns nil if it is not visible in the current calendar window."
 
 ;;;; .emacs tail
 
+;; desktop 保存打开的文件列表
 (robust-require desktop
   ;; 启用 desktop save mode
   (desktop-save-mode t)
