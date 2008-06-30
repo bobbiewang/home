@@ -35,8 +35,12 @@
                       (nnimap-list-pattern ("*"))))
 
 ;; 设置 SMTP 服务
-(setq sendmail-program "msmtp")
-(setq mail-host-address "gmail.com")
+(setq message-send-mail-function 'smtpmail-send-it
+      smtpmail-default-smtp-server "smtp.gmail.com"
+      smtpmail-smtp-server "smtp.gmail.com"
+      smtpmail-smtp-service 587
+      smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
+      smtpmail-local-domain "yourcompany.com")
 
 (gnus-demon-init)
 (gnus-demon-add-handler 'gnus-demon-scan-news 10 t)
