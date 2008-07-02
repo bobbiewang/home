@@ -1209,7 +1209,8 @@ do kill lines as `dd' in vim."
        (defvar muse-src-tag-lang-history nil)
 
        (setq muse-src-tag-lang-alist
-             '(("conf")
+             '(("c++")
+               ("conf")
                ("emacs-lisp")
                ("python")
                ("ruby")
@@ -1493,6 +1494,11 @@ do kill lines as `dd' in vim."
             (run-at-time .5 nil 'delete-windows-on buf)
             (message "NO COMPILATION ERRORS!")))))
 
+(add-hook 'gud-mode-hook
+          (lambda ()
+            (define-key gud-mode-map (kbd "<f10>") 'gud-next)
+            (define-key gud-mode-map (kbd "<f11>") 'gud-step)))
+            
 ;;;; wb-rudyde.el
 (robust-require ruby-mode
   (autoload 'ruby-mode     "ruby-mode" "Mode for editing ruby source files" t)
@@ -1628,7 +1634,7 @@ the length of the whitespace"
   (autoload 'run-scheme "quack"
     "enhanced support for editing and running Scheme code" t))
 
-;;;; wb-perl-ide.el
+;;;; wb-perlde.el
 
 (defalias 'perl-mode 'cperl-mode)
 (eval-after-load "cperl-mode"
@@ -1800,6 +1806,35 @@ Returns nil if it is not visible in the current calendar window."
           (lambda ()
             (toggle-truncate-lines t)))
 
+;;; Shell
+
+;; shell buffer 的标题加上当前路径，这样可以开多个 shell buffer
+(defun wb-shell-mode-auto-rename-buffer (text)
+  (if (eq major-mode 'shell-mode)
+      (rename-buffer (concat "*shell: " default-directory "*") t)))
+
+(add-hook 'comint-output-filter-functions
+          'wb-shell-mode-auto-rename-buffer)
+
+(defun wb-shell-mode-kill-buffer-on-exit (process state)
+  ;; shell 退出时记录命令历史
+  (shell-write-history-on-exit process state)
+  ;; shell 退出时删除 shell buffer
+  (kill-buffer (process-buffer process)))
+
+(defun wb-shell-mode-hook-func ()
+  (set-process-sentinel (get-buffer-process (current-buffer))
+                        #'wb-shell-mode-kill-buffer-on-exit))
+
+(defun wb-shell-mode-hook nil
+  (wcy-shell-mode-hook-func)
+  ;; 打开 ansi-color
+  (ansi-color-for-comint-mode-on)
+  ;; 启用 abbrev
+  (abbrev-mode t))
+
+(add-hook 'shell-mode-hook 'wb-shell-mode-hook)
+
 ;;; Spell Check
 
 (setq ispell-personal-dictionary "~/.emacs.d/.ispell_personal")
@@ -1842,6 +1877,14 @@ Returns nil if it is not visible in the current calendar window."
             (define-key function-key-map (kbd "\e[l")   [C-f2])
             (define-key function-key-map (kbd "\e[Z")   [S-f2])
             (define-key function-key-map (kbd "\e\e[N") [M-f2])
+            (define-key function-key-map (kbd "\e[V")   [f10])
+            (define-key function-key-map (kbd "\e[t")   [C-f10])
+            (define-key function-key-map (kbd "\e[h")   [S-f10])
+            (define-key function-key-map (kbd "\e\eV") [M-f10])
+            (define-key function-key-map (kbd "\e[W")   [f11])
+            (define-key function-key-map (kbd "\e[u")   [C-f11])
+            (define-key function-key-map (kbd "\e[i")   [S-f11])
+            (define-key function-key-map (kbd "\e\e[W") [M-f11])
             ;; PageUp 和 PageDown
             (define-key function-key-map (kbd "\e[I")   [prior])
             (define-key function-key-map (kbd "\e[G")   [next])))
