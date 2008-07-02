@@ -541,6 +541,9 @@ selected rectangle."
 (display-time)                        ; 在 Modeline 显示时间
 (set-time-zone-rule "Asia/Shanghai")  ; 设置正确的时区
 
+;; 以闪烁整个 frame 的形式代替警铃，可以通过 ring-bell-function
+;; 自定义警铃的方式。比如希望没有任何提示，可以
+;; (setq ring-bell-function (lambda ()))
 (setq visible-bell t)
 
 
