@@ -35,11 +35,13 @@
 /.local/*
 /.mc/*
 /.mozilla/*
+/.msmtprc
 /.netrc
 /.privatebashrc
 /.pulse-cookie
 /.qt/*
 /.recently-used.xbel
+/.rnd
 /.sdcv_history
 /.ssh
 /.subversion/*
