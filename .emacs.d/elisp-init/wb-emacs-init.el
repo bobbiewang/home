@@ -964,6 +964,9 @@ do kill lines as `dd' in vim."
               (ibuffer-switch-to-saved-filter-groups "default"))))
 
 ;; 一些 buffer 长时间不用的话自动关闭
+;; 可以用 (mapc (lambda (x) (add-hook x 'turn-on-tempbuf-mode))
+;;         '(dired-mode-hook custom-mode-hook)))
+;; 方式批量设置，但可读性还是分开设置的好
 (robust-require tempbuf
   (setq tempbuf-minimum-timeout 3600)
   (add-hook 'dired-mode-hook 'turn-on-tempbuf-mode)
