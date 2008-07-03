@@ -110,3 +110,11 @@
 
 ;; 隐藏 signature，需要时可以用 W W s 命令显示
 (setq gnus-treat-hide-signature t)
+
+(defun wb-gnus-update-imap-info ()
+  (interactive)
+  (progn
+    (nnimap-request-group "toplanguage" "gmail" t)
+    (nnimap-request-group "nkeric" "gmail" t)
+    (nnimap-request-group "gfans" "gmail" t)
+    (nnimap-request-group "cpug" "gmail" t)))
