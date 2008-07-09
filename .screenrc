@@ -47,11 +47,14 @@ bind 'O' login off
 bind '}' history
 
 # 自动打开一些窗口，在打开前可以用 chdir 切换到指定目录
-# （如果不指定目录，缺省为 $HOME)
-screen -t emacs 0
-screen -t shell 1
-chdir $HOME/devspace
-screen -t devspace 2
+# （如果 chdir 命令不指定目录，切换到 $HOME)
+chdir $HOME/.emacs.d/gnus
+screen -t gnus 0
+chdir
+screen -t emacs 1
+chdir
+screen -t shell 2
+chdir
 screen -t su 3 sudo su -
 select 0
 
