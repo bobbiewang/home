@@ -1926,6 +1926,9 @@ Returns nil if it is not visible in the current calendar window."
           '(lambda ()
              (define-key diff-mode-shared-map "q" 'wb-quit-buffer)))
 (define-key occur-mode-map "q" 'wb-quit-buffer)
+(eval-after-load "grep"
+  '(progn
+     (define-key grep-mode-map  "q" 'wb-quit-buffer)))
 
 ;; 为 view-mode 加入 vim 的按键。
 (setq view-mode-hook
