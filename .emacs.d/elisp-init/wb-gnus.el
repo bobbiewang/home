@@ -42,7 +42,7 @@
 (gnus-demon-add-handler 'gnus-demon-scan-news 10 t)
 (gnus-demon-add-handler 'gnus-demon-scan-mail 10 t)
 
-(setq gnus-group-line-format "%M%S%p%P%5y:%B%(%g%) (%F) %O\n")
+(setq gnus-group-line-format "%M%S%p%P%5y:%B%(%G%) (%F) %O\n")
 
 (setq gnus-user-date-format-alist
       '(((gnus-seconds-today) . "%H:%M")    ; 当天的新闻/邮件
@@ -51,14 +51,25 @@
         ((gnus-seconds-year) . "%m %d")     ; 今天的新闻/邮件
         (t . "%y-%m-%d")))
 
-(setq gnus-summary-line-format "%U%R %8&user-date; (%4k) %B%(%*%S%) <<< %-8,8n\n"
-      gnus-sum-thread-tree-vertical "│"
-      gnus-sum-thread-tree-root "┬ "
-      gnus-sum-thread-tree-false-root " ┌ "
-      gnus-sum-thread-tree-indent " "
-      gnus-sum-thread-tree-single-indent "┬ "
-      gnus-sum-thread-tree-leaf-with-other "├→ "
-      gnus-sum-thread-tree-single-leaf "└→ ")
+(setq gnus-face-10 'shadow)
+
+(defun wb-gnus-summary-line-format-ascii nil
+  (interactive)
+  (setq gnus-summary-line-format
+        (concat
+         "%0{%U%R%z%}" "%10{|%}" "%1{%8&user-date;%}" "%10{|%}"
+         "%(%-15,15f %)" "%10{|%}" "%4k" "%10{|%}"
+         "%B" "%s\n"))
+  (setq gnus-sum-thread-tree-single-indent   "o "
+        gnus-sum-thread-tree-false-root      "x "
+        gnus-sum-thread-tree-root            "* "
+        gnus-sum-thread-tree-vertical        "| "
+        gnus-sum-thread-tree-leaf-with-other "|-> "
+        gnus-sum-thread-tree-single-leaf     "+-> "
+        gnus-sum-thread-tree-indent          "  ")
+  (gnus-message 5 "Using ascii tree layout."))
+
+(wb-gnus-summary-line-format-ascii)
 
 (setq gnus-parameters
       '(("^cn\\.bbs\\.comp\\."
@@ -73,7 +84,11 @@
          (agent-predicate and true (not old))
          (gnus-list-identifiers '("\\[python-.*+\\]" "\\[CPyUG.*?\\]")))
         ("^nnimap\\+gmail:toplanguage"
-         (gnus-list-identifiers "\\[TopLanguage\\]"))))
+         (gnus-list-identifiers "\\[TopLanguage\\]"))
+        ("^nnimap\\+gmail:rorpassion"
+         (gnus-list-identifiers "\\[rails-development\\]"))
+        ("^nnimap\\+gmail:emacs-muse"
+         (gnus-list-identifiers "\\[Muse-el-discuss\\]"))))
 
 (require 'gnus-agent)
 
@@ -102,10 +117,10 @@
             (gnus-article-fill-long-lines)))
 
 ;; 隐藏 citation，需要时可以用 W W c 命令显示
-(setq gnus-treat-hide-citation t)
-
+;; (setq gnus-treat-hide-citation t)
+ 
 ;; 隐藏 signature，需要时可以用 W W s 命令显示
-(setq gnus-treat-hide-signature t)
+;; (setq gnus-treat-hide-signature t)
 
 (defun wb-gnus-update-imap-info ()
   (interactive)
