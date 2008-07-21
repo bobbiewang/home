@@ -869,6 +869,11 @@ do kill lines as `dd' in vim."
 ;; bind it
 (global-set-key [?\C-w] 'wb-kill-region)
 
+;; M-y 时浏览 kill ring
+;; http://www.todesschaf.org/projects/bkr.html
+(robust-require browse-kill-ring
+  (browse-kill-ring-default-keybindings))
+
 ;; 开启一些缺省被禁止 feature
 (put 'set-goal-column 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
@@ -1833,7 +1838,7 @@ Returns nil if it is not visible in the current calendar window."
                         #'wb-shell-mode-kill-buffer-on-exit))
 
 (defun wb-shell-mode-hook nil
-  (wcy-shell-mode-hook-func)
+  (wb-shell-mode-hook-func)
   ;; 打开 ansi-color
   (ansi-color-for-comint-mode-on)
   ;; 启用 abbrev
