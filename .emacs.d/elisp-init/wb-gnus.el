@@ -86,7 +86,9 @@
         ("^nnimap\\+gmail:toplanguage"
          (gnus-list-identifiers "\\[TopLanguage\\]"))
         ("^nnimap\\+gmail:rorpassion"
-         (gnus-list-identifiers "\\[rails-development\\]"))
+         (gnus-list-identifiers "\\[rails-development\\]")
+         (posting-style
+           (body "\n\n-- Best Regards,\n\nfirebird")))
         ("^nnimap\\+gmail:emacs-muse"
          (gnus-list-identifiers "\\[Muse-el-discuss\\]"))))
 
