@@ -1115,32 +1115,32 @@ do kill lines as `dd' in vim."
        (setq muse-project-alist
              `(("Computer"
                 (,(concat wb-muse-sd "computer")
-                 :default "index"
+                 :default "Computer"
                  :force-publish ("WikiIndex"))
                 (:base "wiki-xhtml" :path ,(concat wb-muse-pd "computer")))
                ("Emacs"
                 (,(concat wb-muse-sd "emacs")
-                 :default "index"
+                 :default "Emacs"
                  :force-publish ("WikiIndex"))
                 (:base "wiki-xhtml" :path ,(concat wb-muse-pd "emacs")))
                ("Programming"
                 (,(concat wb-muse-sd "programming")
-                 :default "index"
+                 :default "Programming"
                  :force-publish ("WikiIndex"))
                 (:base "wiki-xhtml" :path ,(concat wb-muse-pd "programming")))
                ("SPA"
                 (,(concat wb-muse-sd "spa")
-                 :default "index"
+                 :default "SPA"
                  :force-publish ("WikiIndex"))
                 (:base "wiki-xhtml" :path ,(concat wb-muse-pd "spa")))
                ("Reading"
                 (,(concat wb-muse-sd "reading")
-                 :default "index"
+                 :default "Reading"
                  :force-publish ("WikiIndex"))
                 (:base "wiki-xhtml" :path ,(concat wb-muse-pd "reading")))
                ("ICCAD"
                 (,(concat wb-muse-sd "iccad")
-                 :default "index"
+                 :default "ICCAD"
                  :force-publish ("WikiIndex"))
                 (:base "wiki-xhtml" :path ,(concat wb-muse-pd "iccad")))
                ("WiKi" (,@(muse-project-alist-dirs wb-muse-sd)
