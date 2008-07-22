@@ -1128,6 +1128,21 @@ do kill lines as `dd' in vim."
                  :default "index"
                  :force-publish ("WikiIndex"))
                 (:base "wiki-xhtml" :path ,(concat wb-muse-pd "programming")))
+               ("SPA"
+                (,(concat wb-muse-sd "spa")
+                 :default "index"
+                 :force-publish ("WikiIndex"))
+                (:base "wiki-xhtml" :path ,(concat wb-muse-pd "spa")))
+               ("Reading"
+                (,(concat wb-muse-sd "reading")
+                 :default "index"
+                 :force-publish ("WikiIndex"))
+                (:base "wiki-xhtml" :path ,(concat wb-muse-pd "reading")))
+               ("ICCAD"
+                (,(concat wb-muse-sd "iccad")
+                 :default "index"
+                 :force-publish ("WikiIndex"))
+                (:base "wiki-xhtml" :path ,(concat wb-muse-pd "iccad")))
                ("WiKi" (,@(muse-project-alist-dirs wb-muse-sd)
                            :default "index"
                            :force-publish ("WikiIndex"))
@@ -1156,8 +1171,11 @@ do kill lines as `dd' in vim."
                  '(lambda ()
                     (outline-minor-mode 1)
                     (setq abbrev-mode 1)))
+       (add-hook 'muse-before-publish-hook
+                 'wb-remove-leading-space)
        (add-hook 'muse-after-publish-hook
                  'wb-remove-html-cjk-space)
+
 
        ;; 辅助函数
        (defun wb-muse-relative-path (file)
@@ -1170,11 +1188,19 @@ do kill lines as `dd' in vim."
        (defun wb-remove-html-cjk-space ()
          "删除输出 HTML 时两行中文之间的空格。"
          (when (string= (muse-style-element :base muse-publishing-current-style) "html")
+           (save-excursion
+             (goto-char (point-min))
+             (while (re-search-forward "\\(\\cc\\)\n\\(\\cc\\)" nil t)
+               (unless (get-text-property (match-beginning 0) 'read-only)
+                 (replace-match "\\1\\2"))))))
+
+       (defun wb-remove-leading-space ()
+         "删除行首缩进的两个空格。"
          (save-excursion
            (goto-char (point-min))
-           (while (re-search-forward "\\(\\cc\\)\n\\(\\cc\\)" nil t)
+           (while (re-search-forward "\n\n  \\(.\\)" nil t)
              (unless (get-text-property (match-beginning 0) 'read-only)
-               (replace-match "\\1\\2"))))))
+               (replace-match "\n\n\\1")))))
 
        (defun wb-muse-output-file ()
          "Get output file name"
