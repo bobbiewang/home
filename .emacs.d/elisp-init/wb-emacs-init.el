@@ -1902,6 +1902,10 @@ Returns nil if it is not visible in the current calendar window."
   (autoload 'git-blame-mode "git-blame"
     "Minor mode for incremental blame for Git." t))
 
+;;; Dict
+(require 'sdcv-mode)
+(global-set-key (kbd "C-c d") 'sdcv-search)
+
 ;;;; wb-kbd.el
 
 ;;; 终端下 Keyboard 设置
