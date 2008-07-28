@@ -899,7 +899,7 @@ do kill lines as `dd' in vim."
 
 ;; 设置常用的文件和目录，可以用 "C-x r j R" 快速访问
 (set-register ?e '(file . "~/.emacs.d/elisp-init/wb-emacs-init.el"))
-(set-register ?g '(file . "~/.emacs.d/gtd/gtd.org"))
+(set-register ?g '(file . "~/.emacs.d/gtd/gtd"))
 
 ;; Emacs 内置的 bookmark
 ;; bookmark-set    C-x r m
@@ -1809,30 +1809,41 @@ Returns nil if it is not visible in the current calendar window."
 
 ;;; Org Mode
 
-(setq org-agenda-files '("~/.emacs.d/gtd/gtd.org"))
-(setq org-default-notes-file "~/.emacs.d/gtd/notes.org")
+;; 设置 agenda 相关文件的位置
+(setq org-agenda-files '("~/.emacs.d/gtd/gtd"))
+(setq org-default-notes-file "~/.emacs.d/gtd/gtd")
+;; 在 Agenda view 中不显示已完成的任务
+(setq org-agenda-skip-deadline-if-done t)
+(setq org-agenda-skip-scheduled-if-done t)
 ;; agenda overview 显示的天数
 (setq org-agenda-ndays 7)
 ;; agenda overview 从周几开始显示，缺省 1 表示周一，nil 表示当天
 (setq org-agenda-start-on-weekday nil)
 
-(setq org-return-follows-link t)
-(setq org-log-done t)
-(define-key global-map "\C-cl" 'org-store-link)
-(define-key global-map "\C-ca" 'org-agenda)
+;; 自定义 Agenda Custom View
+(setq org-agenda-custom-commands
+      '(("u" alltodo ""
+         ((org-agenda-skip-function
+           (lambda nil
+             (org-agenda-skip-entry-if 'scheduled 'deadline
+                                       'regexp "<[^>\n]+>")))
+          (org-agenda-overriding-header "Unscheduled TODO entries: ")))))
 
-(eval-after-load "org"
-  '(progn
-     ()))
+;; 设置几个方便 Org 使用的全局键绑定
+(define-key global-map "\C-ca" 'org-agenda)
+(define-key global-map "\C-cl" 'org-store-link)
 
 ;; 调用 remember 时使用 org 的模板
 (require 'remember)
 (add-hook 'remember-mode-hook 'org-remember-apply-template)
-;; 设置 TODO 和 NOTE 的模板，并记录到相应的 org 文件
+;; 设置记录时的模板，并记录到相应的 org 文件
 (setq remember-handler-functions 'org-remember-handler)
-(setq org-remember-templates '(("todo" ?t "* TODO %?\n  %u" "~/.emacs.d/gtd/gtd.org" "Tasks")
-                               ("note" ?n "* %u %?" "~/.emacs.d/gtd/notes.org" "Notes")))
-
+(setq org-remember-templates
+      '(("todo" ?t "* TODO %?\n  %u" "~/.emacs.d/gtd/gtd" "Inbox")))
+;; 记住调用 remember 时的位置
+(setq remember-annotation-functions 'org-remember-annotation)
+;; 反向记录 note，新的在上面
+(setq org-reverse-note-order t)
 ;; 设置一个全局键绑定快速调用 remember
 (global-set-key (kbd "C-M-r") 'remember)
 
