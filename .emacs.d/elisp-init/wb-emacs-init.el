@@ -516,10 +516,14 @@ selected rectangle."
 
 (set-terminal-coding-system 'utf-8-unix)
 (set-keyboard-coding-system 'utf-8-unix)
+;;(setq default-buffer-file-coding-system 'utf-8-unix)
+;;(setq-default buffer-file-coding-system 'utf-8-unix)
+;;(setq save-buffer-coding-system 'utf-8-unix)
+;;(prefer-coding-system 'utf-8-unix)
 (set-language-environment 'utf-8)
 (setq locale-coding-system 'utf-8)
 
-(robust-require unicad)
+;; (robust-require unicad)
 
 ;; 支持中文句尾标点，支持 M-a M-e 等命令
 (setq sentence-end "\\([。！？]\\|……\\|[.?!][]\"')}]*\\($\\|[ \t]\\)\\)[ \t\n]*")
@@ -901,6 +905,7 @@ do kill lines as `dd' in vim."
 
 ;; 设置常用的文件和目录，可以用 "C-x r j R" 快速访问
 (set-register ?e '(file . "~/.emacs.d/elisp-init/wb-emacs-init.el"))
+(set-register ?g '(file . "~/.emacs.d/gtd/gtd.org"))
 
 ;; Emacs 内置的 bookmark
 ;; bookmark-set    C-x r m
@@ -1198,7 +1203,7 @@ do kill lines as `dd' in vim."
          "删除行首缩进的两个空格。"
          (save-excursion
            (goto-char (point-min))
-           (while (re-search-forward "\n\n  \\(.\\)" nil t)
+           (while (re-search-forward "\n\n  \\([^-]\\)" nil t)
              (unless (get-text-property (match-beginning 0) 'read-only)
                (replace-match "\n\n\\1")))))
 
@@ -1807,11 +1812,32 @@ Returns nil if it is not visible in the current calendar window."
 
 ;;; Org Mode
 
-(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+(setq org-agenda-files '("~/.emacs.d/gtd/gtd.org"))
+(setq org-default-notes-file "~/.emacs.d/gtd/notes.org")
+;; agenda overview 显示的天数
+(setq org-agenda-ndays 7)
+;; agenda overview 从周几开始显示，缺省 1 表示周一，nil 表示当天
+(setq org-agenda-start-on-weekday nil)
+
 (setq org-return-follows-link t)
 (setq org-log-done t)
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
+
+(eval-after-load "org"
+  '(progn
+     ()))
+
+;; 调用 remember 时使用 org 的模板
+(require 'remember)
+(add-hook 'remember-mode-hook 'org-remember-apply-template)
+;; 设置 TODO 和 NOTE 的模板，并记录到相应的 org 文件
+(setq remember-handler-functions 'org-remember-handler)
+(setq org-remember-templates '(("todo" ?t "* TODO %?\n  %u" "~/.emacs.d/gtd/gtd.org" "Tasks")
+                               ("note" ?n "* %u %?" "~/.emacs.d/gtd/notes.org" "Notes")))
+
+;; 设置一个全局键绑定快速调用 remember
+(global-set-key (kbd "C-M-r") 'remember)
 
 ;;;; wb-tools.el
 
