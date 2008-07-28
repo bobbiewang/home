@@ -1,10 +1,4 @@
-(if (and (fboundp 'normal-top-level-add-subdirs-to-load-path)
-         (file-exists-p "~/.emacs.d/elisp-3rdparty/"))
-    (let* ((wb-lisp-dir "~/.emacs.d/elisp-3rdparty/")
-           (default-directory wb-lisp-dir))
-      (setq load-path (cons wb-lisp-dir load-path))
-      (normal-top-level-add-subdirs-to-load-path)))
-
+;;;; wb-custom.el
 (setq custom-file "~/.emacs.d/elisp-init/wb-custom.el")
 (load custom-file 'noerror)
 
@@ -1165,12 +1159,15 @@ do kill lines as `dd' in vim."
        (setq muse-colors-evaluate-lisp-tags nil)
        ;; C-c TAB u 插入 url 时不自动插入 http://
        (setq muse-insert-url-initial-input "")
+       ;; 设置输出 LaTeX 公式的大小
+       (setq muse-latex2png-scale-factor 1.5)
 
        ;; 需要在 Muse 各种 Hook 中加载的设置
        (add-hook 'muse-mode-hook
                  '(lambda ()
                     (outline-minor-mode 1)
-                    (setq abbrev-mode 1)))
+                    (setq abbrev-mode 1)
+                    (footnote-mode)))
        (add-hook 'muse-before-publish-hook
                  'wb-remove-leading-space)
        (add-hook 'muse-after-publish-hook
