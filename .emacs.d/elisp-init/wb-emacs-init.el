@@ -1256,7 +1256,7 @@ do kill lines as `dd' in vim."
                ("sh")))
 
        (define-skeleton skeleton-muse-mode-tag-src
-         "test"
+         "Insert muse mode src tag"
          (identity
           (setq muse-src-tag-lang-last
                 (completing-read
@@ -1276,6 +1276,15 @@ do kill lines as `dd' in vim."
          _ \n
          "</example>")
 
+       (define-skeleton skeleton-muse-mode-tag-latex
+         "Insert muse mode example tag"
+         nil
+         "<latex>" \n
+         "\\[" \n
+         _ \n
+         "\\]" \n
+         "</latex>")
+
        ;; 绑定 skeleton 到 auto insert
        (define-auto-insert '(muse-mode . "muse document")
          'skeleton-muse-mode-auto-insert)
@@ -1283,7 +1292,8 @@ do kill lines as `dd' in vim."
        ;; 绑定 skeleton 到 abbrev
        (define-abbrev-table 'muse-mode-abbrev-table 
          '(("src" "" skeleton-muse-mode-tag-src)
-           ("ex"  "" skeleton-muse-mode-tag-example)))
+           ("ex"  "" skeleton-muse-mode-tag-example)
+           ("la"  "" skeleton-muse-mode-tag-latex)))
        )))
 
 ;;;; wb-modes.el
@@ -1827,7 +1837,13 @@ Returns nil if it is not visible in the current calendar window."
            (lambda nil
              (org-agenda-skip-entry-if 'scheduled 'deadline
                                        'regexp "<[^>\n]+>")))
-          (org-agenda-overriding-header "Unscheduled TODO entries: ")))))
+          (org-agenda-overriding-header "Unscheduled TODO entries: ")))
+        ("q" agenda "Office Agenda"
+         ((org-agenda-skip-function
+           (lambda nil
+             (org-agenda-skip-entry-if 'notregexp "OFFICE")))
+          (org-agenda-ndays 1)
+          (org-agenda-overriding-header "Today's Office tasks: ")))))
 
 ;; 设置几个方便 Org 使用的全局键绑定
 (define-key global-map "\C-ca" 'org-agenda)
@@ -1840,7 +1856,7 @@ Returns nil if it is not visible in the current calendar window."
 (setq remember-handler-functions 'org-remember-handler)
 (setq org-remember-templates
       '(("todo" ?t "* TODO %?\n  %u" "~/.emacs.d/gtd/gtd" "Inbox")))
-;; 记住调用 remember 时的位置
+;; 记住调用 remember 时的位置（使用 org-store-link）
 (setq remember-annotation-functions 'org-remember-annotation)
 ;; 反向记录 note，新的在上面
 (setq org-reverse-note-order t)
