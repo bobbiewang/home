@@ -1845,9 +1845,13 @@ Returns nil if it is not visible in the current calendar window."
           (org-agenda-ndays 1)
           (org-agenda-overriding-header "Today's Office tasks: ")))))
 
-;; 设置几个方便 Org 使用的全局键绑定
+;; 设置几个方便使用 Org 的全局键绑定和函数
 (define-key global-map "\C-ca" 'org-agenda)
 (define-key global-map "\C-cl" 'org-store-link)
+
+(defun gtd ()
+  (interactive)
+  (find-file "~/.emacs.d/gtd/gtd"))
 
 ;; 调用 remember 时使用 org 的模板
 (require 'remember)
