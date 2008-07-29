@@ -924,7 +924,9 @@ do kill lines as `dd' in vim."
 (setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
 
 (robust-require ido
-  (ido-mode t)
+  (setq ido-save-directory-list-file    ; 自定义 ido 文件的路径
+        (expand-file-name "~/.emacs.d/.ido.last"))
+  (ido-mode t)                      ; 打开 ido mode
   (setq ido-enable-flex-matching t) ; 可以用 wei 匹配文件名 wb-emacs-init.el
   (add-hook 'ido-setup-hook
             (lambda ()
