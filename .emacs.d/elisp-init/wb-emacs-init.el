@@ -885,6 +885,9 @@ do kill lines as `dd' in vim."
 (setq kept-new-versions 5)
 (setq delete-old-versions t)
 (setq backup-directory-alist '(("" . "~/.emacs.d/auto-backup")))
+;; 备份 /su: 时编辑的文件
+(setq tramp-backup-directory-alist backup-directory-alist)
+(setq auto-save-file-name-transforms nil)
 
 ;; My auto-save strategy
 (setq auto-save-interval 50)
