@@ -1885,7 +1885,11 @@ Returns nil if it is not visible in the current calendar window."
            (lambda nil
              (org-agenda-skip-entry-if 'scheduled 'deadline
                                        'regexp "<[^>\n]+>")))
-          (org-agenda-overriding-header "Unscheduled TODO entries: ")))))
+          (org-agenda-overriding-header "Unscheduled TODO entries: ")))
+        ("x" agenda "Agenda Checklist"
+         ((org-agenda-prefix-format " [ ] ")
+          (org-agenda-with-colors nil)
+          (org-agenda-remove-tags t)))))
 
 ;; 设置几个方便使用 Org 的全局键绑定和函数
 (define-key global-map "\C-ca" 'org-agenda)
