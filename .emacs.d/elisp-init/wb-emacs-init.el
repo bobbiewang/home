@@ -1824,6 +1824,8 @@ Returns nil if it is not visible in the current calendar window."
 
 ;;; Org Mode
 
+;; 非 Emacs 带的 org 要加载 org-install
+(robust-require org-install)
 ;; 设置 agenda 相关文件的位置
 (setq org-agenda-files '("~/.emacs.d/gtd/gtd"))
 (setq org-default-notes-file "~/.emacs.d/gtd/gtd")
@@ -1837,18 +1839,28 @@ Returns nil if it is not visible in the current calendar window."
 
 ;; 自定义 Agenda Custom View
 (setq org-agenda-custom-commands
-      '(("u" alltodo ""
-         ((org-agenda-skip-function
-           (lambda nil
-             (org-agenda-skip-entry-if 'scheduled 'deadline
-                                       'regexp "<[^>\n]+>")))
-          (org-agenda-overriding-header "Unscheduled TODO entries: ")))
-        ("q" agenda "Office Agenda"
+      '(("q" agenda "Office Agenda"
          ((org-agenda-skip-function
            (lambda nil
              (org-agenda-skip-entry-if 'notregexp "OFFICE")))
           (org-agenda-ndays 1)
-          (org-agenda-overriding-header "Today's Office tasks: ")))))
+          (org-agenda-overriding-header "Today's Office tasks: ")))
+        ("r" . "Daily/Weekly Review")
+        ("rd" agenda "Daily Review"
+         ((org-agenda-ndays 1)
+          (org-agenda-skip-deadline-if-done nil)
+          (org-agenda-skip-scheduled-if-done nil)))
+        ("rw" agenda "Weekly Review"
+         ((org-agenda-start-on-weekday 1)
+          (org-agenda-ndays 7)
+          (org-agenda-skip-deadline-if-done nil)
+          (org-agenda-skip-scheduled-if-done nil)))
+        ("u" alltodo ""
+         ((org-agenda-skip-function
+           (lambda nil
+             (org-agenda-skip-entry-if 'scheduled 'deadline
+                                       'regexp "<[^>\n]+>")))
+          (org-agenda-overriding-header "Unscheduled TODO entries: ")))))
 
 ;; 设置几个方便使用 Org 的全局键绑定和函数
 (define-key global-map "\C-ca" 'org-agenda)
