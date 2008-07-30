@@ -1839,12 +1839,37 @@ Returns nil if it is not visible in the current calendar window."
 
 ;; 自定义 Agenda Custom View
 (setq org-agenda-custom-commands
-      '(("q" agenda "Office Agenda"
+      '(("c" . "Context Agenda View")
+        ("co" agenda "Office Agenda"
          ((org-agenda-skip-function
            (lambda nil
              (org-agenda-skip-entry-if 'notregexp "OFFICE")))
           (org-agenda-ndays 1)
           (org-agenda-overriding-header "Today's Office tasks: ")))
+        ("cp" agenda "Office+Computer Agenda"
+         ((org-agenda-skip-function
+           (lambda nil
+             (org-agenda-skip-entry-if 'notregexp "OFFICE\\|COMPUTER")))
+          (org-agenda-ndays 1)
+          (org-agenda-overriding-header "Today's Office+Computer tasks: ")))
+        ("ch" agenda "Home Agenda"
+         ((org-agenda-skip-function
+           (lambda nil
+             (org-agenda-skip-entry-if 'notregexp "HOME")))
+          (org-agenda-ndays 1)
+          (org-agenda-overriding-header "Today's Office tasks: ")))
+        ("ci" agenda "Home+Computer Agenda"
+         ((org-agenda-skip-function
+           (lambda nil
+             (org-agenda-skip-entry-if 'notregexp "HOME\\|COMPUTER")))
+          (org-agenda-ndays 1)
+          (org-agenda-overriding-header "Today's Home+Computer tasks: ")))
+        ("ce" agenda "Errand Agenda"
+         ((org-agenda-skip-function
+           (lambda nil
+             (org-agenda-skip-entry-if 'notregexp "ERRAND")))
+          (org-agenda-ndays 1)
+          (org-agenda-overriding-header "Today's Errand tasks: ")))
         ("r" . "Daily/Weekly Review")
         ("rd" agenda "Daily Review"
          ((org-agenda-ndays 1)
