@@ -1870,26 +1870,43 @@ Returns nil if it is not visible in the current calendar window."
              (org-agenda-skip-entry-if 'notregexp "ERRAND")))
           (org-agenda-ndays 1)
           (org-agenda-overriding-header "Today's Errand tasks: ")))
-        ("r" . "Daily/Weekly Review")
-        ("rd" agenda "Daily Review"
-         ((org-agenda-ndays 1)
-          (org-agenda-skip-deadline-if-done nil)
-          (org-agenda-skip-scheduled-if-done nil)))
-        ("rw" agenda "Weekly Review"
-         ((org-agenda-start-on-weekday 1)
-          (org-agenda-ndays 7)
-          (org-agenda-skip-deadline-if-done nil)
-          (org-agenda-skip-scheduled-if-done nil)))
         ("u" alltodo ""
          ((org-agenda-skip-function
            (lambda nil
              (org-agenda-skip-entry-if 'scheduled 'deadline
                                        'regexp "<[^>\n]+>")))
-          (org-agenda-overriding-header "Unscheduled TODO entries: ")))
-        ("x" agenda "Agenda Checklist"
+          (org-agenda-overriding-header "Unscheduled TODO entries")))
+        ("x" . "Checklist Exporters")
+        ("xa" agenda "Agenda Checklist"
          ((org-agenda-prefix-format " [ ] ")
           (org-agenda-with-colors nil)
-          (org-agenda-remove-tags t)))))
+          (org-agenda-remove-tags t)))
+        ("xc" "Context Checklist"
+         ((tags "PROJECT"
+                ((org-agenda-overriding-header "PROJECT:")))
+          (tags "ANYWHERE"
+                ((org-agenda-overriding-header "ANYWHERE:")))
+          (tags "OFFICE"
+                ((org-agenda-overriding-header "OFFICE:")))
+          (tags "COMPUTER"
+                ((org-agenda-overriding-header "COMPUTER:")))
+          (tags "HOME"
+                ((org-agenda-overriding-header "HOME:")))
+          (tags "ERRAND"
+                ((org-agenda-overriding-header "ERRAND:"))))
+         ((org-use-tag-inheritance nil)
+          (org-agenda-prefix-format " [ ] ")
+          (org-agenda-with-colors nil)
+          (org-agenda-remove-tags t)
+          (org-agenda-skip-function
+           (lambda nil
+             (org-agenda-skip-entry-if 'regexp "DONE")))))))
+
+;; 快速设置 TODO Keyword
+(setq org-use-fast-todo-selection t)
+;; 直观的 Refile 操作
+(setq org-refile-targets '((org-agenda-files . (:maxlevel . 2))))
+(setq org-refile-use-outline-path t)
 
 ;; 设置几个方便使用 Org 的全局键绑定和函数
 (define-key global-map "\C-ca" 'org-agenda)
@@ -1908,8 +1925,8 @@ Returns nil if it is not visible in the current calendar window."
       '(("todo" ?t "* TODO %?\n  %u" "~/.emacs.d/gtd/gtd" "Inbox")))
 ;; 记住调用 remember 时的位置（使用 org-store-link）
 (setq remember-annotation-functions 'org-remember-annotation)
-;; 反向记录 note，新的在上面
-(setq org-reverse-note-order t)
+;; 正向记录 note，新的在下面
+(setq org-reverse-note-order nil)
 ;; 设置一个全局键绑定快速调用 remember
 (global-set-key (kbd "C-M-r") 'remember)
 
