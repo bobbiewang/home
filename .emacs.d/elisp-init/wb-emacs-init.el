@@ -1902,7 +1902,7 @@ Returns nil if it is not visible in the current calendar window."
            (lambda nil
              (org-agenda-skip-entry-if 'regexp "DONE")))))))
 
-;; 快速设置 TODO Keyword
+;; 以类似设置 TAG 的界面设置 TODO KEYWORD
 (setq org-use-fast-todo-selection t)
 ;; 直观的 Refile 操作
 (setq org-refile-targets '((org-agenda-files . (:maxlevel . 2))))
@@ -1989,7 +1989,7 @@ Returns nil if it is not visible in the current calendar window."
 
 (add-hook 'shell-mode-hook 'wb-shell-mode-hook)
 
-;;; Spell Check
+;;; Spell Checking
 
 (setq ispell-personal-dictionary "~/.emacs.d/.ispell_personal")
 (setq ispell-silently-savep t)
