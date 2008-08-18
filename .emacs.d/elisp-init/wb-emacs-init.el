@@ -2008,7 +2008,8 @@ Returns nil if it is not visible in the current calendar window."
 (with-library "w3m"
   (require 'w3m-load)
   (setq w3m-fill-column 80)
-  (setq w3m-key-binding 'info))
+  (setq w3m-key-binding 'info)
+  (global-set-key (kbd "C-c b") 'w3m-browse-url))
 
 ;;; Git
 
