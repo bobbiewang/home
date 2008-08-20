@@ -2009,7 +2009,12 @@ Returns nil if it is not visible in the current calendar window."
   (require 'w3m-load)
   (setq w3m-fill-column 80)
   (setq w3m-key-binding 'info)
-  (global-set-key (kbd "C-c b") 'w3m-browse-url))
+  (global-set-key (kbd "C-c b") 'w3m-browse-url)
+
+  (setq w3m-command-arguments-alist
+        '( ;; 本地连接不需要代理
+          ("^http://localhost" "-no-proxy")
+          ("^http://127\\.0\\.0\\.1" "-no-proxy"))))
 
 ;;; Git
 
