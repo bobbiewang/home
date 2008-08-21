@@ -25,6 +25,7 @@
 /.fastri-index
 /.fcitx/*
 /.fontconfig/*
+/.fvwm/*
 /.gconfd/*
 /.gem
 /.gitconfig
@@ -48,6 +49,7 @@
 /.rnd
 /.scim/*
 /.sdcv_history
+/.sqlite_history
 /.ssh
 /.subversion/*
 /.synaptic/*
