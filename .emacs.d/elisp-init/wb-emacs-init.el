@@ -790,9 +790,24 @@ replace. Replace the text that you're presently isearching for."
 ;; Preserve the owner and group of the file you’re editing (this is especially important if you edit files as root).
 ;; (setq backup-by-copying-when-mismatch t)
 
-;; redo
+;; C-/ 或 C-_：undo
+;; C-x C-/ 或 C-+：redo
 (robust-require redo
-  (global-set-key (kbd "C-+") 'redo))
+  (defun undo-redo (arg)
+    "Undo or redo changes.  If ARG is present or negative, redo ARG
+    changes.  If ARG is positive, repeatedly undo ARG changes."
+    (interactive "P")
+    (if (null arg)
+        (undo)
+      (let ((n (prefix-numeric-value arg)))
+        (cond ((= n 0) (redo))
+              ((< n 0) (redo (- n)))
+              ((> n 0) (undo n))))))
+
+  (global-set-key (kbd "C-+") 'redo)
+  (global-set-key (kbd "C-x C-/") 'redo)
+  (global-set-key (kbd "C-x C-_") 'redo)
+  (global-set-key (kbd "C-_") 'undo-redo))
 
 ;; If the point is at the beginning of the line, move to the first noblank char. To enhance C-a
 (defun wb-beginning-of-line ()
