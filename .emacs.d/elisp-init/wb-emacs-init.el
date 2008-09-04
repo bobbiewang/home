@@ -1621,16 +1621,17 @@ the length of the whitespace"
             '(lambda ()
                ;; 启动 outline-minor-mode
                (outline-minor-mode t)
-               (set (make-local-variable 'outline-regexp) "^if[ \t]\\| *\\(module[ \t]+\\|class[ \t]+\\|def[ \t]+\\)")
+               (set (make-local-variable 'outline-regexp)
+                    "^if[ \t]\\| *\\(module[ \t]+\\|class[ \t]+\\|def[ \t]+\\)")
                ;; 以行首的空格数目作为 outline level
                (set (make-local-variable 'outline-level) 'rb-outline-level)
                (hide-body)             ; 开始的时候隐藏所有函数的 body
                (inf-ruby-keys)
                (ruby-electric-mode t)
                (local-set-key "\C-c\C-c" 'ruby-eval-buffer)
-               (local-set-key "\C-[#"    'ruby-hash-header)))
+               (local-set-key "\C-[#"    'ruby-hash-header))))
 
-  ;; Rails
+(robust-require rails
   (add-to-list 'auto-mode-alist '("\.rhtml$". html-mode)))
 
 ;;;; wb-pythonde.el
