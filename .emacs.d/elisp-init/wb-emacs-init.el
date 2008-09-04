@@ -513,7 +513,7 @@ selected rectangle."
 ;;(setq default-buffer-file-coding-system 'utf-8-unix)
 ;;(setq-default buffer-file-coding-system 'utf-8-unix)
 ;;(setq save-buffer-coding-system 'utf-8-unix)
-;;(prefer-coding-system 'utf-8-unix)
+(prefer-coding-system 'utf-8-unix)
 (set-language-environment 'utf-8)
 (setq locale-coding-system 'utf-8)
 
