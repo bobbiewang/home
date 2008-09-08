@@ -2071,6 +2071,13 @@ Returns nil if it is not visible in the current calendar window."
 
 ;;; 全局键绑定
 
+;; C-x 3 缺省用 follow-mode 显示当前 buffer
+(global-set-key (kbd "C-x 3") 'follow-delete-other-windows-and-split)
+
+;; C-x n/p 实现向后/向前的 C-x o
+(global-set-key (kbd "C-x p") 'previous-multiframe-window)
+(global-set-key (kbd "C-x n") 'next-multiframe-window)
+
 ;; 用 C-2 设置 mark，和 C-@ 键位相同，但不用按 Shift
 (global-set-key [?\C-2] 'set-mark-command)
 
