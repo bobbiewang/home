@@ -1526,7 +1526,7 @@ directory, select directory. Lastly the file is opened."
 (require 'cc-mode)
 
 (robust-require xcscope
-  (define-key cscope-list-entry-keymap "q" 'delete-window))
+  (define-key cscope-list-entry-keymap "q" 'wb-quit-buffer))
 
 ;; emacs21 好像没有 number-sequence 函数，那就用其它代替好了。比如
 ;; (require 'cl) 后用 loop 命令，或者这样
