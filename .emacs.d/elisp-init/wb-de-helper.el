@@ -44,8 +44,10 @@
          ,@body)
      (error (deh-log-warn (format "[WARNING] Failed to require %s!" ',symbol))
             nil)))
+
 (put 'robust-require 'lisp-indent-function 1)
 
+;; 存在或者不存在 library 情况下采用不同方案的 macro
 (defmacro with-library (library &rest body)
   (declare (indent 1))
   `(if (locate-library ',library)
@@ -62,6 +64,33 @@
      (progn
        (deh-log-warn (format "[WARNING] No library %s. Skipped." ',library))
        ,@without-body)))
+
+;; Lazy load 功能，可以用于一些耗时的 library
+
+(defvar deh-lazy-require-symbols nil
+  "Symbols which need to be autoloaded when Emacs is idle.")
+
+(defun lazy-require (symbol)
+  "Add SYMBOL to `deh-lazy-require-symbols'."
+  (push symbol deh-lazy-require-symbols))
+
+(defun deh-lazy-require-load-next ()
+  "Load symbols from `deh-lazy-require-symbols.' until input occurs."
+  (let (symbol)
+    (message "Beginning lazy-require")
+    (while (and deh-lazy-require-symbols
+                (not (input-pending-p)))
+      (setq symbol (pop deh-lazy-require-symbols))
+      (message "lazy-require %s..." symbol)
+      (require symbol)
+      (sit-for 1)))
+  (when (null deh-lazy-require-symbols)
+    (cancel-timer deh-lazy-require-timer)
+    (setq deh-lazy-require-timer nil)
+    (message "lazy-require finished")))
+
+(setq deh-lazy-require-timer
+      (run-with-idle-timer 45 t 'deh-lazy-require-load-next))
 
 ;; 捕获启动 Emacs 过程中的过错
 ;; 参考：http://ourcomments.org/Emacs/DL/elisp/dot-emacs/

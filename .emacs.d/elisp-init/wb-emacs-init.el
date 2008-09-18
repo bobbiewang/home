@@ -942,6 +942,8 @@ do kill lines as `dd' in vim."
 (setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
 
 ;; 把常用文件加入 File Name Cache
+(lazy-require 'filecache)
+
 (eval-after-load "filecache"
   '(progn
      (message "Loading file cache...")
