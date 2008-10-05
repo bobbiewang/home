@@ -21,7 +21,10 @@
 (setq user-full-name "firebird")
 (setq user-mail-address "firbir@gmail-SPAM.no")
 
+(setq gnus-novice-user nil)
+(setq gnus-expert-user t)
 (setq gnus-verbose 10)
+(setq gnus-large-newsgroup 9999)
 
 ;; 设置 NNTP 服务
 (setq gnus-select-method '(nntp "news.cn99.com"))
