@@ -497,8 +497,8 @@ selected rectangle."
 ;; 在 *Message* buffer 里保留 256 条消息，缺省只保留 100 条
 (setq message-log-max 256)
 
-;; 遇到错误的时候自动进入 Debugger
-(setq debug-on-error t)
+;; t：遇到错误的时候自动进入 Debugger
+(setq debug-on-error nil)
 
 ;; 禁止启动后显示的欢迎屏幕
 (setq inhibit-startup-message t)
