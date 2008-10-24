@@ -503,6 +503,9 @@ selected rectangle."
 ;; 禁止启动后显示的欢迎屏幕
 (setq inhibit-startup-message t)
 
+;; 在 *scratch* buffer 中不显示初始信息
+(setq initial-scratch-message nil)
+
 ;; 启动 Emacs Server
 (server-start)
 
@@ -917,7 +920,7 @@ do kill lines as `dd' in vim."
 
 ;; 设置常用的文件和目录，可以用 "C-x r j R" 快速访问
 (set-register ?e '(file . "~/.emacs.d/elisp-init/wb-emacs-init.el"))
-(set-register ?g '(file . "~/.emacs.d/gtd/gtd"))
+(set-register ?g '(file . "~/.emacs.d/org/gtd"))
 
 ;; Emacs 内置的 bookmark
 ;; bookmark-set    C-x r m
@@ -1666,6 +1669,7 @@ the length of the whitespace"
                (hide-body)             ; 开始的时候隐藏所有函数的 body
                (inf-ruby-keys)
                (ruby-electric-mode t)
+               (setq abbrev-mode t)
                (local-set-key "\C-c\C-c" 'ruby-eval-buffer)
                (local-set-key "\C-[#"    'ruby-hash-header))))
 
@@ -1889,8 +1893,8 @@ Returns nil if it is not visible in the current calendar window."
 ;; 非 Emacs 带的 org 要加载 org-install
 (robust-require org-install)
 ;; 设置 agenda 相关文件的位置
-(setq org-agenda-files '("~/.emacs.d/gtd/gtd"))
-(setq org-default-notes-file "~/.emacs.d/gtd/gtd")
+(setq org-agenda-files '("~/.emacs.d/org/gtd"))
+(setq org-default-notes-file "~/.emacs.d/org/gtd")
 ;; 在 Agenda view 中不显示已完成的任务
 (setq org-agenda-skip-deadline-if-done t)
 (setq org-agenda-skip-scheduled-if-done t)
@@ -1976,7 +1980,7 @@ Returns nil if it is not visible in the current calendar window."
 
 (defun gtd ()
   (interactive)
-  (find-file "~/.emacs.d/gtd/gtd"))
+  (find-file "~/.emacs.d/org/gtd"))
 
 ;; 调用 remember 时使用 org 的模板
 (require 'remember)
@@ -1984,7 +1988,7 @@ Returns nil if it is not visible in the current calendar window."
 ;; 设置记录时的模板，并记录到相应的 org 文件
 (setq remember-handler-functions 'org-remember-handler)
 (setq org-remember-templates
-      '(("todo" ?t "* TODO %?\n  %u" "~/.emacs.d/gtd/gtd" "Inbox")))
+      '(("todo" ?t "* TODO %?\n  %u" "~/.emacs.d/org/gtd" "Inbox")))
 ;; 记住调用 remember 时的位置（使用 org-store-link）
 (setq remember-annotation-functions 'org-remember-annotation)
 ;; 正向记录 note，新的在下面
