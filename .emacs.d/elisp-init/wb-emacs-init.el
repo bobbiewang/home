@@ -527,23 +527,26 @@ selected rectangle."
 
 ;; eim 中文输入法
 
-(autoload 'eim-use-package "eim" "Another emacs input method")
-;; Tooltip 暂时还不好用
-(setq eim-use-tooltip nil)
+(with-library "eim"
+  (autoload 'eim-use-package "eim" "Another emacs input method")
+  ;; Tooltip 暂时还不好用
+  (setq eim-use-tooltip nil)
 
-(add-hook 'eim-py-load-hook
-          (lambda ()
-            (let ((map (eim-mode-map)))
-              (define-key map "," 'eim-previous-page)
-              (define-key map "." 'eim-next-page))))
+  (add-hook 'eim-py-load-hook
+            (lambda ()
+              (let ((map (eim-mode-map)))
+                (define-key map "," 'eim-previous-page)
+                (define-key map "." 'eim-next-page))))
 
-(register-input-method
- "eim-py" "euc-cn" 'eim-use-package
- "拼音" "汉字拼音输入法" "py.txt")
+  (register-input-method
+   "eim-py" "euc-cn" 'eim-use-package
+   "拼音" "汉字拼音输入法" "py.txt")
 
-;; 用 ; 暂时输入英文
-(require 'eim-extra)
-(global-set-key ";" 'eim-insert-ascii)
+  ;; 用 ; 暂时输入英文
+  (require 'eim-extra)
+  (global-set-key ";" 'eim-insert-ascii)
+
+  (setq default-input-method "eim-py"))
 
 ;;; Interface
 
@@ -2008,7 +2011,9 @@ Returns nil if it is not visible in the current calendar window."
 ;; 设置记录时的模板，并记录到相应的 org 文件
 (setq remember-handler-functions 'org-remember-handler)
 (setq org-remember-templates
-      '(("todo" ?t "* TODO %?\n  %u" "~/.emacs.d/org/gtd" "Inbox")))
+      '(("Todo" ?t "* TODO %?\n  %u" "~/.emacs.d/org/gtd" "Inbox")
+        ("Note" ?n "* %?\n  %U" "~/.emacs.d/org/notes")))
+
 ;; 记住调用 remember 时的位置（使用 org-store-link）
 (setq remember-annotation-functions 'org-remember-annotation)
 ;; 正向记录 note，新的在下面
