@@ -22,7 +22,10 @@
 (setq user-mail-address "firbir@gmail-SPAM.no")
 
 (setq gnus-novice-user nil)
-(setq gnus-expert-user t)
+(setq gnus-expert-user nil)
+(setq gnus-interactive-catchup t)
+(setq gnus-interactive-exit t)
+
 (setq gnus-verbose 10)
 (setq gnus-large-newsgroup 9999)
 
@@ -84,7 +87,7 @@
           (eval (setq mm-coding-system-priorities
                  '(iso-8859-1 gb2312 utf-8)))))
         ("^nnimap\\+gmail:cpug"
-         (agent-predicate and true (not old))
+         (agent-predicate and (not read) (not old))
          (gnus-list-identifiers '("\\[python-.*+\\]" "\\[CPyUG.*?\\]")))
         ("^nnimap\\+gmail:toplanguage"
          (gnus-list-identifiers "\\[TopLanguage\\]"))
