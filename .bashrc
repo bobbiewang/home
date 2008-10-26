@@ -33,6 +33,9 @@ else
     export EDITOR="emacs -nw"
 fi
 alias emq="emacs -nw --no-desktop"
+alias gemq="emacs -nw --no-desktop"
+alias gnus="emacs -nw --no-desktop -f gnus-unplugged"
+alias ggnus="emacs --no-desktop -f gnus-unplugged"
 
 ######################################################################
 ## Ruby
