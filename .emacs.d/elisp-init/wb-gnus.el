@@ -30,7 +30,8 @@
 (setq gnus-large-newsgroup 9999)
 
 ;; 设置 NNTP 服务
-(setq gnus-select-method '(nntp "news.cn99.com"))
+(setq gnus-select-method '(nnml ""))
+;; (setq gnus-select-method '(nntp "news.cn99.com"))
 
 ;; 设置 IMAG 服务
 (add-to-list 'gnus-secondary-select-methods
@@ -48,7 +49,11 @@
 (gnus-demon-add-handler 'gnus-demon-scan-news 10 t)
 (gnus-demon-add-handler 'gnus-demon-scan-mail 10 t)
 
+;; 设置 Group Buffer
 (setq gnus-group-line-format "%M%S%p%P%5y:%B%(%G%) (%F) %O\n")
+
+;; 隐藏只有 ticked 文章的 group，可以用 L 显示所有 group
+(setq gnus-list-groups-with-ticked-articles nil)
 
 (setq gnus-user-date-format-alist
       '(((gnus-seconds-today) . "%H:%M")    ; 当天的新闻/邮件
@@ -96,7 +101,11 @@
          (posting-style
            (body "\n\n-- Best Regards,\n\nfirebird")))
         ("^nnimap\\+gmail:emacs-muse"
-         (gnus-list-identifiers "\\[Muse-el-discuss\\]"))))
+         (gnus-list-identifiers "\\[Muse-el-discuss\\]"))
+        ("^nnimap\\+gmail:emacs-org"
+         (gnus-list-identifiers "\\[Orgmode\\]"))
+        ("^nnimap\\+gmail:railsonsh"
+         (gnus-list-identifiers "\\[shanghaionrails\\]"))))
 
 (require 'gnus-agent)
 
