@@ -949,7 +949,8 @@ do kill lines as `dd' in vim."
 ;; bookmark-set    C-x r m
 ;; bookmark-jump   C-x r b
 ;; list-bookmarks  C-x r l
-(setq bookmark-save-flag 1) ; 设置 bookmark 同时 save
+(setq bookmark-default-file "~/.emacs.d/.emacs.bmk") ; 自定义 bookmark 文件的位置
+(setq bookmark-save-flag 1)                          ; 设置 bookmark 同时 save
 
 ;; 参考命令
 
