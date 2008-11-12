@@ -1633,6 +1633,8 @@ directory, select directory. Lastly the file is opened."
             (define-key gud-mode-map (kbd "<f11>") 'gud-step)))
             
 ;;;; wb-rudyde.el
+
+;; Ruby 开发环境
 (robust-require ruby-mode
   (autoload 'ruby-mode     "ruby-mode" "Mode for editing ruby source files" t)
   (require 'ruby-electric)
@@ -1696,9 +1698,20 @@ the length of the whitespace"
                (local-set-key "\C-c\C-c" 'ruby-eval-buffer)
                (local-set-key "\C-[#"    'ruby-hash-header))))
 
-(robust-require rails
-  (add-to-list 'auto-mode-alist '("\.rhtml$". html-mode)))
+;; Rails 开发环境
+(robust-require rinari
+  (setq rinari-tags-file-name "TAGS"))
 
+(robust-require rhtml-mode
+  (add-to-list 'auto-mode-alist '("\.rhtml$". rhtml-mode))
+  (add-to-list 'auto-mode-alist '("\.html\.erb$". rhtml-mode))
+  (add-hook 'rhtml-mode-hook
+            (lambda () (rinari-launch))))
+
+;; (robust-require rails
+;;  (add-to-list 'auto-mode-alist '("\.rhtml$". html-mode)))
+
+;; YAML 支持
 (robust-require yaml-mode
   (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
   (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
@@ -1918,13 +1931,20 @@ Returns nil if it is not visible in the current calendar window."
 ;; 设置 agenda 相关文件的位置
 (setq org-agenda-files '("~/.emacs.d/org/gtd"))
 (setq org-default-notes-file "~/.emacs.d/org/gtd")
-;; 在 Agenda view 中不显示已完成的任务
+;; 在 Agenda Overview 中不显示已完成的任务
 (setq org-agenda-skip-deadline-if-done t)
 (setq org-agenda-skip-scheduled-if-done t)
-;; agenda overview 显示的天数
+;; Agenda Overview 显示的天数
 (setq org-agenda-ndays 7)
-;; agenda overview 从周几开始显示，缺省 1 表示周一，nil 表示当天
+;; Agenda Overview 从周几开始显示，缺省 1 表示周一，nil 表示当天
 (setq org-agenda-start-on-weekday nil)
+;; 设置 TODO 关键字的 Face
+(setq org-todo-keyword-faces
+      '(("TODO"      . org-todo)
+        ("ONGO"      . (:foreground "red" :weight bold))
+        ("WAIT"      . (:foreground "grey80" :background "grey40"))
+        ("DELE"      . (:foreground "grey40"))
+        ("CANCELED"  . (:foreground "blue" :weight bold))))
 
 ;; 自定义 Agenda Custom View
 (setq org-agenda-custom-commands
