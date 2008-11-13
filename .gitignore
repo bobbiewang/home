@@ -6,8 +6,8 @@
 /.config/*
 /.cvspass
 /.dbus/*
-/.emacs.bmk
 /.emacs.d/.diary
+/.emacs.d/.emacs.bmk
 /.emacs.d/.emacs.desktop
 /.emacs.d/.emacs.desktop.lock
 /.emacs.d/.ido.last
