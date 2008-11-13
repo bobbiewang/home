@@ -1712,8 +1712,10 @@ the length of the whitespace"
   (add-hook 'rhtml-mode-hook
             (lambda () (rinari-launch))))
 
-;; (robust-require rails
-;;  (add-to-list 'auto-mode-alist '("\.rhtml$". html-mode)))
+;; Rails Snippets
+(robust-require yasnippet
+  (yas/initialize)
+  (yas/load-directory "~/.emacs.d/elisp-3rdparty/ruby/yasnippets-rails/rails-snippets/"))
 
 ;; YAML 支持
 (robust-require yaml-mode
