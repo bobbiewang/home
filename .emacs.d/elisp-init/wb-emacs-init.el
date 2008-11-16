@@ -759,7 +759,9 @@ Argument ARG Key."
   (autoload 'vline-mode "vline"
     "Highlight the current column" t)
   (autoload 'vline-global-mode "vline"
-    "Highlight the current column" t))
+    "Highlight the current column" t)
+  ;; 使用和 hl-line-mode 相同的 face
+  (setq vline-face 'hl-line))
 
 ;; 即使在中文操作系统，mode-line 和 dired 等模式下星期、月份等信息不用中文
 (setq system-time-locale "C")
