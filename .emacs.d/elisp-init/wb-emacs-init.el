@@ -98,6 +98,34 @@ current time."
 
 ;;; Move, Edit, View
 
+(defvar wb-elisp-defun-re
+  (regexp-opt '("defun" "defsubst" "defmacro" "defadvice") 'paren)
+  "Regular expression used to identify a defun.")
+
+(defun wb-jump-to-elisp-defun (func)
+  "Jump to the definition of function FUNC in the current buffer, if found.
+Return the position of the defun, or nil if not found."
+  (interactive
+   (let ((fn (function-called-at-point)))
+     (list (completing-read (if fn
+                                (format "Find defun for (default %s): " fn)
+                              "Find defun for: ")
+                            obarray 'fboundp t nil nil (symbol-name fn)))))
+  (let (place)
+    (save-excursion
+      (goto-char (point-min))
+      (if (re-search-forward
+           (concat "^[ \t]*(" wb-elisp-defun-re "[ \t]+"
+                   (regexp-quote func) "[ \t]+") (point-max) t)
+          (setq place (point))))
+    (if (not place)
+        (if (interactive-p) (message "No defun found for `%s'" func))
+      (when (interactive-p)
+        (push-mark)
+        (goto-char place)
+        (message "Found defun for `%s'" func))
+      place)))
+
 ;; 按百分率跳转到某一行
 (defun wb-goto-line (percent)
   (interactive (list (or current-prefix-arg
@@ -106,6 +134,70 @@ current time."
   (let* ((total (count-lines (point-min) (point-max)))
          (num (round (* (/ total 100.0) percent))))
     (goto-line num)))
+
+;; 将当前行移动到本页第一行
+(defun wb-line-to-top-of-window ()
+  "Move the line point is on to top of window."
+  (interactive)
+  (recenter 0))
+
+;; 找到当前 buffer 里最长的一行，并且跳转到那里
+(defun wb-goto-longest-line (&optional goto)
+  "Find visual length (ie in columns) of longest line in buffer.
+If optional argument GOTO is non-nil, go to that line."
+  (interactive "p")
+  (let ((maxlen 0)
+        (line 1)
+        len maxline)
+    (save-excursion
+      (goto-char (point-min))
+      (goto-char (line-end-position))
+      ;; Not necessarily same as line-end - line-beginning (eg tabs)
+      ;; and this function is for visual purposes.
+      (setq len (current-column))
+      (if (eobp)                        ; 1 line in buffer
+          (setq maxlen len
+                maxline line)
+        (while (zerop (forward-line))
+          (goto-char (line-end-position))
+          (setq line (1+ line)
+                len (current-column))
+          (if (> len maxlen)
+              (setq maxlen len
+                    maxline line)))))
+    (if (not (interactive-p))
+        maxlen
+      (message "Longest line is line %s (%s)" maxline maxlen)
+      (if goto (goto-line maxline)))))
+
+;; 自定义自动补齐命令，如果在单词中间就补齐，否则就是输入 tab
+;; 可以绑定到 TAB 键
+(defun wb-indent-or-complete ()
+  (interactive)
+  (if (looking-at "\\>")
+      (hippie-expand nil)
+    (indent-for-tab-command)))
+
+;; 删除行尾的空白，只作用于某些指定的 major mode，比较安全
+;; 可以设置为在写文件的时候自动运行
+;; (add-hook (if (boundp 'write-file-functions) 'write-file-functions
+;;             'write-file-hooks) 'my-delete-trailing-whitespace)
+(defun my-delete-trailing-whitespace ()
+  "Delete all trailing whitespace in buffer.
+Return values are suitable for use with `write-file-functions'."
+  (condition-case nil
+      (progn
+        ;; Don't want to do this to mail messages, etc.
+        ;; Would an exclude list be better?
+        ;; Error was occurring in VM-mode for some reason.
+        (when (memq major-mode '(text-mode sh-mode emacs-lisp-mode
+                                           f90-mode awk-mode c-mode))
+          (message "Cleaning up whitespace...")
+          (delete-trailing-whitespace)
+          (message "Cleaning up whitespace...done")
+          nil))
+    (error (message "Cleaning up whitespace...ERROR")
+           t)))
 
 (defun wb-untabify-buffer (prefix)
   "Untabify the whole buffer. Calls untabify for the whole
@@ -232,7 +324,7 @@ when a region-mark is active."
       (kill-new new-kill-string))))
 
 (defun wb-toggle-narrow()
-  "Narrow to region, iff region is marked, otherwise widen"
+  "Narrow to region, if region is marked, otherwise widen"
   (interactive)
   (if mark-active
       (narrow-to-region (region-beginning) (region-end))
@@ -413,6 +505,67 @@ selected rectangle."
  */
 "))
 
+;; 打印出键盘图，显示全部热键
+(defun wb-key-table (arg)
+  "Print the key bindings in a tabular form.
+Argument ARG Key."
+  (interactive "sEnter a modifier string:")
+  (with-output-to-temp-buffer "*Key table*"
+    (let* ((i 0)
+           (keys (list "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n"
+                       "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z"
+                       "<return>" "<down>" "<up>" "<right>" "<left>"
+                       "<home>" "<end>" "<f1>" "<f2>" "<f3>" "<f4>" "<f5>"
+                       "<f6>" "<f7>" "<f8>" "<f9>" "<f10>" "<f11>" "<f12>"
+                       "1" "2" "3" "4" "5" "6" "7" "8" "9" "0"
+                       "`" "~" "!" "@" "#" "$" "%" "^" "&" "*" "(" ")" "-" "_"
+                       "=" "+" "\\" "|" "{" "[" "]" "}" ";" "'" ":" "\""
+                       "<" ">" "," "." "/" "?"))
+           (n (length keys))
+           (modifiers (list "" "C-" "M-" "S-" "M-C-" "S-C-")))
+      (or (string= arg "") (setq modifiers (list arg)))
+      (setq k (length modifiers))
+      (princ (format " %-10.10s |" "Key"))
+      (let ((j 0))
+        (while (< j k)
+          (princ (format " %-50.50s |" (nth j modifiers)))
+          (setq j (1+ j))))
+      (princ "\n")
+      (princ (format "_%-10.10s_|" "__________"))
+      (let ((j 0))
+        (while (< j k)
+          (princ (format "_%-50.50s_|"
+                         "__________________________________________________"))
+          (setq j (1+ j))))
+      (princ "\n")
+      (while (< i n)
+        (princ (format " %-10.10s |" (nth i keys)))
+        (let ((j 0))
+          (while (< j k)
+            (let* ((binding
+                    (key-binding (read-kbd-macro (concat (nth j modifiers)
+                                                         (nth i keys)))))
+                   (binding-string "_"))
+              (when binding
+                (if (eq binding 'self-insert-command)
+                    (setq binding-string (concat "'" (nth i keys) "'"))
+                  (setq binding-string (format "%s" binding))))
+              (setq binding-string
+                    (substring binding-string 0 (min (length
+                                                      binding-string) 48)))
+              (princ (format " %-50.50s |" binding-string))
+              (setq j (1+ j)))))
+        (princ "\n")
+        (setq i (1+ i)))
+      (princ (format "_%-10.10s_|" "__________"))
+      (let ((j 0))
+        (while (< j k)
+          (princ (format "_%-50.50s_|"
+                         "__________________________________________________"))
+          (setq j (1+ j))))))
+  (delete-window)
+  (toggle-truncate-lines nil))
+
 (defun wb-ascii-table ()
   "Display basic ASCII table (0 thru 128)."
   (interactive)
@@ -500,8 +653,9 @@ selected rectangle."
 ;; t：遇到错误的时候自动进入 Debugger
 (setq debug-on-error nil)
 
-;; 禁止启动后显示的欢迎屏幕
+;; 禁止启动 Emacs/Gnus 后显示的欢迎屏幕
 (setq inhibit-startup-message t)
+(setq gnus-inhibit-startup-message t)
 
 ;; 在 *scratch* buffer 中不显示初始信息
 (setq initial-scratch-message nil)
@@ -511,14 +665,19 @@ selected rectangle."
 
 ;;; I18N
 
-(set-terminal-coding-system 'utf-8-unix)
-(set-keyboard-coding-system 'utf-8-unix)
-;;(setq default-buffer-file-coding-system 'utf-8-unix)
-;;(setq-default buffer-file-coding-system 'utf-8-unix)
-;;(setq save-buffer-coding-system 'utf-8-unix)
-(prefer-coding-system 'utf-8-unix)
-(set-language-environment 'utf-8)
 (setq locale-coding-system 'utf-8)
+(set-language-environment 'utf-8)
+(prefer-coding-system 'utf-8-unix)
+;; (set-terminal-coding-system 'utf-8-unix)
+;; (set-keyboard-coding-system 'utf-8-unix)
+;; (set-buffer-file-coding-system 'utf-8)
+;; (set-file-name-coding-system 'utf-8)
+;; (set-selection-coding-system 'utf-8)
+;; (set-clipboard-coding-system 'utf-8)
+;; (setq-default pathname-coding-system 'utf-8)
+;; (setq default-buffer-file-coding-system 'utf-8-unix)
+;; (setq-default buffer-file-coding-system 'utf-8-unix)
+;; (setq save-buffer-coding-system 'utf-8-unix)
 
 ;; (robust-require unicad)
 
@@ -559,17 +718,21 @@ selected rectangle."
 ;; 否则，在 title 显示 buffer 的名字
 (setq frame-title-format '(buffer-file-name "%n %F %f" ("%n %F %b")))
 
-;; 在 Modeline 显示当前时间
-(setq display-time-24hr-format t)     ; 以 24 小时格式显示时间
-(setq display-time-day-and-date nil)  ; 不显示日期以节省空间
-(display-time)                        ; 在 Modeline 显示时间
-(set-time-zone-rule "Asia/Shanghai")  ; 设置正确的时区
-
 ;; 以闪烁整个 frame 的形式代替警铃，可以通过 ring-bell-function
 ;; 自定义警铃的方式。比如希望没有任何提示，可以
 ;; (setq ring-bell-function (lambda ()))
 (setq visible-bell t)
 
+;; 支持滚轮鼠标
+(mouse-wheel-mode t)
+
+;; 当鼠标移动的时候自动转换 frame，window 或者 minibuffer
+(setq mouse-autoselect-window t)
+
+;; 滚动页面的方式
+(setq scroll-step 1
+      scroll-margin 3
+      scroll-conservatively 10000)
 
 ;;; Display
 
@@ -579,6 +742,7 @@ selected rectangle."
 (show-paren-mode t)
 ;; 光标靠近鼠标时鼠标跳开
 (mouse-avoidance-mode 'animate)
+(blink-cursor-mode -1) ; 光标不要闪烁
 ;; 可以显示图片
 (auto-image-file-mode t)
 ;; 高亮显示选中区域
@@ -587,6 +751,9 @@ selected rectangle."
 (setq-default indicate-empty-lines t)
 (setq truncate-partial-width-windows t)
 
+;; 以像素为单位的文本间距，nil 表示没有额外的间距
+(setq-default line-spacing nil)
+
 ;; Ways to highlight the current column
 (with-library "vline"
   (autoload 'vline-mode "vline"
@@ -594,13 +761,21 @@ selected rectangle."
   (autoload 'vline-global-mode "vline"
     "Highlight the current column" t))
 
-(setq column-number-mode t)
-
 ;; 即使在中文操作系统，mode-line 和 dired 等模式下星期、月份等信息不用中文
 (setq system-time-locale "C")
 
-(setq scroll-margin 3
-      scroll-conservatively 10000)
+;; Modeline 的时间显示设置
+(setq display-time-24hr-format t)     ; 以 24 小时格式显示时间
+(setq display-time-day-and-date nil)  ; 不显示日期以节省空间，
+                                      ; 可以进一步用 display-time-format 设置格式
+(setq display-time-use-mail-icon nil) ; 在时间旁边的邮件显示
+(setq display-time-interval 60)       ; 时间的更新频率
+(display-time)                        ; 在 Modeline 显示时间
+(set-time-zone-rule "Asia/Shanghai")  ; 设置正确的时区
+
+;; Modeline 上显示行号、列号
+(line-number-mode t)
+(column-number-mode t)
 
 ;; M-x color-theme-select 选择配色方案，在配色方案上按 I 可以改变当前
 ;; Frame 的配色，按 i 可以改变所有 Frame 的配色，按 p 可以把当前配色方
@@ -624,6 +799,9 @@ selected rectangle."
 ;; 支持查看图片
 (auto-image-file-mode t)
 
+;; 读 man 文档时，使用当前 window
+(setq Man-notify-method 'pushy)
+
 (setq outline-minor-mode-prefix [(control o)])
 
 (robust-require hideshow
@@ -637,6 +815,9 @@ selected rectangle."
   (define-key hs-minor-mode-map (kbd "C-o C-s") 'hs-show-block)
   (define-key hs-minor-mode-map (kbd "C-o C-c") 'hs-hide-block)
   (define-key hs-minor-mode-map (kbd "C-o C-o") 'hs-toggle-hiding))
+
+;; 起始移动点在行末的话，垂直移动时始终保持在行末
+(setq track-eol t)
 
 (defun wb-next-line (&optional line)
   "next-line over continuation lines"
@@ -799,6 +980,7 @@ replace. Replace the text that you're presently isearching for."
 ;; 不是直接在光标的位置插入。也可以按 DEL 将选中的文件删除
 (delete-selection-mode t)
 
+;; 设定删除保存记录为 200，可以方便以后无限恢复
 (setq kill-ring-max 200)
 
 ;; 70 是 Emacs 的缺省值
@@ -807,12 +989,18 @@ replace. Replace the text that you're presently isearching for."
 (setq-default indent-tabs-mode nil)
 (setq default-tab-width 4)
 
+;; 在文档最后自动插入一个空行
 (setq require-final-newline 't)
 
+;; 允许 Emacs 和外部其他程序的复制粘贴
 (setq x-select-enable-clipboard t)
 
-;; 在 mini-buffer 中支持自动完成
-(icomplete-mode t)
+;; Minibuffer 交互功能的设置
+(icomplete-mode t)            ; 自动提示补全函数和变量
+(partial-completion-mode t)   ; 首字母完成功能，比如 q-r-r 相当于 query-replace-regexp
+(fset 'yes-or-no-p 'y-or-n-p) ; 所有的问题用 y/n 确认，而不用 yes/no
+(setq resize-mini-windows 'grow-only) ; 允许 minibuffer 变化大小
+(setq enable-recursive-minibuffers t) ; 可以递归的使用 minibuffer
 
 ;; Preserve hard links to the file you’re editing (this is especially important if you edit system files).
 ;; (setq backup-by-copying-when-linked t)
@@ -917,18 +1105,23 @@ do kill lines as `dd' in vim."
   (browse-kill-ring-default-keybindings))
 
 ;; 开启一些缺省被禁止 feature
-(put 'set-goal-column 'disabled nil)
-(put 'narrow-to-region 'disabled nil)
+(put 'set-goal-column 'disabled nil)  ; C-x C-n
+(put 'narrow-to-region 'disabled nil) ; C-x n n
+(put 'narrow-to-page 'disabled nil)   ; C-x n p
+(put 'narrow-to-defun 'disabled nil)  ; C-x n d
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
-
+(put 'scroll-left 'disabled nil)      ; C-x <,  C-x >
 ;; My backup strategy
-(setq make-backup-files t)
-(setq version-control t)
-(setq kept-old-versions 1)
-(setq kept-new-versions 5)
-(setq delete-old-versions t)
+(setq version-control t)     ; 启用版本控制
+(setq kept-old-versions 2)   ; 备份最原始的版本两次，即第一次、第二次编辑前的文件
+(setq kept-new-versions 5)   ; 备份最新的版本五次
+(setq delete-old-versions t) ; 删掉不属于以上12中版本的版本
+;; 设置备份文件的路径
 (setq backup-directory-alist '(("" . "~/.emacs.d/auto-backup")))
+;; 备份设置方法，直接拷贝
+(setq backup-by-copying t)
+(setq make-backup-files t)
 ;; 备份 /su: 时编辑的文件
 (setq tramp-backup-directory-alist backup-directory-alist)
 (setq auto-save-file-name-transforms nil)
@@ -937,6 +1130,14 @@ do kill lines as `dd' in vim."
 (setq auto-save-interval 50)
 (setq auto-save-timeout 30)
 (setq delete-auto-save-files t)
+
+;; 时间戳（time-stamp）设置，记录文档保存的时间。如果文档里有
+;; Time-stamp: 的文字，就会自动保存时间戳
+(setq time-stamp-active t)                ; 启用时间戳
+(setq time-stamp-warn-inactive t)         ; 去掉时间戳的警告
+(setq time-stamp-format
+      "%:u %02m/%02d/%04y%02H:%02M:%02S") ; 设置time-stamp的格式
+(add-hook 'write-file-hooks 'time-stamp)  ; 保存文件时更新时间戳
 
 ;; Chmod of scripts to u+x
 (add-hook 'after-save-hook
@@ -966,6 +1167,7 @@ do kill lines as `dd' in vim."
 
 ;;; Buffers, Files, Dired
 
+;; 当打开两个同名的文件，在 buffer 名字前面加上目录名
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
 (setq uniquify-after-kill-buffer-p t) ; rename after killing uniquified
@@ -1068,11 +1270,31 @@ directory, select directory. Lastly the file is opened."
 
 ;; Dired Settings
 
+;;设置 ls 的参数（缺省为 -al），显示易读的大小，按版本排序
+(setq dired-listing-switches "-avhl")
+
+;; dired-mode 下不折行显示
+(defun wb-dired-long-lines ()
+  (setq truncate-lines t))
+(add-hook 'dired-after-readin-hook 'wb-dired-long-lines)
+
+;; 复制和删除时递归处理子目录
+(setq dired-recursive-copies 'top)
+(setq dired-recursive-deletes 'top)
+
+;; 复制和移动时把当前 emacs 中另一个窗口中的目录为对象。这通常是我们希望的方式。
+(setq dired-dwim-target t)
+
+;; 另外 dired-mode 下还有不常用但是比较有用的命令。比如
+;; dired-compare-directories 可以用于比较文件夹。
+
 ;; dired-x 是 dired-mode 的一个扩展。提供了许多很有用的命令和特性。
 ;; 1. 隐藏配置文件和其它类型的文件。通过设置 dired-omit-extensions 和
 ;;    dired-omit-files
 ;; 2. 把文件和特定的 shell 程序关联。通过设置
-;;    dired-guess-shell-alist-default， 在文件上使用 "!" 会调用相应的命令
+;;    dired-guess-shell-alist-default 或 dired-guess-shell-alist-user，
+;;    在文件上使用 ! 会调用相应的命令
+
 (robust-require dired-x
   (add-hook 'dired-mode-hook
             (lambda ()
@@ -1080,9 +1302,25 @@ directory, select directory. Lastly the file is opened."
   ;; 忽略指定名字的目录和后缀文件
   (setq dired-omit-extensions
         '("CVS/" ".o" "~" ".bak" ".obj" ".map"))
-  ;; 忽略 "." ".." "以.引导的目录/文件" "以#引导的文件" "以~引导的文件"
+  ;; 隐藏 . 和 ..，以及以 . 引导的目录/文件，以# 引导的文件，以 ~ 引导
+  ;; 的文件等，可以使用 M-o 切换隐藏和显示
   (setq dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$\\|^\\.\\|^~")
   ;; 设置文件对应的命令
+  (setq dired-guess-shell-alist-user
+        (list
+         (list "\\.tar\\.bz2$" "tar jxvf * &")
+         '("\\.tar\\.gz$" "tar zxvf * &")
+         '("\\.chm$" "chmsee * &")
+         '("\\.tar$" "tar xvvf * &")
+         '("\\.ps$" "gv * &")
+         '("\\.html?$" "firefox * &" "urxvt -e w3m * &")
+         '("\\.pdf$" "acroread * &" "evince * &")
+         '("\\.\\(jpe?g\\|gif\\|png\\|bmp\\|xbm\\|xpm\\|fig\\|eps\\)$"
+           "gthumb * &" "gqview *  &" "display *   &" "xloadimage *   &" )
+         '("\\.\\([Ww][Mm][Vv]\\|[Vv][Oo][Bb]\\|[Mm][Pp][Ee]?[Gg]\\|asf\\|[Rr][Aa]?[Mm]\\)$"
+           "mplayer * &")
+         '("\\.rmvb$" "mplayer * &")
+         '("\\.RMVB$" "mplayer * &")))
   (add-to-list 'dired-guess-shell-alist-default '("\\.dvi$" "dvipdfmx"))
   (add-to-list 'dired-guess-shell-alist-default '("\\.pl$" "perltidy")))
 
@@ -1091,9 +1329,6 @@ directory, select directory. Lastly the file is opened."
 (robust-require wdired
   (autoload 'wdired-change-to-wdired-mode "wdired")
   (define-key dired-mode-map "r" 'wdired-change-to-wdired-mode))
-
-;; 另外 dired-mode 下还有不常用但是比较有用的命令。比如
-;; dired-compare-directories 可以用于比较文件夹。
 
 ;; List directories first in dired mode
 (defun sof/dired-sort ()
@@ -1108,21 +1343,13 @@ directory, select directory. Lastly the file is opened."
   (set-buffer-modified-p nil))
 (add-hook 'dired-after-readin-hook 'sof/dired-sort)
 
-;; dired-mode 下不折行显示
-(defun wb-dired-long-lines ()
-  (setq truncate-lines t))
-(add-hook 'dired-after-readin-hook 'wb-dired-long-lines)
-
-;; 复制和删除时递归处理子目录
-(setq dired-recursive-copies 'top)
-(setq dired-recursive-deletes 'top)
-
-;; 复制和移动时把当前 emacs 中另一个窗口中的目录为对象。这通常是我们希望的方式。
-(setq dired-dwim-target t)
-
 ;;; Self Documentation
 
+;; 增大 apropos 函数查找的范围
+(setq apropos-do-all t)
+
 ;; 添加自己的 info 文件目录，可以在 list 里添加多个目录
+;; 也可以通过 shell 的环境变量 $INFOPATH 设置
 (setq Info-default-directory-list (append
                                    Info-default-directory-list
                                    '("~/.emacs.d/info")))
@@ -1137,9 +1364,6 @@ directory, select directory. Lastly the file is opened."
 
 (setq default-directory "~/")
 
-;; "y or n" instead of "yes or no"
-(fset 'yes-or-no-p 'y-or-n-p)
-
 ;; Shell Mode
 ;; Color support
 (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
@@ -1153,20 +1377,21 @@ directory, select directory. Lastly the file is opened."
 (robust-require autoinsert
   (auto-insert-mode))
 
-;; 设置 hippie-expand 的行为
+;; 设置 hippie-expand 的补全方式。这是一个优先列表，hippie-expand 会依
+;; 次尝试列表中的函数来补全。当前使用的匹配方式会在 echo 区域显示
 (setq hippie-expand-try-functions-list
-      '(try-expand-dabbrev
-        try-expand-line
+      '(try-expand-dabbrev                 ; 搜索当前 buffer
+        try-expand-line                    ; 补全当前行
         try-expand-line-all-buffers
-        try-expand-list
+        try-expand-list                    ; 补全一个列表
         try-expand-list-all-buffers
-        try-expand-dabbrev-visible
-        try-expand-dabbrev-all-buffers
-        try-expand-dabbrev-from-kill
-        try-complete-file-name
-        try-complete-file-name-partially
-        try-complete-lisp-symbol
-        try-complete-lisp-symbol-partially
+        try-expand-dabbrev-visible         ; 搜索当前可见窗口
+        try-expand-dabbrev-all-buffers     ; 搜索所有 buffer
+        try-expand-dabbrev-from-kill       ; 搜索 kill-ring
+        try-complete-file-name             ; 文件名匹配
+        try-complete-file-name-partially   ; 文件名部分匹配
+        try-complete-lisp-symbol           ; 补全 lisp symbol
+        try-complete-lisp-symbol-partially ; 部分补全 elisp symbol
         try-expand-whole-kill))
 (global-set-key "\M-/" 'hippie-expand)
 
@@ -1378,7 +1603,7 @@ directory, select directory. Lastly the file is opened."
          'skeleton-muse-mode-auto-insert)
 
        ;; 绑定 skeleton 到 abbrev
-       (define-abbrev-table 'muse-mode-abbrev-table 
+       (define-abbrev-table 'muse-mode-abbrev-table
          '(("src" "" skeleton-muse-mode-tag-src)
            ("ex"  "" skeleton-muse-mode-tag-example)
            ("la"  "" skeleton-muse-mode-tag-latex)))
@@ -1552,6 +1777,32 @@ directory, select directory. Lastly the file is opened."
           "%n.bat"
           "%n.sh")))
 
+;;;; wb-elispde.el
+
+(defun wb-emacs-lisp-mode-hook ()
+  (local-set-key (kbd "C-c .") 'wb-jump-to-elisp-defun)
+  (if (eq major-mode 'emacs-lisp-mode)
+      (setq mode-name "Elisp"))
+  (when (boundp 'comment-auto-fill-only-comments)
+    (setq comment-auto-fill-only-comments t)
+    (kill-local-variable 'normal-auto-fill-function)))
+(add-hook 'emacs-lisp-mode-hook 'wb-emacs-lisp-mode-hook)
+
+(defun my-lisp-interaction-mode-hook ()
+  (setq mode-name "Lisp Int"))
+(add-hook 'lisp-interaction-mode-hook 'my-lisp-interaction-mode-hook)
+
+(setq eval-expression-print-level  10
+      eval-expression-print-length 100)
+
+;; 增加一些高亮设置
+(font-lock-add-keywords
+ 'emacs-lisp-mode
+ '((";" ("\\<\\(GM\\|NB\\|TODO\\|FIXME\\)\\>"  nil nil
+         (0 'font-lock-warning-face t)))
+   (";" ("[* ]\\*[ \t]*\\(\\w.*\\)\\*" nil nil
+         (1 'font-lock-warning-face t)))))
+
 ;;;; wb-cppde.el
 
 ;; CC Mode 配置  http://cc-mode.sourceforge.net/
@@ -1581,8 +1832,14 @@ directory, select directory. Lastly the file is opened."
           defun-close-semi))
   ;; tab 设置
   (setq tab-width 4)
-  (set (make-local-variable 'tab-stop-list) (number-sequence tab-width 80 tab-width))
+  (set (make-local-variable 'tab-stop-list)
+       (number-sequence tab-width 80 tab-width))
   (setq c-basic-offset tab-width)
+  ;; 预处理设置
+  (setq c-macro-shrink-window-flag t)
+  (setq c-macro-preprocessor "cpp")
+  (setq c-macro-cppflags " ")
+  (setq c-macro-prompt-flag t)
   ;; 编译命令
   (define-key c-mode-map [(shift f7)] 'compile)
   (define-key c-mode-map [(f7)] 'wb-onekey-compile)
@@ -1635,7 +1892,7 @@ directory, select directory. Lastly the file is opened."
           (lambda ()
             (define-key gud-mode-map (kbd "<f10>") 'gud-next)
             (define-key gud-mode-map (kbd "<f11>") 'gud-step)))
-            
+
 ;;;; wb-rudyde.el
 
 ;; Ruby 开发环境
@@ -1829,11 +2086,18 @@ the length of the whitespace"
 
 ;; Calendar
 (setq view-diary-entries-initially t
-      ;; calendar 中按 S，显示每天的日出和日落的时间
+      ;; 设置所在地的经度、纬度，这样在 Calendar 中按 S，就可以显示每天
+      ;; 的日出、日落时间
       calendar-longitude +121.26
       calendar-latitude +31.12
       calendar-location-name "上海 - 徐家汇"
+      ;; 当退出日历的时候把 frame 删除
       calendar-remove-frame-by-deleting t
+      mark-diary-entries-in-calendar t      ; 标记有日记记录的日子
+      calendar-week-start-day 1             ; 每周第一天是周一
+      appt-issue-message nil
+      mark-holidays-in-calendar t           ; 标记节假日
+      view-calendar-holidays-initially nil  ; 不显示节日列表
       ;; 在 calendar 中按 p C 看中文的天干地支
       chinese-calendar-celestial-stem
       ["甲" "乙" "丙" "丁" "戊" "己" "庚" "辛" "壬" "癸"]
@@ -1866,12 +2130,6 @@ the length of the whitespace"
       islamic-holidays nil
       solar-holidays nil
       bahai-holidays nil)
-
-(setq mark-diary-entries-in-calendar t      ; 标记有记录的日子
-      calendar-week-start-day 1             ; 每周第一天是周一
-      appt-issue-message nil
-      mark-holidays-in-calendar t           ; 标记节假日
-      view-calendar-holidays-initially nil) ; 不显示节日列表
 
 (add-hook 'today-visible-calendar-hook 'calendar-mark-today)
 
@@ -2059,7 +2317,7 @@ Returns nil if it is not visible in the current calendar window."
 (defun create-c-tags (dir-name)
   "Create tags file."
   (interactive "DDirectory: ")
-  (eshell-command 
+  (eshell-command
    (format "find %s -type f -name \"*.[ch]\" | etags -" dir-name)))
 
 ;; 如果同一个 tag 有不同结果，etags-select 能显示出列表
@@ -2108,6 +2366,8 @@ Returns nil if it is not visible in the current calendar window."
 
 ;;; Spell Checking
 
+;; 新版的 Emacs 已经缺省使用 aspell 了
+; (setq-default ispell-program-name "/usr/bin/aspell")
 (setq ispell-personal-dictionary "~/.emacs.d/.ispell_personal")
 (setq ispell-silently-savep t)
 ;; ignore all-uppercase words
@@ -2124,9 +2384,13 @@ Returns nil if it is not visible in the current calendar window."
 
 (with-library "w3m"
   (require 'w3m-load)
+  ;; 使用 w3m 作为默认的浏览器
+  (setq browse-url-browser-function 'w3m-browse-url)
+  (global-set-key (kbd "C-c b") 'w3m-browse-url)
   (setq w3m-fill-column 80)
   (setq w3m-key-binding 'info)
-  (global-set-key (kbd "C-c b") 'w3m-browse-url)
+  ;; 用 S+RET 打开新链接时不直接跳到新页面，可以用 C-c C-n、C-c C-p 跳转
+  (setq w3m-view-this-url-new-session-in-background t)
 
   (setq w3m-command-arguments-alist
         '( ;; 本地连接不需要代理
