@@ -2458,6 +2458,9 @@ Returns nil if it is not visible in the current calendar window."
 ;; 分率跳转到某一行
 (global-set-key (kbd "M-g g") 'wb-goto-line)
 
+;; M-o 替换 C-x o，用于切换 window
+(global-set-key (kbd "M-o") 'other-window)
+
 ;; C-c i 前缀用于插入一些文本
 
 ;; 定义 wb-insert-map 并绑定为 C-c i
