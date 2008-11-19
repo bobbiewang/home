@@ -1954,7 +1954,7 @@ the length of the whitespace"
                     "^if[ \t]\\| *\\(module[ \t]+\\|class[ \t]+\\|def[ \t]+\\)")
                ;; 以行首的空格数目作为 outline level
                (set (make-local-variable 'outline-level) 'rb-outline-level)
-               (hide-body)             ; 开始的时候隐藏所有函数的 body
+               ;; (hide-body)             ; 开始的时候隐藏所有函数的 body
                (inf-ruby-keys)
                (ruby-electric-mode t)
                (setq abbrev-mode t)
