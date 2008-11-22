@@ -66,6 +66,45 @@
            (= emacs-major-version 23)))
   "Are we running GNU Emacs 21 or above?")
 
+;; (require 'cygwin-mount)
+;; (cygwin-mount-activate)
+
+;; NT-emacs assumes a Windows command shell, which you change
+;; here.
+;; (defun cygwin-shell()
+;;   (interactive)
+;;   (setq old-process-coding-system-alist process-coding-system-alist)
+;;   (setq old-shell-file-name shell-file-name)
+;;   (setq process-coding-system-alist '(("bash" . undecided-unix)))
+;;   (setq shell-file-name "bash")
+;;   (setenv "SHELL" shell-file-name)
+;;   (setq explicit-shell-file-name shell-file-name)
+;;   (switch-to-buffer (shell "*cygwin-shell*"))
+;;   (delete-other-windows)
+;;   (setq process-coding-system-alist old-process-coding-system-alist)
+;;   (setq shell-file-name old-shell-file-name)
+;;   (setenv "SHELL" shell-file-name)
+;;   (setq explicit-shell-file-name shell-file-name))
+
+;; Maximuize the frame when start Emacs
+;; (defun w32-restore-frame (&optional arg)
+;;     "Restore a minimized frame"
+;;     (interactive)
+;;     (w32-send-sys-command 61728 arg))
+;; (defun w32-maximize-frame (&optional arg)
+;;     "Maximize the current frame"
+;;     (interactive)
+;;     (w32-send-sys-command 61488 arg))
+;; (w32-maximize-frame)
+;; (add-hook 'after-make-frame-functions 'w32-maximize-frame)
+
+;; (if (eq window-system 'w32)
+;;     (defun insert-x-style-font() 
+;;       "Insert a string in the X format which describes a font the
+;; user can select from the Windows font selector."
+;;       (interactive) 
+;;       (insert (prin1-to-string (w32-select-font))))) 
+
 ;;;; wb-functions.el
 
 ;;; Infrastructure
@@ -2062,7 +2101,26 @@ the length of the whitespace"
   '(progn
      (setq cperl-indent-level 4
            cperl-hairy t
-           cperl-auto-newline nil)))
+           cperl-auto-newline nil)
+
+     (define-skeleton skeleton-perl-mode-sub
+       "Insert a perl subroutine with arguments."
+       "Subroutine name: "
+       " " str " {"
+       \n "my (" ("Argument name: " "$" str ", ") -2 ") = @_;"
+       "\n"
+       \n _
+       \n "}" '(progn (indent-according-to-mode) nil)
+       \n)
+
+     (define-skeleton skeleton-perl-mode-open
+       "Insert a perl open file statment."
+       ""
+       > " " (setq v1 (skeleton-read "File handle: ")) ", \""
+       (setq v2 (skeleton-read "File name: ")) "\" or die \"Cannot "
+       (setq v3 (skeleton-read "Read/Write/Create? ")) " " v2 ": $!.\\n\";"
+       \n
+       \n)))
 
 ;;;; wb-utils.el
 
@@ -2372,6 +2430,7 @@ Returns nil if it is not visible in the current calendar window."
 ; (setq-default ispell-program-name "/usr/bin/aspell")
 (setq ispell-personal-dictionary "~/.emacs.d/.ispell_personal")
 (setq ispell-silently-savep t)
+
 ;; ignore all-uppercase words
 (defun flyspell-ignore-uppercase (beg end &rest rest)
   (while (and (< beg end)
@@ -2380,6 +2439,7 @@ Returns nil if it is not visible in the current calendar window."
     (setq beg (1+ beg)))
   (= beg end))
 (add-hook 'flyspell-incorrect-hook 'flyspell-ignore-uppercase)
+
 ; (add-hook 'font-lock-mode-hook 'flyspell-prog-mode)
 
 ;;; w3m
