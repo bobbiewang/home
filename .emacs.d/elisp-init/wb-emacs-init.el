@@ -707,19 +707,71 @@ Argument ARG Key."
 
 ;;; I18N
 
-(setq locale-coding-system 'utf-8)
-(set-language-environment 'utf-8)
-(prefer-coding-system 'utf-8-unix)
-;; (set-terminal-coding-system 'utf-8-unix)
-;; (set-keyboard-coding-system 'utf-8-unix)
-;; (set-buffer-file-coding-system 'utf-8)
-;; (set-file-name-coding-system 'utf-8)
-;; (set-selection-coding-system 'utf-8)
-;; (set-clipboard-coding-system 'utf-8)
-;; (setq-default pathname-coding-system 'utf-8)
-;; (setq default-buffer-file-coding-system 'utf-8-unix)
-;; (setq-default buffer-file-coding-system 'utf-8-unix)
-;; (setq save-buffer-coding-system 'utf-8-unix)
+(if *win32p*
+    (progn
+      (robust-require mule-gbk
+        ;; Setup GBK environment
+        (set-terminal-coding-system 'chinese-gbk)
+        (set-keyboard-coding-system 'chinese-gbk)
+        (set-language-environment 'chinese-gbk)
+        (setq locale-coding-system 'chinese-gbk)
+        ;; Windows 里要用 GB2312 作为 Selection Coding System
+        (set-selection-coding-system 'gb2312)
+        ;; Setup X Selection for mule-gbk
+        (mule-gbk-selection-setup)
+        ;; Unicode support, for Emacs CVS (21.3.50) only
+        (when (fboundp 'utf-translate-cjk-mode)
+          ;; Load modified utf-translate-cjk-mode
+          (require 'gbk-utf-mode)
+          (utf-translate-cjk-load-tables)
+          ;; Turn on utf-translate-cjk-mode
+          (utf-translate-cjk-mode 1)
+          ;; Setup X selection for unicode encoding
+          (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+        (define-coding-system-alias 'chinese-iso-8bit 'chinese-gbk)
+        (define-coding-system-alias 'cn-gb-2312 'chinese-gbk)
+        (define-coding-system-alias 'euc-china 'chinese-gbk)
+        (define-coding-system-alias 'euc-cn 'chinese-gbk)
+        (define-coding-system-alias 'cn-gb 'chinese-gbk)
+        (define-coding-system-alias 'gb2312 'chinese-gbk)
+        (define-coding-system-alias 'cp936 'chinese-gbk)
+        (define-coding-system-alias 'gb18030 'chinese-gbk)
+        (define-coding-system-alias 'GB18030 'chinese-gbk)
+        (define-coding-system-alias 'chinese-gb18030 'chinese-gbk)
+        (define-coding-system-alias 'cn-gb18030 'chinese-gbk)
+
+        (setq w32-charset-info-alist
+              (cons '("gbk" w32-charset-gb2312 . 936) w32-charset-info-alist))))
+  (setq locale-coding-system 'utf-8)
+  (set-language-environment 'utf-8)
+  (prefer-coding-system 'utf-8-unix)
+  ;; (set-terminal-coding-system 'utf-8-unix)
+  ;; (set-keyboard-coding-system 'utf-8-unix)
+  ;; (set-buffer-file-coding-system 'utf-8)
+  ;; (set-file-name-coding-system 'utf-8)
+  ;; (set-selection-coding-system 'utf-8)
+  ;; (set-clipboard-coding-system 'utf-8)
+  ;; (setq-default pathname-coding-system 'utf-8)
+  ;; (setq default-buffer-file-coding-system 'utf-8-unix)
+  ;; (setq-default buffer-file-coding-system 'utf-8-unix)
+  ;; (setq save-buffer-coding-system 'utf-8-unix)
+  )
+
+(when *win32p*
+  (create-fontset-from-fontset-spec
+   (concat
+    "-outline-Consolas-normal-r-normal-normal-22-97-96-96-c-*-fontset-gbk,"
+    "chinese-gb2312:-outline-微软雅黑-normal-r-normal-*-24-*-96-96-c-*-iso10646-1,"
+    "mule-unicode-0100-24ff:-*-微软雅黑-normal-r-*-*-24-*-96-96-c-*-iso10646-1,"
+    "chinese-cns11643-5:-*-微软雅黑-normal-r-normal-*-24-*-96-96-c-*-iso10646-1,"
+    "chinese-cns11643-6:-*-微软雅黑-normal-r-normal-*-24-*-96-96-c-*-iso10646-1,"
+    "chinese-cns11643-7:-*-微软雅黑-normal-r-normal-*-24-*-96-96-c-*-iso10646-1"))
+  (set-default-font "fontset-gbk")
+
+  ;; 在 C-x 5 2 打开的 Frame 中也正常显示字体
+  (setq default-frame-alist
+        (append
+         '((font . "fontset-gbk")) default-frame-alist)))
 
 ;; (robust-require unicad)
 
@@ -2353,20 +2405,20 @@ Returns nil if it is not visible in the current calendar window."
   (find-file "~/.emacs.d/org/gtd"))
 
 ;; 调用 remember 时使用 org 的模板
-(require 'remember)
-(add-hook 'remember-mode-hook 'org-remember-apply-template)
-;; 设置记录时的模板，并记录到相应的 org 文件
-(setq remember-handler-functions 'org-remember-handler)
-(setq org-remember-templates
-      '(("Todo" ?t "* TODO %?\n  %u" "~/.emacs.d/org/gtd" "Inbox")
-        ("Note" ?n "* %?\n  %U" "~/.emacs.d/org/notes")))
+(robust-require remember
+  (add-hook 'remember-mode-hook 'org-remember-apply-template)
+  ;; 设置记录时的模板，并记录到相应的 org 文件
+  (setq remember-handler-functions 'org-remember-handler)
+  (setq org-remember-templates
+        '(("Todo" ?t "* TODO %?\n  %u" "~/.emacs.d/org/gtd" "Inbox")
+          ("Note" ?n "* %?\n  %U" "~/.emacs.d/org/notes")))
 
-;; 记住调用 remember 时的位置（使用 org-store-link）
-(setq remember-annotation-functions 'org-remember-annotation)
-;; 正向记录 note，新的在下面
-(setq org-reverse-note-order nil)
-;; 设置一个全局键绑定快速调用 remember
-(global-set-key (kbd "C-M-r") 'remember)
+  ;; 记住调用 remember 时的位置（使用 org-store-link）
+  (setq remember-annotation-functions 'org-remember-annotation)
+  ;; 正向记录 note，新的在下面
+  (setq org-reverse-note-order nil)
+  ;; 设置一个全局键绑定快速调用 remember
+  (global-set-key (kbd "C-M-r") 'remember))
 
 ;;;; wb-tools.el
 
