@@ -66,6 +66,17 @@
            (= emacs-major-version 23)))
   "Are we running GNU Emacs 21 or above?")
 
+(defconst *emacs<=22p*
+  (and (not *xemacsp*)
+       (or (= emacs-major-version 21)
+           (= emacs-major-version 22)))
+  "Are we running GNU Emacs 22 or older?")
+
+(defconst *emacs>=23p*
+  (and (not *xemacsp*)
+       (= emacs-major-version 23))
+  "Are we running GNU Emacs 23 or above?")
+
 ;; (require 'cygwin-mount)
 ;; (cygwin-mount-activate)
 
@@ -707,41 +718,44 @@ Argument ARG Key."
 
 ;;; I18N
 
+(when *emacs<=22p*
+  (robust-require mule-gbk
+    (define-coding-system-alias 'chinese-iso-8bit 'chinese-gbk)
+    (define-coding-system-alias 'cn-gb-2312 'chinese-gbk)
+    (define-coding-system-alias 'euc-china 'chinese-gbk)
+    (define-coding-system-alias 'euc-cn 'chinese-gbk)
+    (define-coding-system-alias 'cn-gb 'chinese-gbk)
+    (define-coding-system-alias 'gb2312 'chinese-gbk)
+    (define-coding-system-alias 'cp936 'chinese-gbk)
+    (define-coding-system-alias 'gb18030 'chinese-gbk)
+    (define-coding-system-alias 'GB18030 'chinese-gbk)
+    (define-coding-system-alias 'chinese-gb18030 'chinese-gbk)
+    (define-coding-system-alias 'cn-gb18030 'chinese-gbk)
+
+    ;; Setup X Selection for mule-gbk
+    (mule-gbk-selection-setup)
+    ;; Unicode support, for Emacs CVS (21.3.50) only
+    (when (fboundp 'utf-translate-cjk-mode)
+      ;; Load modified utf-translate-cjk-mode
+      (require 'gbk-utf-mode)
+      (utf-translate-cjk-load-tables)
+      ;; Turn on utf-translate-cjk-mode
+      (utf-translate-cjk-mode 1)
+      ;; Setup X selection for unicode encoding
+      (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))))
+
 (if *win32p*
     (progn
-      (robust-require mule-gbk
-        ;; Setup GBK environment
-        (set-terminal-coding-system 'chinese-gbk)
-        (set-keyboard-coding-system 'chinese-gbk)
-        (set-language-environment 'chinese-gbk)
-        (setq locale-coding-system 'chinese-gbk)
-        ;; Windows 里要用 GB2312 作为 Selection Coding System
-        (set-selection-coding-system 'gb2312)
-        ;; Setup X Selection for mule-gbk
-        (mule-gbk-selection-setup)
-        ;; Unicode support, for Emacs CVS (21.3.50) only
-        (when (fboundp 'utf-translate-cjk-mode)
-          ;; Load modified utf-translate-cjk-mode
-          (require 'gbk-utf-mode)
-          (utf-translate-cjk-load-tables)
-          ;; Turn on utf-translate-cjk-mode
-          (utf-translate-cjk-mode 1)
-          ;; Setup X selection for unicode encoding
-          (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
-        (define-coding-system-alias 'chinese-iso-8bit 'chinese-gbk)
-        (define-coding-system-alias 'cn-gb-2312 'chinese-gbk)
-        (define-coding-system-alias 'euc-china 'chinese-gbk)
-        (define-coding-system-alias 'euc-cn 'chinese-gbk)
-        (define-coding-system-alias 'cn-gb 'chinese-gbk)
-        (define-coding-system-alias 'gb2312 'chinese-gbk)
-        (define-coding-system-alias 'cp936 'chinese-gbk)
-        (define-coding-system-alias 'gb18030 'chinese-gbk)
-        (define-coding-system-alias 'GB18030 'chinese-gbk)
-        (define-coding-system-alias 'chinese-gb18030 'chinese-gbk)
-        (define-coding-system-alias 'cn-gb18030 'chinese-gbk)
+      ;; Setup GBK environment
+      (set-terminal-coding-system 'chinese-gbk)
+      (set-keyboard-coding-system 'chinese-gbk)
+      (set-language-environment 'chinese-gbk)
+      (setq locale-coding-system 'chinese-gbk)
+      ;; Windows 环境要用 GB2312 作为 Selection Coding System
+      (set-selection-coding-system 'gb2312)
 
-        (setq w32-charset-info-alist
-              (cons '("gbk" w32-charset-gb2312 . 936) w32-charset-info-alist))))
+      (setq w32-charset-info-alist
+            (cons '("gbk" w32-charset-gb2312 . 936) w32-charset-info-alist)))
   (setq locale-coding-system 'utf-8)
   (set-language-environment 'utf-8)
   (prefer-coding-system 'utf-8-unix)
