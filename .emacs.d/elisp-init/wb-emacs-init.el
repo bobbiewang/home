@@ -686,6 +686,9 @@ Argument ARG Key."
 
 ;;; General
 
+;; 设置 Emacs 启动后的缺省路径
+(setq default-directory "~/")
+
 ;; 在 *Message* buffer 里保留 256 条消息，缺省只保留 100 条
 (setq message-log-max 256)
 
