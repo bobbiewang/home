@@ -1117,7 +1117,7 @@ replace. Replace the text that you're presently isearching for."
 ;; Preserve the owner and group of the file you’re editing (this is especially important if you edit files as root).
 ;; (setq backup-by-copying-when-mismatch t)
 
-;; C-/ 或 C-_：undo
+;; C-/ 或 C-_ 或 C-x u：undo
 ;; C-x C-/ 或 C-+：redo
 (robust-require redo
   (defun undo-redo (arg)
