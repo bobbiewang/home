@@ -1324,8 +1324,9 @@ directory, select directory. Lastly the file is opened."
 (robust-require ido
   (setq ido-save-directory-list-file    ; 自定义 ido 文件的路径
         (expand-file-name "~/.emacs.d/.ido.last"))
-  (ido-mode t)                      ; 打开 ido mode
-  (setq ido-enable-flex-matching t) ; 可以用 wei 匹配文件名 wb-emacs-init.el
+  (ido-mode t)                       ; 启用 ido mode
+  (setq ido-enable-flex-matching t)  ; 可以用 wei 匹配文件名 wb-emacs-init.el
+  (setq ido-use-filename-at-point t) ; 先查找光标处文件，可以用于替换 ffap
   (add-hook 'ido-setup-hook
             (lambda ()
               ;(define-key ido-completion-map [tab] 'ido-complete)
