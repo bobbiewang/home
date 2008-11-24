@@ -1362,7 +1362,7 @@ directory, select directory. Lastly the file is opened."
 (with-library "xray"
   (autoload 'xray-symbol "xray" "Display internal Emacs object structures." t))
 
-;;; misc
+;;; Misc
 
 (setq default-directory "~/")
 
@@ -2306,6 +2306,18 @@ Returns nil if it is not visible in the current calendar window."
 (setq org-reverse-note-order nil)
 ;; 设置一个全局键绑定快速调用 remember
 (global-set-key (kbd "C-M-r") 'remember)
+
+;;; Anything
+(robust-require anything-config
+  (setq anything-sources
+        (list anything-c-source-buffers
+              anything-c-source-file-name-history
+              anything-c-source-file-cache
+              anything-c-source-emacs-commands
+              ;; anything-c-source-info-pages
+              ;; anything-c-source-man-pages
+              ))
+  (global-set-key (kbd "ESC ESC SPC") 'anything))
 
 ;;;; wb-tools.el
 
