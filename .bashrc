@@ -102,9 +102,21 @@ alias scr='screen -r'
 export LS_OPTIONS='--color=auto'
 eval `dircolors`
 alias ls='ls $LS_OPTIONS'
-alias ll='ls $LS_OPTIONS -l'
 alias l='ls $LS_OPTIONS -lA'
-alias lsd='ls -d */.'
+alias ll='ls $LS_OPTIONS -lt'
+alias lm="ls #LS_OPTIONS -lt | more"
+alias lll='ls $LS_OPTIONS --sort=size -l'
+alias lsd='ls -d */.'                   # 只显示目录
+alias lsl='\ls -l | fgrep -e "->" '     # 只显示链接
+
+######################################################################
+## Find
+######################################################################
+
+# alias 不能处理命令行参数，需要自定义 function 
+function ff { find . -name "$1" -print; }
+function gg { find . -type f \( -name '*.hpp' -o -name '*.cpp' \) -print |\
+               grep -v include | grep -v rcs | xargs grep "$1"; }
 
 ######################################################################
 ## apt 命令别名
@@ -125,10 +137,14 @@ alias agr='sudo apt-get remove'
 ######################################################################
 
 alias so="source"
-alias j="jobs"
+alias f="fg"
+alias j="jobs -l"
+alias m="more"
 alias k="kill -9"
+alias s="sdcv"
 alias grep="grep --color=auto"
 alias pgrep="ps awx | grep"
+alias tail="tail -32"
 
 ######################################################################
 ## 修改一些危险命令的缺省行为

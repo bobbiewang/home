@@ -66,6 +66,56 @@
            (= emacs-major-version 23)))
   "Are we running GNU Emacs 21 or above?")
 
+(defconst *emacs<=22p*
+  (and (not *xemacsp*)
+       (or (= emacs-major-version 21)
+           (= emacs-major-version 22)))
+  "Are we running GNU Emacs 22 or older?")
+
+(defconst *emacs>=23p*
+  (and (not *xemacsp*)
+       (= emacs-major-version 23))
+  "Are we running GNU Emacs 23 or above?")
+
+;; (require 'cygwin-mount)
+;; (cygwin-mount-activate)
+
+;; NT-emacs assumes a Windows command shell, which you change
+;; here.
+;; (defun cygwin-shell()
+;;   (interactive)
+;;   (setq old-process-coding-system-alist process-coding-system-alist)
+;;   (setq old-shell-file-name shell-file-name)
+;;   (setq process-coding-system-alist '(("bash" . undecided-unix)))
+;;   (setq shell-file-name "bash")
+;;   (setenv "SHELL" shell-file-name)
+;;   (setq explicit-shell-file-name shell-file-name)
+;;   (switch-to-buffer (shell "*cygwin-shell*"))
+;;   (delete-other-windows)
+;;   (setq process-coding-system-alist old-process-coding-system-alist)
+;;   (setq shell-file-name old-shell-file-name)
+;;   (setenv "SHELL" shell-file-name)
+;;   (setq explicit-shell-file-name shell-file-name))
+
+;; Maximuize the frame when start Emacs
+;; (defun w32-restore-frame (&optional arg)
+;;     "Restore a minimized frame"
+;;     (interactive)
+;;     (w32-send-sys-command 61728 arg))
+;; (defun w32-maximize-frame (&optional arg)
+;;     "Maximize the current frame"
+;;     (interactive)
+;;     (w32-send-sys-command 61488 arg))
+;; (w32-maximize-frame)
+;; (add-hook 'after-make-frame-functions 'w32-maximize-frame)
+
+;; (if (eq window-system 'w32)
+;;     (defun insert-x-style-font() 
+;;       "Insert a string in the X format which describes a font the
+;; user can select from the Windows font selector."
+;;       (interactive) 
+;;       (insert (prin1-to-string (w32-select-font))))) 
+
 ;;;; wb-functions.el
 
 ;;; Infrastructure
@@ -647,6 +697,9 @@ Argument ARG Key."
 
 ;;; General
 
+;; 设置 Emacs 启动后的缺省路径
+(setq default-directory "~/")
+
 ;; 在 *Message* buffer 里保留 256 条消息，缺省只保留 100 条
 (setq message-log-max 256)
 
@@ -665,19 +718,74 @@ Argument ARG Key."
 
 ;;; I18N
 
-(setq locale-coding-system 'utf-8)
-(set-language-environment 'utf-8)
-(prefer-coding-system 'utf-8-unix)
-;; (set-terminal-coding-system 'utf-8-unix)
-;; (set-keyboard-coding-system 'utf-8-unix)
-;; (set-buffer-file-coding-system 'utf-8)
-;; (set-file-name-coding-system 'utf-8)
-;; (set-selection-coding-system 'utf-8)
-;; (set-clipboard-coding-system 'utf-8)
-;; (setq-default pathname-coding-system 'utf-8)
-;; (setq default-buffer-file-coding-system 'utf-8-unix)
-;; (setq-default buffer-file-coding-system 'utf-8-unix)
-;; (setq save-buffer-coding-system 'utf-8-unix)
+(when *emacs<=22p*
+  (robust-require mule-gbk
+    (define-coding-system-alias 'chinese-iso-8bit 'chinese-gbk)
+    (define-coding-system-alias 'cn-gb-2312 'chinese-gbk)
+    (define-coding-system-alias 'euc-china 'chinese-gbk)
+    (define-coding-system-alias 'euc-cn 'chinese-gbk)
+    (define-coding-system-alias 'cn-gb 'chinese-gbk)
+    (define-coding-system-alias 'gb2312 'chinese-gbk)
+    (define-coding-system-alias 'cp936 'chinese-gbk)
+    (define-coding-system-alias 'gb18030 'chinese-gbk)
+    (define-coding-system-alias 'GB18030 'chinese-gbk)
+    (define-coding-system-alias 'chinese-gb18030 'chinese-gbk)
+    (define-coding-system-alias 'cn-gb18030 'chinese-gbk)
+
+    ;; Setup X Selection for mule-gbk
+    (mule-gbk-selection-setup)
+    ;; Unicode support, for Emacs CVS (21.3.50) only
+    (when (fboundp 'utf-translate-cjk-mode)
+      ;; Load modified utf-translate-cjk-mode
+      (require 'gbk-utf-mode)
+      (utf-translate-cjk-load-tables)
+      ;; Turn on utf-translate-cjk-mode
+      (utf-translate-cjk-mode 1)
+      ;; Setup X selection for unicode encoding
+      (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))))
+
+(if *win32p*
+    (progn
+      ;; Setup GBK environment
+      (set-terminal-coding-system 'chinese-gbk)
+      (set-keyboard-coding-system 'chinese-gbk)
+      (set-language-environment 'chinese-gbk)
+      (setq locale-coding-system 'chinese-gbk)
+      ;; Windows 环境要用 GB2312 作为 Selection Coding System
+      (set-selection-coding-system 'gb2312)
+
+      (setq w32-charset-info-alist
+            (cons '("gbk" w32-charset-gb2312 . 936) w32-charset-info-alist)))
+  (setq locale-coding-system 'utf-8)
+  (set-language-environment 'utf-8)
+  (prefer-coding-system 'utf-8-unix)
+  ;; (set-terminal-coding-system 'utf-8-unix)
+  ;; (set-keyboard-coding-system 'utf-8-unix)
+  ;; (set-buffer-file-coding-system 'utf-8)
+  ;; (set-file-name-coding-system 'utf-8)
+  ;; (set-selection-coding-system 'utf-8)
+  ;; (set-clipboard-coding-system 'utf-8)
+  ;; (setq-default pathname-coding-system 'utf-8)
+  ;; (setq default-buffer-file-coding-system 'utf-8-unix)
+  ;; (setq-default buffer-file-coding-system 'utf-8-unix)
+  ;; (setq save-buffer-coding-system 'utf-8-unix)
+  )
+
+(when *win32p*
+  (create-fontset-from-fontset-spec
+   (concat
+    "-outline-Consolas-normal-r-normal-normal-22-97-96-96-c-*-fontset-gbk,"
+    "chinese-gb2312:-outline-微软雅黑-normal-r-normal-*-24-*-96-96-c-*-iso10646-1,"
+    "mule-unicode-0100-24ff:-*-微软雅黑-normal-r-*-*-24-*-96-96-c-*-iso10646-1,"
+    "chinese-cns11643-5:-*-微软雅黑-normal-r-normal-*-24-*-96-96-c-*-iso10646-1,"
+    "chinese-cns11643-6:-*-微软雅黑-normal-r-normal-*-24-*-96-96-c-*-iso10646-1,"
+    "chinese-cns11643-7:-*-微软雅黑-normal-r-normal-*-24-*-96-96-c-*-iso10646-1"))
+  (set-default-font "fontset-gbk")
+
+  ;; 在 C-x 5 2 打开的 Frame 中也正常显示字体
+  (setq default-frame-alist
+        (append
+         '((font . "fontset-gbk")) default-frame-alist)))
 
 ;; (robust-require unicad)
 
@@ -1009,7 +1117,7 @@ replace. Replace the text that you're presently isearching for."
 ;; Preserve the owner and group of the file you’re editing (this is especially important if you edit files as root).
 ;; (setq backup-by-copying-when-mismatch t)
 
-;; C-/ 或 C-_：undo
+;; C-/ 或 C-_ 或 C-x u：undo
 ;; C-x C-/ 或 C-+：redo
 (robust-require redo
   (defun undo-redo (arg)
@@ -2062,7 +2170,26 @@ the length of the whitespace"
   '(progn
      (setq cperl-indent-level 4
            cperl-hairy t
-           cperl-auto-newline nil)))
+           cperl-auto-newline nil)
+
+     (define-skeleton skeleton-perl-mode-sub
+       "Insert a perl subroutine with arguments."
+       "Subroutine name: "
+       " " str " {"
+       \n "my (" ("Argument name: " "$" str ", ") -2 ") = @_;"
+       "\n"
+       \n _
+       \n "}" '(progn (indent-according-to-mode) nil)
+       \n)
+
+     (define-skeleton skeleton-perl-mode-open
+       "Insert a perl open file statment."
+       ""
+       > " " (setq v1 (skeleton-read "File handle: ")) ", \""
+       (setq v2 (skeleton-read "File name: ")) "\" or die \"Cannot "
+       (setq v3 (skeleton-read "Read/Write/Create? ")) " " v2 ": $!.\\n\";"
+       \n
+       \n)))
 
 ;;;; wb-utils.el
 
@@ -2292,20 +2419,20 @@ Returns nil if it is not visible in the current calendar window."
   (find-file "~/.emacs.d/org/gtd"))
 
 ;; 调用 remember 时使用 org 的模板
-(require 'remember)
-(add-hook 'remember-mode-hook 'org-remember-apply-template)
-;; 设置记录时的模板，并记录到相应的 org 文件
-(setq remember-handler-functions 'org-remember-handler)
-(setq org-remember-templates
-      '(("Todo" ?t "* TODO %?\n  %u" "~/.emacs.d/org/gtd" "Inbox")
-        ("Note" ?n "* %?\n  %U" "~/.emacs.d/org/notes")))
+(robust-require remember
+  (add-hook 'remember-mode-hook 'org-remember-apply-template)
+  ;; 设置记录时的模板，并记录到相应的 org 文件
+  (setq remember-handler-functions 'org-remember-handler)
+  (setq org-remember-templates
+        '(("Todo" ?t "* TODO %?\n  %u" "~/.emacs.d/org/gtd" "Inbox")
+          ("Note" ?n "* %?\n  %U" "~/.emacs.d/org/notes")))
 
-;; 记住调用 remember 时的位置（使用 org-store-link）
-(setq remember-annotation-functions 'org-remember-annotation)
-;; 正向记录 note，新的在下面
-(setq org-reverse-note-order nil)
-;; 设置一个全局键绑定快速调用 remember
-(global-set-key (kbd "C-M-r") 'remember)
+  ;; 记住调用 remember 时的位置（使用 org-store-link）
+  (setq remember-annotation-functions 'org-remember-annotation)
+  ;; 正向记录 note，新的在下面
+  (setq org-reverse-note-order nil)
+  ;; 设置一个全局键绑定快速调用 remember
+  (global-set-key (kbd "C-M-r") 'remember))
 
 ;;; Anything
 (robust-require anything-config
@@ -2384,6 +2511,7 @@ Returns nil if it is not visible in the current calendar window."
 ; (setq-default ispell-program-name "/usr/bin/aspell")
 (setq ispell-personal-dictionary "~/.emacs.d/.ispell_personal")
 (setq ispell-silently-savep t)
+
 ;; ignore all-uppercase words
 (defun flyspell-ignore-uppercase (beg end &rest rest)
   (while (and (< beg end)
@@ -2392,6 +2520,7 @@ Returns nil if it is not visible in the current calendar window."
     (setq beg (1+ beg)))
   (= beg end))
 (add-hook 'flyspell-incorrect-hook 'flyspell-ignore-uppercase)
+
 ; (add-hook 'font-lock-mode-hook 'flyspell-prog-mode)
 
 ;;; w3m
