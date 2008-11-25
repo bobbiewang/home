@@ -1223,13 +1223,14 @@ do kill lines as `dd' in vim."
 (put 'downcase-region 'disabled nil)
 (put 'scroll-left 'disabled nil)      ; C-x <,  C-x >
 
-;; My backup strategy
-(setq version-control t)     ; 启用版本控制
+;; Backup 策略
+(setq version-control t)     ; 启用文件备份方式的版本控制
 (setq kept-old-versions 2)   ; 备份最原始的版本两次，即第一次、第二次编辑前的文件
 (setq kept-new-versions 5)   ; 备份最新的版本五次
 (setq delete-old-versions t) ; 删掉不属于以上12中版本的版本
 ;; 设置备份文件的路径
-(setq backup-directory-alist '(("" . "~/.emacs.d/auto-backup")))
+(setq backup-directory-alist
+      '(("" . "~/.emacs.d/auto-backup")))
 ;; 备份设置方法，直接拷贝
 (setq backup-by-copying t)
 (setq make-backup-files t)
@@ -1237,15 +1238,15 @@ do kill lines as `dd' in vim."
 ;; (setq tramp-backup-directory-alist backup-directory-alist)
 
 ;; Auto Save 策略
-;; auto-save-default 为 t（除了 batch mode），缺省打开 Auto Save
+;; auto-save-default 为 t（除了 batch mode），所以缺省打开 Auto Save
 (setq auto-save-interval 100)            ; 每输入 N 个字符后自动保存
 (setq auto-save-timeout 30)              ; 至少 N 秒后才自动保存
 (setq delete-auto-save-files t)
 (setq auto-save-file-name-transforms
-      `(;; 缺省值，Tramp 编辑文件时保存到本地的 tmp 目录
+      `(;; 缺省值，Tramp 编辑文件时，自动保存到本地的 tmp 目录
         ("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
          ,(concat temporary-file-directory "\\2") t)
-        ;; *nix 平台的 dropbox 文件保存到本地的 tmp 目录
+        ;; 编辑 dropbox 的文件时，自动保存到本地的 tmp 目录
         ("\\`/?\\([^/]*/\\)*\\.?[Dd]ropbox/\\([^/]*/\\)*\\([^/]*\\)\\'"
          ,(concat temporary-file-directory "\\3") t)
         ;; 下面的规则适用于 *nix 平台所有文件
