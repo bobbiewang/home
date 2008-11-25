@@ -1,0 +1,77 @@
+# -*- conf -*-
+
+# GNU GLOBAL 的配置文件
+#
+# GLOBAL doesn't need 'gtags.conf' because it has the default values in it.
+# But if you have this file as '/etc/gtags.conf' or "$HOME/.globalrc"
+# then GLOBAL system overwrite default values with the values from the file.
+#
+# gtags.conf 使用 termcap 文件风格
+# - 用 \ 续行
+# - 以 # 为首字符的行为注释
+# 
+# 'default' is default target.
+# You can specify target with GTAGSLABEL environment variable.
+#
+# Variable 'suffixes' is obsoleted but is acceptable because it is needed
+# for plugged-in parser. If you use gtags-parser(1) then you should use
+# variable 'langmap' instead.
+#
+default:\
+    :tc=common_gtags:tc=htags:
+
+lsc:\
+    :tc=lsc_gtags:tc=htags:
+
+#---------------------------------------------------------------------
+# Configuration for gtags
+#
+# 忽略 ntopt, linopt, solopt, lin64opt 等目录
+# 将 .c .h 扩展名的文件设为 C++ 文件
+#---------------------------------------------------------------------
+common_skip:\
+    :skip=GPATH,GTAGS,GRTAGS,GSYMS,HTML/,html/,tags,TAGS,ID,y.tab.c,y.tab.h,.notfunction,cscope.out,.gdbinit,ntopt/,linopt/,solopt/,lin64opt/,smoke/,SCCS/,RCS/,CVS/,CVSROOT/,{arch}/,.svn/,.cvsrc,.cvsignore,.cvspass,.cvswrappers,.deps/,autom4te.cache/,.snprj/:
+
+common_langmap:\
+    :langmap=c\:.c.h,yacc\:.y,asm\:.s.S,java\:.java,cpp\:.c++.cc.cpp.cxx.hxx.hpp.C.H,php\:.php.php3.phtml:
+
+lsc_langmap:\
+    :langmap=yacc\:.y,asm\:.s.S,java\:.java,cpp\:.c.h.c++.cc.cpp.cxx.hxx.hpp.C.H,php\:.php.php3.phtml:
+
+#
+# [gtags-parser]
+#
+# This command is distributed as part of GLOBAL.
+# The %s is replaced with the path of source file.
+# You need not use --langmap=xxx option. Gtags-parser(1) get the value
+# from environment variable.
+#
+common_gtags:\
+    :tc=common_langmap:\
+    :tc=common_skip:\
+    :GTAGS=gtags-parser -dt %s:\
+    :GRTAGS=gtags-parser -dtr %s:\
+    :GSYMS=gtags-parser -dts %s:
+
+lsc_gtags:\
+    :tc=lsc_langmap:\
+    :tc=common_skip:\
+    :GTAGS=gtags-parser -dt %s:\
+    :GRTAGS=gtags-parser -dtr %s:\
+    :GSYMS=gtags-parser -dts %s:
+
+#---------------------------------------------------------------------
+# Configuration for htags
+# Let's paint hypertext with your favorite colors!
+#---------------------------------------------------------------------
+htags:\
+    :body_begin=<body text='#191970' bgcolor='#f5f5dc' vlink='gray'>:body_end=</body>:\
+    :table_begin=<table>:table_end=</table>:\
+    :title_begin=<h1><font color='#cc0000'>:title_end=</font></h1>:\
+    :comment_begin=<i><font color='green'>:comment_end=</font></i>:\
+    :sharp_begin=<font color='darkred'>:sharp_end=</font>:\
+    :brace_begin=<font color='blue'>:brace_end=</font>:\
+    :warned_line_begin=<span style='background-color\:yellow'>:warned_line_end=</span>:\
+    :reserved_begin=<b>:reserved_end=</b>:script_alias=/cgi-bin/:\
+    :ncol#4:tabs#8:normal_suffix=html:gzipped_suffix=ghtml:\
+    :definition_header=no:
