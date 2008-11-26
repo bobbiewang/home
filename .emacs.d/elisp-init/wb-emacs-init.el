@@ -1934,6 +1934,30 @@ directory, select directory. Lastly the file is opened."
 (robust-require xcscope
   (define-key cscope-list-entry-keymap "q" 'wb-quit-buffer))
 
+(with-library "gtags"
+    (autoload 'gtags-mode "gtags" "" t))
+
+(robust-require xgtags
+  (defun xgtags-pop-stack ()
+    "Move to previous point on the stack."
+    (interactive)
+    (let ((delete (and xgtags-kill-buffers 
+                       (not (xgtags--stacked-p (current-buffer)))))
+          (context (xgtags--pop-context)))
+      (assert context nil "The tags stack is empty")
+      (when delete
+        (kill-buffer (current-buffer)))
+      (when (> (count-windows) 1)       ; 增加这两行代码，退出 xgtags 时
+        (delete-window))                ; 关闭因为 xgtags 弹出的 window
+      (xgtags--update-buffer context)
+      (switch-to-buffer (xgtags--context-buffer context))
+      (goto-char (xgtags--context-point context))))
+
+  (add-hook 'xgtags-select-mode-hook
+              (lambda ()
+                (define-key xgtags-select-mode-map (kbd "o")
+                  'xgtags-select-tag-near-point))))
+
 ;; emacs21 好像没有 number-sequence 函数，那就用其它代替好了。比如
 ;; (require 'cl) 后用 loop 命令，或者这样
 (when (not (fboundp 'number-sequence))
@@ -1979,12 +2003,18 @@ directory, select directory. Lastly the file is opened."
 (add-hook 'c-mode-hook 'wb-c-mode-hook)
 
 ;; C++ 语言特殊设置
+
+;; 某些开发环境使用 .c/.h 文件开发 C++ 语言
+(add-to-list 'auto-mode-alist '("rel/env[^/]*/\\([^/]*/\\)*[^/]*\\.c$" . c++-mode))
+(add-to-list 'auto-mode-alist '("rel/env[^/]*/\\([^/]*/\\)*[^/]*\\.h$" . c++-mode))
+
 (defun wb-c++-mode-hook()
   (c-set-style "stroustrup")
   (c-set-offset 'inline-open 0)
   (c-set-offset 'friend '-)
-  ;; gtags
-  (autoload 'gtags-mode "gtags" "" t)
+  ;; gtags，优先使用 xgtags-mode
+  (cond ((fboundp 'xgtags-mode) (xgtags-mode t))
+        ((fboundp 'gtags-mode)  (gtags-mode t)))
   ;; xref
   )
 (add-hook 'c++-mode-hook 'wb-c++-mode-hook)
