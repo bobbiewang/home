@@ -2411,6 +2411,9 @@ Returns nil if it is not visible in the current calendar window."
 (setq org-refile-targets '((org-agenda-files . (:maxlevel . 2))))
 (setq org-refile-use-outline-path t)
 
+;; 尽可能使用 ido 方式的补全（如 Refile 操作），6.13
+(setq org-completion-use-ido nil)
+
 ;; 设置几个方便使用 Org 的全局键绑定和函数
 (define-key global-map "\C-ca" 'org-agenda)
 (define-key global-map "\C-cl" 'org-store-link)
