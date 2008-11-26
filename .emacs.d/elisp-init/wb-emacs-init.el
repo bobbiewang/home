@@ -381,9 +381,14 @@ when a region-mark is active."
     (widen)))
 
 (defun wb-insert-date ()
-  "插入当前日期"
+  "Insert current date"
   (interactive)
-  (insert (format-time-string "%Y 年 %m 月 %d 日")))
+  (insert (format-time-string "%Y/%m/%d")))
+
+(defun wb-insert-time ()
+  "Insert current time"
+  (interactive)
+  (insert (format-time-string "%H/%M/%S")))
 
 ;; 自动换行显示
 (setq truncate-lines nil)
@@ -2665,6 +2670,7 @@ Returns nil if it is not visible in the current calendar window."
 
 ;; 绑定一些插入文本的函数
 (global-set-key "\C-cid" 'wb-insert-date)
+(global-set-key "\C-cit" 'wb-insert-time)
 
 ;;; 局部键绑定
 
