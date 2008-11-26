@@ -388,7 +388,7 @@ when a region-mark is active."
 (defun wb-insert-time ()
   "Insert current time"
   (interactive)
-  (insert (format-time-string "%H/%M/%S")))
+  (insert (format-time-string "%H:%M:%S")))
 
 ;; 自动换行显示
 (setq truncate-lines nil)
