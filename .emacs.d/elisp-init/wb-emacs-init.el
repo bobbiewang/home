@@ -771,15 +771,17 @@ Argument ARG Key."
   ;; (setq save-buffer-coding-system 'utf-8-unix)
   )
 
+;; Consolas 和雅黑的 2:1 组合
+;; 18/20 20/22 22/24
 (when *win32p*
   (create-fontset-from-fontset-spec
    (concat
-    "-outline-Consolas-normal-r-normal-normal-22-97-96-96-c-*-fontset-gbk,"
-    "chinese-gb2312:-outline-微软雅黑-normal-r-normal-*-24-*-96-96-c-*-iso10646-1,"
-    "mule-unicode-0100-24ff:-*-微软雅黑-normal-r-*-*-24-*-96-96-c-*-iso10646-1,"
-    "chinese-cns11643-5:-*-微软雅黑-normal-r-normal-*-24-*-96-96-c-*-iso10646-1,"
-    "chinese-cns11643-6:-*-微软雅黑-normal-r-normal-*-24-*-96-96-c-*-iso10646-1,"
-    "chinese-cns11643-7:-*-微软雅黑-normal-r-normal-*-24-*-96-96-c-*-iso10646-1"))
+    "-outline-Consolas-normal-r-normal-normal-18-97-96-96-c-*-fontset-gbk,"
+    "chinese-gb2312:-outline-微软雅黑-normal-r-normal-*-22-*-96-96-c-*-iso10646-1,"
+    "mule-unicode-0100-24ff:-*-微软雅黑-normal-r-*-*-22-*-96-96-c-*-iso10646-1,"
+    "chinese-cns11643-5:-*-微软雅黑-normal-r-normal-*-22-*-96-96-c-*-iso10646-1,"
+    "chinese-cns11643-6:-*-微软雅黑-normal-r-normal-*-22-*-96-96-c-*-iso10646-1,"
+    "chinese-cns11643-7:-*-微软雅黑-normal-r-normal-*-22-*-96-96-c-*-iso10646-1"))
   (set-default-font "fontset-gbk")
 
   ;; 在 C-x 5 2 打开的 Frame 中也正常显示字体
