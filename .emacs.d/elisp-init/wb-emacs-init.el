@@ -1222,25 +1222,37 @@ do kill lines as `dd' in vim."
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
 (put 'scroll-left 'disabled nil)      ; C-x <,  C-x >
-;; My backup strategy
-(setq version-control t)     ; 启用版本控制
+
+;; Backup 策略
+(setq version-control t)     ; 启用文件备份方式的版本控制
 (setq kept-old-versions 2)   ; 备份最原始的版本两次，即第一次、第二次编辑前的文件
 (setq kept-new-versions 5)   ; 备份最新的版本五次
 (setq delete-old-versions t) ; 删掉不属于以上12中版本的版本
 ;; 设置备份文件的路径
-(setq backup-directory-alist '(("" . "~/.emacs.d/auto-backup")))
+(setq backup-directory-alist
+      '(("" . "~/.emacs.d/auto-backup")))
 ;; 备份设置方法，直接拷贝
 (setq backup-by-copying t)
 (setq make-backup-files t)
-;; 备份 /su: 时编辑的文件
-(setq tramp-backup-directory-alist backup-directory-alist)
-(setq auto-save-file-name-transforms nil)
+;; 使用 Tramp 编辑文件时，也使用和 backup-directory 相同的备份目录
+;; (setq tramp-backup-directory-alist backup-directory-alist)
 
-;; My auto-save strategy
-(setq auto-save-interval 50)
-(setq auto-save-timeout 30)
+;; Auto Save 策略
+;; auto-save-default 为 t（除了 batch mode），所以缺省打开 Auto Save
+(setq auto-save-interval 100)            ; 每输入 N 个字符后自动保存
+(setq auto-save-timeout 30)              ; 至少 N 秒后才自动保存
 (setq delete-auto-save-files t)
-
+(setq auto-save-file-name-transforms
+      `(;; 缺省值，Tramp 编辑文件时，自动保存到本地的 tmp 目录
+        ("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
+         ,(concat temporary-file-directory "\\2") t)
+        ;; 编辑 dropbox 的文件时，自动保存到本地的 tmp 目录
+        ("\\`/?\\([^/]*/\\)*\\.?[Dd]ropbox/\\([^/]*/\\)*\\([^/]*\\)\\'"
+         ,(concat temporary-file-directory "\\3") t)
+        ;; 下面的规则适用于 *nix 平台所有文件
+        ;; ("\\`/?\\([^/]*/\\)*\\([^/]*\\)\\'" "~/.emacs.d/auto-save/\\2" t)
+        ))
+ 
 ;; 时间戳（time-stamp）设置，记录文档保存的时间。如果文档里有
 ;; Time-stamp: 的文字，就会自动保存时间戳
 (setq time-stamp-active t)                ; 启用时间戳
