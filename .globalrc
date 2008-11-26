@@ -36,7 +36,7 @@ common_langmap:\
     :langmap=c\:.c.h,yacc\:.y,asm\:.s.S,java\:.java,cpp\:.c++.cc.cpp.cxx.hxx.hpp.C.H,php\:.php.php3.phtml:
 
 lsc_langmap:\
-    :langmap=yacc\:.y,asm\:.s.S,java\:.java,cpp\:.c.h.c++.cc.cpp.cxx.hxx.hpp.C.H,php\:.php.php3.phtml:
+    :langmap=cpp\:.c.h.c++.cc.cpp.cxx.hxx.hpp.C.H,yacc\:.y,asm\:.s.S,java\:.java:
 
 #
 # [gtags-parser]
