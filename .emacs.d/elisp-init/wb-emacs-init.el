@@ -2460,9 +2460,15 @@ Returns nil if it is not visible in the current calendar window."
               ;; anything-c-source-info-pages
               ;; anything-c-source-man-pages
               ))
+  (setq anything-c-adaptive-history-file
+        "~/.emacs.d/.anything-c-adaptive-history")
   (global-set-key (kbd "ESC ESC SPC") 'anything))
 
 ;;;; wb-tools.el
+
+;;; Tramp
+
+(setq tramp-persistency-file-name "~/.emacs.d/.tramp")
 
 ;;; etags
 
