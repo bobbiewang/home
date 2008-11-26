@@ -30,12 +30,10 @@ else
     alias e="emacs -nw"
     alias et="emacs -nw"
     alias en="emacsclient -n"
-    export EDITOR="emacs -nw"
+    export EDITOR="emacs -nw -q"
 fi
 alias emq="emacs -nw --no-desktop"
 alias gemq="emacs -nw --no-desktop"
-alias gnus="emacs -nw --no-desktop -f gnus-unplugged"
-alias ggnus="emacs --no-desktop -f gnus-unplugged"
 
 ######################################################################
 ## Ruby
