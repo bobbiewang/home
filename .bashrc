@@ -16,12 +16,12 @@ TZ='Asia/Shanghai'; export TZ
 ## Emacs
 ######################################################################
 
-if [ -n "$HAVE_DTACH" ]; then
+if [ $EMACS_SERVER_MODE == "dtach" ]; then
     alias e="connect-emacs-dtach editor -d $DISPLAY -c"
     alias et="connect-emacs-dtach editor -t"
     export EDITOR="connect-emacs-dtach editor -t"
     ~/bin/preload-emacs-dtach editor
-elif [ -n "$HAVE_SCREEN" ]; then
+elif [ $EMACS_SERVER_MODE == "screen" ]; then
     alias e="connect-emacs-screen editor -d $DISPLAY -c"
     alias et="connect-emacs-screen editor -t"
     export EDITOR="connect-emacs-screen editor -t"

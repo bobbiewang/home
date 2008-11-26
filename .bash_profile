@@ -7,10 +7,13 @@
 
 # 判断一些程序是否已安装，并设置相应的环境变量
 
-HAVE_DTACH=`which dtach`
-HAVE_SCREEN=`which screen`
+if [ `which dtach` ]; then
+    EMACS_SERVER_MODE="dtach"
+elif [ `which screen` ]; then
+    EMACS_SERVER_MODE="screen"
+fi
 
-export HAVE_DTACH HAVE_SCREEN
+export EMACS_SERVER_MODE
 
 # .privatebashrc 负责一些不适合公开的设置，比如 Proxy 账号、密码等。
 # 这个文件的属性应该设为 600，不进行版本控制（因为可能使用 Public Repos）
