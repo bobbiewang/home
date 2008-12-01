@@ -97,18 +97,6 @@
 ;;   (setenv "SHELL" shell-file-name)
 ;;   (setq explicit-shell-file-name shell-file-name))
 
-;; Maximuize the frame when start Emacs
-;; (defun w32-restore-frame (&optional arg)
-;;     "Restore a minimized frame"
-;;     (interactive)
-;;     (w32-send-sys-command 61728 arg))
-;; (defun w32-maximize-frame (&optional arg)
-;;     "Maximize the current frame"
-;;     (interactive)
-;;     (w32-send-sys-command 61488 arg))
-;; (w32-maximize-frame)
-;; (add-hook 'after-make-frame-functions 'w32-maximize-frame)
-
 ;; (if (eq window-system 'w32)
 ;;     (defun insert-x-style-font() 
 ;;       "Insert a string in the X format which describes a font the
@@ -2694,7 +2682,8 @@ Returns nil if it is not visible in the current calendar window."
 ;;;; .emacs tail
 
 ;; 最大化 Frame
-(wb-maximize-frame)
+(when *win32p*
+  (wb-maximize-frame))
 
 ;; desktop 保存打开的文件列表
 (robust-require desktop
