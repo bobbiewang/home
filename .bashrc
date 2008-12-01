@@ -156,7 +156,7 @@ alias mv='mv -i'
 ## 把常用目录加入 CDPATH
 ######################################################################
 
-CDPATH=./:../:~/devspace/:~/muse/:~/repos
+CDPATH=./:../:~:~/devspace/:~/muse/:~/repos
 export CDPATH
 
 ######################################################################
@@ -245,6 +245,27 @@ function set_prompts()
 }
 set_prompts
 export PS1 PS2 PS4
+
+######################################################################
+## 设置 Foundry 工作环境
+######################################################################
+
+if [ -d ~/rel ]; then
+    # *nix 环境
+    ENV=~/rel/env
+    RTF=~/rel/rtf
+elif [ -d /cygwin/c/rel ]; then
+    # Windows 环境
+    ENV=/cygwin/c/rel/env
+    RTF=/cygwin/c/rel/rtf
+fi
+
+if [ -n "$ENV" ]; then
+    FOUNDRY=$RTF
+    CDPATH=$ENV/base/pkg:$ENV/or5g00/pkg:$ENV/base/pkg:$ENV/or5g00/pkg/o5gplace:$CDPATH
+    CDPATH=$ENV/or5s00/pkg:$ENV/mg5g00/pkg:$ENV/mj5g00/pkg:$CDPATH
+    CDPATH=$ENV/ep5g00/pkg:$ENV/ep5a00/pkg:$ENV/ep5m00/pkg:$CDPATH
+fi
 
 # Local Variables:
 # coding: utf-8-unix
