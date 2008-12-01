@@ -7,9 +7,9 @@
 
 # 判断一些程序是否已安装，并设置相应的环境变量
 
-if [ `which dtach` ]; then
+if [ `which dtach 2>/dev/null` ]; then
     EMACS_SERVER_MODE="dtach"
-elif [ `which screen` ]; then
+elif [ `which screen 2>/dev/null` ]; then
     EMACS_SERVER_MODE="screen"
 fi
 
