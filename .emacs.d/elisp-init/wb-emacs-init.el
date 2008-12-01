@@ -794,7 +794,9 @@ Argument ARG Key."
         (append
          '((font . "fontset-gbk")) default-frame-alist)))
 
-;; (robust-require unicad)
+(when *win32p*
+  ;; Windows 环境下使用 unical 识别编码
+  (robust-require unicad))
 
 ;; 支持中文句尾标点，支持 M-a M-e 等命令
 (setq sentence-end "\\([。！？]\\|……\\|[.?!][]\"')}]*\\($\\|[ \t]\\)\\)[ \t\n]*")
