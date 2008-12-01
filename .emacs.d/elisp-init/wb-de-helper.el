@@ -133,3 +133,9 @@
         (display-buffer "*Messages*") ;; display-buffer does the job.
         (redisplay t)
         (setq init-file-had-error t)))))
+
+;; Local Variables:
+;; coding: utf-8-unix
+;; mode: outline-minor
+;; outline-regexp: ";;;\\(;* [^     \n]\\|###autoload\\)"
+;; End:
