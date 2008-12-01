@@ -782,11 +782,11 @@ Argument ARG Key."
   (create-fontset-from-fontset-spec
    (concat
     "-outline-Consolas-normal-r-normal-normal-18-97-96-96-c-*-fontset-gbk,"
-    "chinese-gb2312:-outline-微软雅黑-normal-r-normal-*-22-*-96-96-c-*-iso10646-1,"
-    "mule-unicode-0100-24ff:-*-微软雅黑-normal-r-*-*-22-*-96-96-c-*-iso10646-1,"
-    "chinese-cns11643-5:-*-微软雅黑-normal-r-normal-*-22-*-96-96-c-*-iso10646-1,"
-    "chinese-cns11643-6:-*-微软雅黑-normal-r-normal-*-22-*-96-96-c-*-iso10646-1,"
-    "chinese-cns11643-7:-*-微软雅黑-normal-r-normal-*-22-*-96-96-c-*-iso10646-1"))
+    "chinese-gb2312:-outline-微软雅黑-normal-r-normal-*-20-*-96-96-c-*-iso10646-1,"
+    "mule-unicode-0100-24ff:-*-微软雅黑-normal-r-*-*-20-*-96-96-c-*-iso10646-1,"
+    "chinese-cns11643-5:-*-微软雅黑-normal-r-normal-*-20-*-96-96-c-*-iso10646-1,"
+    "chinese-cns11643-6:-*-微软雅黑-normal-r-normal-*-20-*-96-96-c-*-iso10646-1,"
+    "chinese-cns11643-7:-*-微软雅黑-normal-r-normal-*-20-*-96-96-c-*-iso10646-1"))
   (set-default-font "fontset-gbk")
 
   ;; 在 C-x 5 2 打开的 Frame 中也正常显示字体
