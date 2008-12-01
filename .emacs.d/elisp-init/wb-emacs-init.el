@@ -490,16 +490,15 @@ configuration before the split."
 
 ;; MS Windows 平台 frame 控制
 (when *win32p*
-  (defun w32-restore-frame (&optional arg)
+  (defun wb-restore-frame (&optional arg)
     "Restore a minimized frame"
     (interactive)
     (w32-send-sys-command 61728 arg))
-  (defun w32-maximize-frame (&optional arg)
+  (defun wb-maximize-frame (&optional arg)
     "Maximize the current frame"
     (interactive)
     (w32-send-sys-command 61488 arg))
-  (w32-maximize-frame)
-  (add-hook 'after-make-frame-functions 'w32-maximize-frame))
+  (add-hook 'after-make-frame-functions 'wb-maximize-frame))
 
 ;;; Utilities
 
@@ -2693,6 +2692,9 @@ Returns nil if it is not visible in the current calendar window."
         (define-key view-mode-map "k" 'previous-line)))
 
 ;;;; .emacs tail
+
+;; 最大化 Frame
+(wb-maximize-frame)
 
 ;; desktop 保存打开的文件列表
 (robust-require desktop
