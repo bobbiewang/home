@@ -16,12 +16,12 @@ TZ='Asia/Shanghai'; export TZ
 ## Emacs
 ######################################################################
 
-if [ $EMACS_SERVER_MODE == "dtach" ]; then
+if [ "$EMACS_SERVER_MODE" == "dtach" ]; then
     alias e="connect-emacs-dtach editor -d $DISPLAY -c"
     alias et="connect-emacs-dtach editor -t"
     export EDITOR="connect-emacs-dtach editor -t"
     ~/bin/preload-emacs-dtach editor
-elif [ $EMACS_SERVER_MODE == "screen" ]; then
+elif [ "$EMACS_SERVER_MODE" == "screen" ]; then
     alias e="connect-emacs-screen editor -d $DISPLAY -c"
     alias et="connect-emacs-screen editor -t"
     export EDITOR="connect-emacs-screen editor -t"
@@ -98,7 +98,7 @@ alias scr='screen -r'
 ######################################################################
 
 export LS_OPTIONS='--color=auto'
-eval `dircolors`
+eval `dircolors -b`
 alias ls='ls $LS_OPTIONS'
 alias l='ls $LS_OPTIONS -lA'
 alias ll='ls $LS_OPTIONS -lt'
