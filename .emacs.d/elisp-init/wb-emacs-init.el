@@ -711,43 +711,46 @@ Argument ARG Key."
 ;;; I18N
 
 (when *emacs<=22p*
-  (robust-require mule-gbk
-    (define-coding-system-alias 'chinese-iso-8bit 'chinese-gbk)
-    (define-coding-system-alias 'cn-gb-2312 'chinese-gbk)
-    (define-coding-system-alias 'euc-china 'chinese-gbk)
-    (define-coding-system-alias 'euc-cn 'chinese-gbk)
-    (define-coding-system-alias 'cn-gb 'chinese-gbk)
-    (define-coding-system-alias 'gb2312 'chinese-gbk)
-    (define-coding-system-alias 'cp936 'chinese-gbk)
-    (define-coding-system-alias 'gb18030 'chinese-gbk)
-    (define-coding-system-alias 'GB18030 'chinese-gbk)
-    (define-coding-system-alias 'chinese-gb18030 'chinese-gbk)
-    (define-coding-system-alias 'cn-gb18030 'chinese-gbk)
+  (robust-require mule-gbk))
 
-    ;; Setup X Selection for mule-gbk
-    (mule-gbk-selection-setup)
-    ;; Unicode support, for Emacs CVS (21.3.50) only
-    (when (fboundp 'utf-translate-cjk-mode)
-      ;; Load modified utf-translate-cjk-mode
-      (require 'gbk-utf-mode)
-      (utf-translate-cjk-load-tables)
-      ;; Turn on utf-translate-cjk-mode
-      (utf-translate-cjk-mode 1)
-      ;; Setup X selection for unicode encoding
-      (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))))
-
-(if *win32p*
+(if (and *win32p* (fboundp 'mule-gbk-selection-setup))
+    ;; Windows 环境使用 chinese-gbk 编码
     (progn
       ;; Setup GBK environment
       (set-terminal-coding-system 'chinese-gbk)
       (set-keyboard-coding-system 'chinese-gbk)
       (set-language-environment 'chinese-gbk)
       (setq locale-coding-system 'chinese-gbk)
-      ;; Windows 环境要用 GB2312 作为 Selection Coding System
-      (set-selection-coding-system 'gb2312)
+      ;; Setup X Selection for mule-gbk
+      (mule-gbk-selection-setup)
+      ;; Unicode support, for Emacs CVS (21.3.50) only
+      (when (fboundp 'utf-translate-cjk-mode)
+        ;; Load modified utf-translate-cjk-mode
+        (require 'gbk-utf-mode)
+        (utf-translate-cjk-load-tables)
+        ;; Turn on utf-translate-cjk-mode
+        (utf-translate-cjk-mode 1)
+        ;; Setup X selection for unicode encoding
+        (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+
+      (define-coding-system-alias 'chinese-iso-8bit 'chinese-gbk)
+      (define-coding-system-alias 'cn-gb-2312 'chinese-gbk)
+      (define-coding-system-alias 'euc-china 'chinese-gbk)
+      (define-coding-system-alias 'euc-cn 'chinese-gbk)
+      (define-coding-system-alias 'cn-gb 'chinese-gbk)
+      (define-coding-system-alias 'gb2312 'chinese-gbk)
+      (define-coding-system-alias 'cp936 'chinese-gbk)
+      (define-coding-system-alias 'gb18030 'chinese-gbk)
+      (define-coding-system-alias 'GB18030 'chinese-gbk)
+      (define-coding-system-alias 'chinese-gb18030 'chinese-gbk)
+      (define-coding-system-alias 'cn-gb18030 'chinese-gbk)
 
       (setq w32-charset-info-alist
-            (cons '("gbk" w32-charset-gb2312 . 936) w32-charset-info-alist)))
+            (cons '("gbk" w32-charset-gb2312 . 936) w32-charset-info-alist))
+
+      ;; Windows 环境要用 GB2312 作为 Selection Coding System
+      (set-selection-coding-system 'gb2312))
+  ;; *nix 环境使用 UTF-8 编码
   (setq locale-coding-system 'utf-8)
   (set-language-environment 'utf-8)
   (prefer-coding-system 'utf-8-unix)
