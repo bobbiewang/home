@@ -2361,8 +2361,13 @@ Returns nil if it is not visible in the current calendar window."
 
 ;;; Org Mode
 
-;; 非 Emacs 带的 org 要加载 org-install
+;; 下载 Org 后用 make 命令生成 org-install 文件
 (robust-require org-install)
+;; 设置 .org 文件使用 org-mode
+(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+;; 设置几个方便使用 Org 的全局键绑定和函数
+(define-key global-map "\C-ca" 'org-agenda)
+(define-key global-map "\C-cl" 'org-store-link)
 ;; 设置 agenda 相关文件的位置
 (setq org-agenda-files '("~/.emacs.d/org/gtd"))
 (setq org-default-notes-file "~/.emacs.d/org/gtd")
@@ -2454,10 +2459,6 @@ Returns nil if it is not visible in the current calendar window."
 
 ;; 尽可能使用 ido 方式的补全（如 Refile 操作），6.13
 (setq org-completion-use-ido nil)
-
-;; 设置几个方便使用 Org 的全局键绑定和函数
-(define-key global-map "\C-ca" 'org-agenda)
-(define-key global-map "\C-cl" 'org-store-link)
 
 (defun gtd ()
   (interactive)
