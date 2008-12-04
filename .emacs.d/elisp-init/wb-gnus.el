@@ -45,10 +45,10 @@
 (setq sendmail-program "msmtp")
 (setq mail-host-address "gmail.com")
 
-;; 因为使用了 agent，不开 demon，需要刷新的时候按 g
-;;(gnus-demon-init)
-;; (gnus-demon-add-handler 'gnus-demon-scan-news 30 t)
-;; (gnus-demon-add-handler 'gnus-demon-scan-mail 30 t)
+;; 因为使用了 agent，增加 demon 更新的间隔，需要刷新的时候按 g
+(gnus-demon-init)
+(gnus-demon-add-handler 'gnus-demon-scan-news 360 t)
+(gnus-demon-add-handler 'gnus-demon-scan-mail 360 t)
 
 ;; 设置 Group Buffer
 (setq gnus-group-line-format "%M%S%p%P%5y:%B%(%G%) (%F) %O\n")
