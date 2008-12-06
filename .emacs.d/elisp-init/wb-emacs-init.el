@@ -2378,13 +2378,18 @@ Returns nil if it is not visible in the current calendar window."
 (setq org-agenda-ndays 7)
 ;; Agenda Overview 从周几开始显示，缺省 1 表示周一，nil 表示当天
 (setq org-agenda-start-on-weekday nil)
-;; 设置 TODO 关键字的 Face
+
+;; 设置 TODO 关键字的 face
 (setq org-todo-keyword-faces
       '(("TODO"      . org-todo)
         ("ONGO"      . (:foreground "red" :weight bold))
         ("WAIT"      . (:foreground "grey80" :background "grey40"))
         ("DELE"      . (:foreground "grey40"))
         ("CANCELED"  . (:foreground "blue" :weight bold))))
+
+;; 设置 TAG 的 face
+(setq org-tag-faces
+      '(("PROJECT"    . org-level-2)))
 
 ;; 自定义 Agenda Custom View
 (setq org-agenda-custom-commands
@@ -2450,6 +2455,9 @@ Returns nil if it is not visible in the current calendar window."
           (org-agenda-skip-function
            (lambda nil
              (org-agenda-skip-entry-if 'regexp "DONE")))))))
+
+;; Agenda 中不显示某些继承的 tag
+(setq org-tags-exclude-from-inheritance '("PROJECT"))
 
 ;; 以类似设置 TAG 的界面设置 TODO KEYWORD
 (setq org-use-fast-todo-selection t)
