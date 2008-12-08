@@ -2387,7 +2387,7 @@ Returns nil if it is not visible in the current calendar window."
         ("DELE"      . (:foreground "grey40"))
         ("CANCELED"  . (:foreground "blue" :weight bold))))
 
-;; 设置 TAG 的 face
+;; 设置 TAG 的 face (v6.14)
 (setq org-tag-faces
       '(("PROJECT"    . org-level-2)))
 
@@ -2465,8 +2465,8 @@ Returns nil if it is not visible in the current calendar window."
 (setq org-refile-targets '((org-agenda-files . (:maxlevel . 2))))
 (setq org-refile-use-outline-path t)
 
-;; 尽可能使用 ido 方式的补全（如 Refile 操作），6.13
-(setq org-completion-use-ido nil)
+;; 在一些操作中（如 Refile）尽可能使用 ido 方式的补全 (v6.13)
+(setq org-completion-use-ido t)
 
 (defun gtd ()
   (interactive)
