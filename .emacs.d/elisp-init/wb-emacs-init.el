@@ -2124,7 +2124,7 @@ the length of the whitespace"
 ;; Rails Snippets
 (robust-require yasnippet
   (yas/initialize)
-  (yas/load-directory "~/.emacs.d/elisp-3rdparty/ruby/yasnippets-rails/rails-snippets/"))
+  (yas/load-directory "~/.emacs.d/elisp-personal/snippets"))
 
 ;; YAML 支持
 (robust-require yaml-mode
@@ -2494,7 +2494,7 @@ Returns nil if it is not visible in the current calendar window."
         (list anything-c-source-buffers
               anything-c-source-file-name-history
               anything-c-source-file-cache
-              anything-c-source-emacs-commands
+              ;; anything-c-source-emacs-commands
               ;; anything-c-source-info-pages
               ;; anything-c-source-man-pages
               ))
