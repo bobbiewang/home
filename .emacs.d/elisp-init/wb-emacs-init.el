@@ -1332,6 +1332,7 @@ directory, select directory. Lastly the file is opened."
 
 (global-set-key (kbd "ESC ESC f") 'file-cache-ido-find-file)
 
+;; ido
 (robust-require ido
   (setq ido-save-directory-list-file    ; 自定义 ido 文件的路径
         (expand-file-name "~/.emacs.d/.ido.last"))
@@ -1346,6 +1347,7 @@ directory, select directory. Lastly the file is opened."
               (define-key ido-completion-map "\C-n" 'ido-next-match)
               (define-key ido-completion-map "\C-p" 'ido-prev-match))))
 
+;; ibuffer
 (with-library "ibuffer"
   (autoload 'ibuffer "ibuffer" "Dired lik Ibuffer." t)
   (global-set-key (kbd "C-x C-b") 'ibuffer)
@@ -1389,6 +1391,12 @@ directory, select directory. Lastly the file is opened."
   (add-hook 'custom-mode-hook 'turn-on-tempbuf-mode)
   (add-hook 'w3-mode-hook 'turn-on-tempbuf-mode)
   (add-hook 'Man-mode-hook 'turn-on-tempbuf-mode))
+
+;; 在保存文件时，如果目录不存在（如打开 foo/bar 文件），则自动创建目录
+(add-hook 'before-save-hook
+          '(lambda ()
+             (or (file-exists-p (file-name-directory buffer-file-name))
+                 (make-directory (file-name-directory buffer-file-name) t))))
 
 ;; Dired Settings
 
