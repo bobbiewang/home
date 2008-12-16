@@ -858,6 +858,9 @@ Argument ARG Key."
 (setq-default indicate-empty-lines t)
 (setq truncate-partial-width-windows t)
 
+;; 提示行尾的空格
+(setq show-trailing-whitespace t)
+
 ;; 以像素为单位的文本间距，nil 表示没有额外的间距
 (setq-default line-spacing nil)
 
