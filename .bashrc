@@ -258,6 +258,7 @@ elif [ -d /cygwin/c/rel ]; then
     # Windows 环境
     ENV=/cygwin/c/rel/env
     RTF=/cygwin/c/rel/rtf
+    PATH=$PATH:/cygdrive/c/rel/script:/cygdrive/c/rel/script/build
 fi
 
 if [ -n "$ENV" ]; then
