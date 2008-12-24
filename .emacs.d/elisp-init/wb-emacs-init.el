@@ -2003,7 +2003,9 @@ directory, select directory. Lastly the file is opened."
   ;; 一起启动的 Minor Modes
   (setq hs-minor-mode t)
   (setq abbrev-mode t)
-  (which-func-mode t))
+  (which-func-mode t)
+  ;; 其他键绑定
+  (local-set-key  (kbd "C-c o") 'ff-find-other-file))
 
 (add-hook 'c-mode-common-hook 'wb-c-mode-common-hook)
 
