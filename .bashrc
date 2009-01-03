@@ -254,10 +254,11 @@ if [ -d ~/rel ]; then
     # *nix 环境
     ENV=~/rel/env
     RTF=~/rel/rtf
-elif [ -d /cygwin/c/rel ]; then
+elif [ -d /cygdrive/c/rel ]; then
     # Windows 环境
-    ENV=/cygwin/c/rel/env
-    RTF=/cygwin/c/rel/rtf
+    ENV=/cygdrive/c/rel/env
+    RTF=/cygdrive/c/rel/rtf
+    PATH=$PATH:/cygdrive/c/rel/script:/cygdrive/c/rel/script/build
 fi
 
 if [ -n "$ENV" ]; then
