@@ -883,7 +883,7 @@ Argument ARG Key."
 (setq display-time-use-mail-icon nil) ; 在时间旁边的邮件显示
 (setq display-time-interval 60)       ; 时间的更新频率
 (display-time)                        ; 在 Modeline 显示时间
-;; (set-time-zone-rule "Asia/Shanghai")  ; 设置正确的时区
+;; (set-time-zone-rule "Asia/Shanghai")  ; 设置正确的时区（某些版本的 Emacs 不能自动设置准确时区）
 
 ;; Modeline 上显示行号、列号
 (line-number-mode t)
@@ -2003,7 +2003,9 @@ directory, select directory. Lastly the file is opened."
   ;; 一起启动的 Minor Modes
   (setq hs-minor-mode t)
   (setq abbrev-mode t)
-  (which-func-mode t))
+  (which-func-mode t)
+  ;; 其他键绑定
+  (local-set-key  (kbd "C-c o") 'ff-find-other-file))
 
 (add-hook 'c-mode-common-hook 'wb-c-mode-common-hook)
 
