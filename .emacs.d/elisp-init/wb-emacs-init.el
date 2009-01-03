@@ -883,7 +883,7 @@ Argument ARG Key."
 (setq display-time-use-mail-icon nil) ; 在时间旁边的邮件显示
 (setq display-time-interval 60)       ; 时间的更新频率
 (display-time)                        ; 在 Modeline 显示时间
-(set-time-zone-rule "Asia/Shanghai")  ; 设置正确的时区
+;; (set-time-zone-rule "Asia/Shanghai")  ; 设置正确的时区
 
 ;; Modeline 上显示行号、列号
 (line-number-mode t)
@@ -2475,6 +2475,15 @@ Returns nil if it is not visible in the current calendar window."
 ;; 直观的 Refile 操作
 (setq org-refile-targets '((org-agenda-files . (:maxlevel . 2))))
 (setq org-refile-use-outline-path t)
+
+(defface org-embedded-code-face
+  '((t (:foreground "grey40")))
+  "Used in org-mode to indicate code block.")
+
+(font-lock-add-keywords
+ 'org-mode
+ '(("#\\+BEGIN_SRC.*$" . 'org-embedded-code-face)
+   ("#\\+END_SRC" . 'org-embedded-code-face)))
 
 ;; 在一些操作中（如 Refile）尽可能使用 ido 方式的补全 (v6.13)
 (setq org-completion-use-ido t)
