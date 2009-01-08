@@ -859,7 +859,7 @@ Argument ARG Key."
 (setq truncate-partial-width-windows t)
 
 ;; 提示行尾的空格
-(setq show-trailing-whitespace t)
+(setq-default show-trailing-whitespace t)
 
 ;; 以像素为单位的文本间距，nil 表示没有额外的间距
 (setq-default line-spacing nil)
@@ -2485,8 +2485,9 @@ Returns nil if it is not visible in the current calendar window."
 
 (font-lock-add-keywords
  'org-mode
- '(("#\\+BEGIN_SRC.*$" . 'org-embedded-code-face)
-   ("#\\+END_SRC" . 'org-embedded-code-face)))
+ '(("#\\+BEGIN_SRC.*$" (0 'org-embedded-code-face t))
+   ("#\\+END_SRC" (0 'org-embedded-code-face t)))
+ t)
 
 ;; 在一些操作中（如 Refile）尽可能使用 ido 方式的补全 (v6.13)
 (setq org-completion-use-ido t)
