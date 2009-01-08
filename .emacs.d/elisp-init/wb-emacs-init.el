@@ -1102,6 +1102,7 @@ replace. Replace the text that you're presently isearching for."
 (setq default-tab-width 4)
 
 ;; 在文档最后自动插入一个空行
+;; 可以用 mode-require-final-newline 针对 mode 设置
 (setq require-final-newline 't)
 
 ;; 允许 Emacs 和外部其他程序的复制粘贴
