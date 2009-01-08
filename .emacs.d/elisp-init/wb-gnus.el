@@ -18,7 +18,7 @@
 
 (require 'gnus)
 
-(setq user-full-name "firebird")
+(setq user-full-name "Bo Wang")
 (setq user-mail-address "firbir@gmail-SPAM.no")
 
 (setq gnus-novice-user nil)
