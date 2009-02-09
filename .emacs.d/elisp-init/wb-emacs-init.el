@@ -2389,6 +2389,40 @@ Returns nil if it is not visible in the current calendar window."
 ;; 设置几个方便使用 Org 的全局键绑定和函数
 (define-key global-map "\C-ca" 'org-agenda)
 (define-key global-map "\C-cl" 'org-store-link)
+
+(setq org-publish-project-alist
+      '(("org"
+         :base-directory "~/org/"
+         :publishing-directory "~/public_html"
+         :section-numbers nil
+         :table-of-contents nil
+         :style "<link rel=\"stylesheet\"
+                     href=\"../other/mystyle.css\"
+                     type=\"text/css\">")))
+
+(setq org-publish-project-alist
+      '(("index"
+         :base-directory "~/org/source"
+         :base-extension "org"
+         :publishing-directory "~/org/html/"
+         :publishing-function org-publish-org-to-html)
+        ("emacs"
+         :base-directory "~/org/source/emacs"
+         :base-extension "org"
+         :publishing-directory "~/org/html/emacs"
+         :publishing-function org-publish-org-to-html)
+        ("computer"
+         :base-directory "~/org/source/computer"
+         :base-extension "org"
+         :publishing-directory "~/org/html/computer"
+         :publishing-function org-publish-org-to-html)
+        ("images"
+         :base-directory "~/org/source/images"
+         :base-extension "jpg\\|gif\\|png"
+         :publishing-directory "~/org/html/images"
+         :publishing-function org-publish-attachment)
+        ("website" :components ("index" "emacs" "computer" "images"))))
+
 ;; 设置 agenda 相关文件的位置
 (setq org-agenda-files '("~/.emacs.d/org/gtd"))
 (setq org-default-notes-file "~/.emacs.d/org/gtd")
