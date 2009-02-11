@@ -2386,6 +2386,7 @@ Returns nil if it is not visible in the current calendar window."
 (robust-require org-install)
 ;; 设置 .org 文件使用 org-mode
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+(add-to-list 'auto-mode-alist '("\\.muse\\'" . org-mode))
 ;; 设置几个方便使用 Org 的全局键绑定和函数
 (define-key global-map "\C-ca" 'org-agenda)
 (define-key global-map "\C-cl" 'org-store-link)
