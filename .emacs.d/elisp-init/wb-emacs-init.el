@@ -2508,9 +2508,12 @@ Returns nil if it is not visible in the current calendar window."
           (org-agenda-prefix-format " [ ] ")
           (org-agenda-with-colors nil)
           (org-agenda-remove-tags t)
+          (org-agenda-add-entry-text-maxlines 5)
           (org-agenda-skip-function
            (lambda nil
              (org-agenda-skip-entry-if 'regexp "DONE")))))))
+
+;; org-export-htmlize-output-type
 
 ;; Agenda 中不显示某些继承的 tag
 (setq org-tags-exclude-from-inheritance '("PROJECT"))
@@ -2524,6 +2527,12 @@ Returns nil if it is not visible in the current calendar window."
 (defface org-embedded-code-face
   '((t (:foreground "grey40")))
   "Used in org-mode to indicate code block.")
+
+(defface org-date
+  '((((class color) (background light)) (:foreground "brightblack" :underline t))
+    (((class color) (background dark)) (:foreground "brightblack" :underline t))
+    (t (:underline t)))
+  "Face for links.")
 
 (font-lock-add-keywords
  'org-mode
