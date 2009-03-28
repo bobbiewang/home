@@ -2406,12 +2406,14 @@ Returns nil if it is not visible in the current calendar window."
 
 ;; 下载 Org 后用 make 命令生成 org-install 文件
 (robust-require org-install)
-;; 设置 .org 文件使用 org-mode
+
+;; 设置使用 Org Mode 的文件后缀
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 (add-to-list 'auto-mode-alist '("\\.muse\\'" . org-mode))
-;; 设置几个方便使用 Org 的全局键绑定和函数
-(define-key global-map "\C-ca" 'org-agenda)
+
+;; 设置几个方便使用 Org 的全局键绑定
 (define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-ca" 'org-agenda)
 
 (setq org-publish-project-alist
       '(("org"
@@ -2468,6 +2470,10 @@ Returns nil if it is not visible in the current calendar window."
 ;; 设置 TAG 的 face (v6.14)
 (setq org-tag-faces
       '(("PROJECT"    . org-level-2)))
+
+;; 把任务的状态转换情况记录到 drawer 里，缺省为 LOGBOOK
+;; 该变量同时设置 clock 记录位置（org-clock-into-drawer）
+(setq org-log-into-drawer t)
 
 ;; 自定义 Agenda Custom View
 (setq org-agenda-custom-commands
