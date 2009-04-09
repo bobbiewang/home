@@ -2483,8 +2483,7 @@ Returns nil if it is not visible in the current calendar window."
         ("website" :components ("index" "emacs" "computer" "images"))))
 
 ;; 设置 agenda 相关文件的位置
-(setq org-agenda-files '("~/.emacs.d/org/gtd"))
-(setq org-default-notes-file "~/.emacs.d/org/gtd")
+(setq org-agenda-files '("~/.dropbox/GTD/gtd"))
 ;; 在 Agenda Overview 中不显示已完成的任务
 (setq org-agenda-skip-deadline-if-done t)
 (setq org-agenda-skip-scheduled-if-done t)
@@ -2591,10 +2590,10 @@ Returns nil if it is not visible in the current calendar window."
   "Used in org-mode to indicate code block.")
 
 (defface org-date
-  '((((class color) (background light)) (:foreground "brightblack" :underline t))
-    (((class color) (background dark)) (:foreground "brightblack" :underline t))
+  '((((class color) (background light)) (:foreground "#7f7f7f" :underline t))
+    (((class color) (background dark)) (:foreground "#7f7f7f" :underline t))
     (t (:underline t)))
-  "Face for links.")
+  "Face for org dates.")
 
 (font-lock-add-keywords
  'org-mode
@@ -2611,12 +2610,12 @@ Returns nil if it is not visible in the current calendar window."
 
 ;; 调用 remember 时使用 org 的模板
 (robust-require remember
-  (add-hook 'remember-mode-hook 'org-remember-apply-template)
-  ;; 设置记录时的模板，并记录到相应的 org 文件
-  (setq remember-handler-functions 'org-remember-handler)
+  (org-remember-insinuate)
+  (setq org-directory "~/.dropbox/GTD/")
+  (setq org-default-notes-file (concat org-directory "/gtd"))
   (setq org-remember-templates
-        '(("Todo" ?t "* TODO %?\n  %u" "~/.emacs.d/org/gtd" "Inbox")
-          ("Note" ?n "* %?\n  %U" "~/.emacs.d/org/notes")))
+        '(("Todo" ?t "* TODO %?\n  %u" "/gtd" "Inbox")
+          ("Note" ?n "* %?\n  %U" "/notes" top)))
 
   ;; 记住调用 remember 时的位置（使用 org-store-link）
   (setq remember-annotation-functions 'org-remember-annotation)
