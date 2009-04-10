@@ -2614,8 +2614,8 @@ Returns nil if it is not visible in the current calendar window."
   (setq org-directory "~/.dropbox/GTD/")
   (setq org-default-notes-file (concat org-directory "/gtd"))
   (setq org-remember-templates
-        '(("Todo" ?t "* TODO %?\n  %u" "/gtd" "Inbox")
-          ("Note" ?n "* %?\n  %U" "/notes" top)))
+        '(("Todo" ?t "* TODO %?\n  %u" "gtd" "Inbox")
+          ("Note" ?n "* %?\n  %T" "notes" top)))
 
   ;; 记住调用 remember 时的位置（使用 org-store-link）
   (setq remember-annotation-functions 'org-remember-annotation)
