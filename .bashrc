@@ -181,12 +181,12 @@ function set_prompts()
     local STANDOUT=$(tput smso 2> /dev/null)    # 在一些终端上效果等同粗体
     local UNDERLINE=$(tput smul 2> /dev/null)   # 下划线（部分终端支持）
     local INVISIBLE=$(tput invis 2> /dev/null)  # 隐藏，在某些情况下可能有用
-    
+
     # 特殊效果
     local BEEP=$(tput bel 2> /dev/null)         # 响铃
     local HOME=$(tput home 2> /dev/null)        # 移动光标到 home
     local CLEAR=$(tput clear 2> /dev/null)      # 清屏
-    
+
     # 前景色
     local FG_BLK=$(tput setaf 0 2> /dev/null)   # Black
     local FG_RED=$(tput setaf 1 2> /dev/null)   # Red
@@ -196,7 +196,7 @@ function set_prompts()
     local FG_MAG=$(tput setaf 5 2> /dev/null)   # Magenta
     local FG_CYN=$(tput setaf 6 2> /dev/null)   # Cyan
     local FG_WHT=$(tput setaf 7 2> /dev/null)   # White
-    
+
     # 背景色
     local BG_BLK=$(tput setab 0 2> /dev/null)   # Black
     local BG_RED=$(tput setab 1 2> /dev/null)   # Red
@@ -206,7 +206,7 @@ function set_prompts()
     local BG_MAG=$(tput setab 5 2> /dev/null)   # Magenta
     local BG_CYN=$(tput setab 6 2> /dev/null)   # Cyan
     local BG_WHT=$(tput setab 7 2> /dev/null)   # White
-    
+
     # 显示属性和提示内容的组合
     local PS_ROOT="\[$BOLD$FG_RED\]\u"
     local PS_USER="\[$NORM$FG_GRN\]\u"
@@ -227,17 +227,17 @@ function set_prompts()
     local PS_PLUS="\[$BOLD$FG_YEL\]+"
     local PS_GTHAN="\[$NORM$FG_WHT\]\$"
     local PS_SPACE="\[$NORM$FG_WHT\] "
-    
+
     # $EUID 用于识别是否 root 用户
     case $EUID in
         # 为 root 用户设置 Prompt
         0)  PS1="\n$PS_ROOT" ;;
-    
+
         # 为普通用户设置 Prompt
         *)  PS1="\n$PS_USER"
-    
+
     esac
-    
+
     PS1="$PS1$PS_AT$PS_HOST$PS_SPACE$PS_WDIR$PS_SPACE$PS_JOBS\n"
     PS1="$PS1$PS_SMILE$PS_HIST$PS_GTHAN$PS_SPACE"
     PS2="$PS_CONT$PS_COLON$PS_SPACE"
@@ -263,9 +263,9 @@ fi
 
 if [ -n "$ENV" ]; then
     FOUNDRY=$RTF
-    CDPATH=$ENV/base/pkg:$ENV/or5g00/pkg:$ENV/base/pkg:$ENV/or5g00/pkg/o5gplace:$CDPATH
-    CDPATH=$ENV/or5s00/pkg:$ENV/mg5g00/pkg:$ENV/mj5g00/pkg:$CDPATH
-    CDPATH=$ENV/ep5g00/pkg:$ENV/ep5a00/pkg:$ENV/ep5m00/pkg:$CDPATH
+    CDPATH=$CDPATH:$ENV/base/pkg:$ENV/or5g00/pkg:$ENV/base/pkg:$ENV/or5g00/pkg/o5gplace
+    CDPATH=$CDPATH:$ENV/or5s00/pkg:$ENV/mg5g00/pkg:$ENV/mj5g00/pkg
+    CDPATH=$CDPATH:$ENV/ep5g00/pkg:$ENV/ep5a00/pkg:$ENV/ep5m00/pkg
 fi
 
 # Local Variables:
