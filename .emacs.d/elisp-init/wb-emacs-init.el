@@ -98,11 +98,11 @@
 ;;   (setq explicit-shell-file-name shell-file-name))
 
 ;; (if (eq window-system 'w32)
-;;     (defun insert-x-style-font() 
+;;     (defun insert-x-style-font()
 ;;       "Insert a string in the X format which describes a font the
 ;; user can select from the Windows font selector."
-;;       (interactive) 
-;;       (insert (prin1-to-string (w32-select-font))))) 
+;;       (interactive)
+;;       (insert (prin1-to-string (w32-select-font)))))
 
 ;;;; wb-functions.el
 
@@ -720,7 +720,7 @@ Argument ARG Key."
 (when *emacs<=22p*
   (robust-require mule-gbk))
 
-(if (and *win32p* (fboundp 'mule-gbk-selection-setup))
+(if (and *win32p* (or *emacs>=23p* (and *emacs<=22p* (fboundp 'mule-gbk-selection-setup))))
     ;; Windows 环境使用 chinese-gbk 编码
     (progn
       ;; Setup GBK environment
@@ -729,7 +729,7 @@ Argument ARG Key."
       (set-language-environment 'chinese-gbk)
       (setq locale-coding-system 'chinese-gbk)
       ;; Setup X Selection for mule-gbk
-      (mule-gbk-selection-setup)
+      (if *emacs<=22p* (mule-gbk-selection-setup))
       ;; Unicode support, for Emacs CVS (21.3.50) only
       (when (fboundp 'utf-translate-cjk-mode)
         ;; Load modified utf-translate-cjk-mode
@@ -775,15 +775,48 @@ Argument ARG Key."
 
 ;; Consolas 和雅黑的 2:1 组合
 ;; 18/20 20/22 22/24
+
 (when *win32p*
-  (create-fontset-from-fontset-spec
-   (concat
-    "-outline-Consolas-normal-r-normal-normal-18-97-96-96-c-*-fontset-gbk,"
-    "chinese-gb2312:-outline-微软雅黑-normal-r-normal-*-20-*-96-96-c-*-iso10646-1,"
-    "mule-unicode-0100-24ff:-*-微软雅黑-normal-r-*-*-20-*-96-96-c-*-iso10646-1,"
-    "chinese-cns11643-5:-*-微软雅黑-normal-r-normal-*-20-*-96-96-c-*-iso10646-1,"
-    "chinese-cns11643-6:-*-微软雅黑-normal-r-normal-*-20-*-96-96-c-*-iso10646-1,"
-    "chinese-cns11643-7:-*-微软雅黑-normal-r-normal-*-20-*-96-96-c-*-iso10646-1"))
+  ;; 定义字体
+  (if *emacs<=22p*
+      ;; Emacs 22 定义字体的方法
+      (create-fontset-from-fontset-spec
+       (concat
+        "-outline-Consolas-normal-r-normal-normal-18-97-96-96-c-*-fontset-gbk,"
+        "chinese-gb2312:-outline-微软雅黑-normal-r-normal-*-20-*-96-96-c-*-iso10646-1,"
+        "mule-unicode-0100-24ff:-*-微软雅黑-normal-r-*-*-20-*-96-96-c-*-iso10646-1,"
+        "chinese-cns11643-5:-*-微软雅黑-normal-r-normal-*-20-*-96-96-c-*-iso10646-1,"
+        "chinese-cns11643-6:-*-微软雅黑-normal-r-normal-*-20-*-96-96-c-*-iso10646-1,"
+        "chinese-cns11643-7:-*-微软雅黑-normal-r-normal-*-20-*-96-96-c-*-iso10646-1"))
+    ;; Emacs 23 定义字体的方法
+    (create-fontset-from-fontset-spec
+     "-*-Consolas-normal-r-*-*-18-*-*-*-c-*-fontset-gbk")
+    (set-fontset-font
+     "fontset-default" nil
+     "-*-微软雅黑-normal-r-*-*-20-*-*-*-*-*-iso10646-1" nil 'prepend)
+    (set-fontset-font
+     "fontset-gbk" 'chinese-big5-1
+     "-*-微软雅黑-normal-r-*-*-20-*-*-*-*-*-iso10646-1" nil 'prepend)
+    (set-fontset-font
+     "fontset-gbk" 'chinese-big5-2
+     "-*-微软雅黑-normal-r-*-*-20-*-*-*-*-*-iso10646-1" nil 'prepend)
+    (set-fontset-font
+     "fontset-gbk" 'kana
+     "-*-微软雅黑-normal-r-*-*-20-*-*-*-*-*-iso10646-1" nil 'prepend)
+    (set-fontset-font
+     "fontset-gbk" 'han
+     "-*-微软雅黑-normal-r-*-*-20-*-*-*-*-*-iso10646-1" nil 'prepend)
+    (set-fontset-font
+     "fontset-gbk" 'gb18030
+     "-*-微软雅黑-normal-r-*-*-20-*-*-*-*-*-iso10646-1" nil 'prepend)
+    (set-fontset-font
+     "fontset-gbk" 'cjk-misc
+     "-*-微软雅黑-normal-r-*-*-20-*-*-*-*-*-iso10646-1" nil 'prepend)
+    (set-fontset-font
+     "fontset-gbk" 'symbol
+     "-*-微软雅黑-normal-r-*-*-20-*-*-*-*-*-iso10646-1" nil 'prepend))
+
+  ;; 使用字体
   (set-default-font "fontset-gbk")
 
   ;; 在 C-x 5 2 打开的 Frame 中也正常显示字体
@@ -793,7 +826,8 @@ Argument ARG Key."
 
 (when *win32p*
   ;; Windows 环境下使用 unical 识别编码
-  (robust-require unicad))
+  (robust-require unicad)
+  )
 
 ;; 支持中文句尾标点，支持 M-a M-e 等命令
 (setq sentence-end "\\([。！？]\\|……\\|[.?!][]\"')}]*\\($\\|[ \t]\\)\\)[ \t\n]*")
@@ -1262,7 +1296,7 @@ do kill lines as `dd' in vim."
         ;; 下面的规则适用于 *nix 平台所有文件
         ;; ("\\`/?\\([^/]*/\\)*\\([^/]*\\)\\'" "~/.emacs.d/auto-save/\\2" t)
         ))
- 
+
 ;; 时间戳（time-stamp）设置，记录文档保存的时间。如果文档里有
 ;; Time-stamp: 的文字，就会自动保存时间戳
 (setq time-stamp-active t)                ; 启用时间戳
@@ -1959,7 +1993,7 @@ directory, select directory. Lastly the file is opened."
   (defun xgtags-pop-stack ()
     "Move to previous point on the stack."
     (interactive)
-    (let ((delete (and xgtags-kill-buffers 
+    (let ((delete (and xgtags-kill-buffers
                        (not (xgtags--stacked-p (current-buffer)))))
           (context (xgtags--pop-context)))
       (assert context nil "The tags stack is empty")
@@ -2406,12 +2440,14 @@ Returns nil if it is not visible in the current calendar window."
 
 ;; 下载 Org 后用 make 命令生成 org-install 文件
 (robust-require org-install)
-;; 设置 .org 文件使用 org-mode
+
+;; 设置使用 Org Mode 的文件后缀
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 (add-to-list 'auto-mode-alist '("\\.muse\\'" . org-mode))
-;; 设置几个方便使用 Org 的全局键绑定和函数
-(define-key global-map "\C-ca" 'org-agenda)
+
+;; 设置几个方便使用 Org 的全局键绑定
 (define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-ca" 'org-agenda)
 
 (setq org-publish-project-alist
       '(("org"
@@ -2447,8 +2483,7 @@ Returns nil if it is not visible in the current calendar window."
         ("website" :components ("index" "emacs" "computer" "images"))))
 
 ;; 设置 agenda 相关文件的位置
-(setq org-agenda-files '("~/.emacs.d/org/gtd"))
-(setq org-default-notes-file "~/.emacs.d/org/gtd")
+(setq org-agenda-files '("~/.dropbox/GTD/gtd"))
 ;; 在 Agenda Overview 中不显示已完成的任务
 (setq org-agenda-skip-deadline-if-done t)
 (setq org-agenda-skip-scheduled-if-done t)
@@ -2468,6 +2503,10 @@ Returns nil if it is not visible in the current calendar window."
 ;; 设置 TAG 的 face (v6.14)
 (setq org-tag-faces
       '(("PROJECT"    . org-level-2)))
+
+;; 把任务的状态转换情况记录到 drawer 里，缺省为 LOGBOOK
+;; 该变量同时设置 clock 记录位置（org-clock-into-drawer）
+(setq org-log-into-drawer t)
 
 ;; 自定义 Agenda Custom View
 (setq org-agenda-custom-commands
@@ -2551,10 +2590,10 @@ Returns nil if it is not visible in the current calendar window."
   "Used in org-mode to indicate code block.")
 
 (defface org-date
-  '((((class color) (background light)) (:foreground "brightblack" :underline t))
-    (((class color) (background dark)) (:foreground "brightblack" :underline t))
+  '((((class color) (background light)) (:foreground "#7f7f7f" :underline t))
+    (((class color) (background dark)) (:foreground "#7f7f7f" :underline t))
     (t (:underline t)))
-  "Face for links.")
+  "Face for org dates.")
 
 (font-lock-add-keywords
  'org-mode
@@ -2571,12 +2610,12 @@ Returns nil if it is not visible in the current calendar window."
 
 ;; 调用 remember 时使用 org 的模板
 (robust-require remember
-  (add-hook 'remember-mode-hook 'org-remember-apply-template)
-  ;; 设置记录时的模板，并记录到相应的 org 文件
-  (setq remember-handler-functions 'org-remember-handler)
+  (org-remember-insinuate)
+  (setq org-directory "~/.dropbox/GTD/")
+  (setq org-default-notes-file (concat org-directory "/gtd"))
   (setq org-remember-templates
-        '(("Todo" ?t "* TODO %?\n  %u" "~/.emacs.d/org/gtd" "Inbox")
-          ("Note" ?n "* %?\n  %U" "~/.emacs.d/org/notes")))
+        '(("Todo" ?t "* TODO %?\n  %u" "/gtd" "Inbox")
+          ("Note" ?n "* %?\n  %U" "/notes" top)))
 
   ;; 记住调用 remember 时的位置（使用 org-store-link）
   (setq remember-annotation-functions 'org-remember-annotation)
