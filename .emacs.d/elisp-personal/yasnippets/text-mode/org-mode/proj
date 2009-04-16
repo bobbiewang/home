@@ -1,0 +1,6 @@
+#name : Project
+# --
+${1:src} [%]         :PROJECT:
+:PROPERTIES:
+:CATEGORY: $0
+:END:
