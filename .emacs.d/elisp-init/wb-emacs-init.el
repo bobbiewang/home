@@ -2179,7 +2179,7 @@ the length of the whitespace"
 ;; Rails Snippets
 (robust-require yasnippet
   (yas/initialize)
-  (yas/load-directory "~/.emacs.d/elisp-personal/snippets"))
+  (yas/load-directory "~/.emacs.d/elisp-personal/yasnippets"))
 
 ;; YAML 支持
 (robust-require yaml-mode
@@ -2450,37 +2450,35 @@ Returns nil if it is not visible in the current calendar window."
 (define-key global-map "\C-ca" 'org-agenda)
 
 (setq org-publish-project-alist
-      '(("org"
-         :base-directory "~/org/"
-         :publishing-directory "~/public_html"
-         :section-numbers nil
-         :table-of-contents nil
-         :style "<link rel=\"stylesheet\"
-                     href=\"../other/mystyle.css\"
-                     type=\"text/css\">")))
-
-(setq org-publish-project-alist
       '(("index"
-         :base-directory "~/org/source"
-         :base-extension "org"
-         :publishing-directory "~/org/html/"
+         :base-directory "~/muse/source"
+         :publishing-directory "~/public_html/"
          :publishing-function org-publish-org-to-html)
         ("emacs"
-         :base-directory "~/org/source/emacs"
-         :base-extension "org"
-         :publishing-directory "~/org/html/emacs"
+         :base-directory "~/muse/source/emacs"
+         :publishing-directory "~/public_html/emacs"
          :publishing-function org-publish-org-to-html)
         ("computer"
-         :base-directory "~/org/source/computer"
-         :base-extension "org"
-         :publishing-directory "~/org/html/computer"
+         :base-directory "~/muse/source/computer"
+         :publishing-directory "~/public_html/computer"
          :publishing-function org-publish-org-to-html)
-        ("images"
-         :base-directory "~/org/source/images"
-         :base-extension "jpg\\|gif\\|png"
-         :publishing-directory "~/org/html/images"
-         :publishing-function org-publish-attachment)
-        ("website" :components ("index" "emacs" "computer" "images"))))
+        ("iccad"
+         :base-directory "~/muse/source/iccad"
+         :publishing-directory "~/public_html/iccad"
+         :publishing-function org-publish-org-to-html)
+        ("programming"
+         :base-directory "~/muse/source/programming"
+         :publishing-directory "~/public_html/programming"
+         :publishing-function org-publish-org-to-html)
+        ("reading"
+         :base-directory "~/muse/source/reading"
+         :publishing-directory "~/public_html/reading"
+         :publishing-function org-publish-org-to-html)
+        ("spa"
+         :base-directory "~/muse/source/spa"
+         :publishing-directory "~/public_html/spa"
+         :publishing-function org-publish-org-to-html)
+        ("website" :components ("index" "emacs" "computer" "iccad" "programming" "reading" "spa"))))
 
 ;; 设置 agenda 相关文件的位置
 (setq org-agenda-files '("~/.dropbox/GTD/gtd"))
