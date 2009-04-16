@@ -1128,6 +1128,7 @@ replace. Replace the text that you're presently isearching for."
 
 ;; 设置缺省的 mode 为 text-mode，而不是一点功能都没有的 fundamental-mode
 (setq default-major-mode 'text-mode)
+(add-hook 'text-mode-hook 'turn-on-auto-fill)
 
 ;; 选中了一些文字时，如果再输入一个字符，这个字符把选中的文字替换掉，而
 ;; 不是直接在光标的位置插入。也可以按 DEL 将选中的文件删除
@@ -2438,12 +2439,14 @@ Returns nil if it is not visible in the current calendar window."
 
 ;;; Org Mode
 
+;; 用 RET 而不是 C-c C-o 打开连接，这要在加载 org 前设置
+(setq org-return-follows-link t)
+
 ;; 下载 Org 后用 make 命令生成 org-install 文件
 (robust-require org-install)
 
 ;; 设置使用 Org Mode 的文件后缀
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
-(add-to-list 'auto-mode-alist '("\\.muse\\'" . org-mode))
 
 ;; 设置几个方便使用 Org 的全局键绑定
 (define-key global-map "\C-cl" 'org-store-link)
@@ -2453,32 +2456,46 @@ Returns nil if it is not visible in the current calendar window."
       '(("index"
          :base-directory "~/muse/source"
          :publishing-directory "~/public_html/"
+         :base-extension "org"
+         :section-numbers nil
+         :preamble "<div id='photo'><img src=''/></div><a href=''>Home</a><p>Bo</p>"
+         :postamble "<div id='hosted'></div>"
+         :author nil
          :publishing-function org-publish-org-to-html)
         ("emacs"
          :base-directory "~/muse/source/emacs"
          :publishing-directory "~/public_html/emacs"
+         :base-extension "org"
          :publishing-function org-publish-org-to-html)
         ("computer"
          :base-directory "~/muse/source/computer"
          :publishing-directory "~/public_html/computer"
+         :base-extension "org"
          :publishing-function org-publish-org-to-html)
         ("iccad"
          :base-directory "~/muse/source/iccad"
          :publishing-directory "~/public_html/iccad"
+         :base-extension "org"
          :publishing-function org-publish-org-to-html)
         ("programming"
          :base-directory "~/muse/source/programming"
          :publishing-directory "~/public_html/programming"
+         :base-extension "org"
          :publishing-function org-publish-org-to-html)
         ("reading"
          :base-directory "~/muse/source/reading"
          :publishing-directory "~/public_html/reading"
+         :base-extension "org"
          :publishing-function org-publish-org-to-html)
         ("spa"
          :base-directory "~/muse/source/spa"
          :publishing-directory "~/public_html/spa"
+         :base-extension "org"
          :publishing-function org-publish-org-to-html)
-        ("website" :components ("index" "emacs" "computer" "iccad" "programming" "reading" "spa"))))
+        ("website" :components ("index" "emacs" "computer" "iccad"
+                                "programming" "reading" "spa"))))
+
+;; iimage
 
 ;; 设置 agenda 相关文件的位置
 (setq org-agenda-files '("~/.dropbox/GTD/gtd"))
@@ -2489,6 +2506,8 @@ Returns nil if it is not visible in the current calendar window."
 (setq org-agenda-ndays 7)
 ;; Agenda Overview 从周几开始显示，缺省 1 表示周一，nil 表示当天
 (setq org-agenda-start-on-weekday nil)
+
+(add-hook 'org-agenda-mode-hook 'hl-line-mode)
 
 ;; 设置 TODO 关键字的 face
 (setq org-todo-keyword-faces
@@ -2612,7 +2631,7 @@ Returns nil if it is not visible in the current calendar window."
   (setq org-directory "~/.dropbox/GTD/")
   (setq org-default-notes-file (concat org-directory "/gtd"))
   (setq org-remember-templates
-        '(("Todo" ?t "* TODO %?\n  %u" "gtd" "Inbox")
+        '(("Todo" ?t "* TODO %? %^g\n  %u" "gtd" "Inbox")
           ("Note" ?n "* %?\n  %T" "notes" top)))
 
   ;; 记住调用 remember 时的位置（使用 org-store-link）
