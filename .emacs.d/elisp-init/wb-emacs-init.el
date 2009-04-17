@@ -1573,6 +1573,11 @@ directory, select directory. Lastly the file is opened."
 
 (robust-require snippet)
 
+(with-library "company"
+  (autoload 'company-mode "company" nil t)
+  (setq company-idle-delay t)
+  (setq company-begin-commands '(self-insert-command)))
+
 ;;;; wb-muse.el
 
 (robust-require muse-autoloads
