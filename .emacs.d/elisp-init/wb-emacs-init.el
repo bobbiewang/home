@@ -2463,9 +2463,37 @@ Returns nil if it is not visible in the current calendar window."
          :publishing-directory "~/public_html/"
          :base-extension "org"
          :section-numbers nil
-         :preamble "<div id='photo'><img src=''/></div><a href=''>Home</a><p>Bo</p>"
-         :postamble "<div id='hosted'></div>"
-         :author nil
+         :table-of-contents nil
+         :author-info nil
+         :creator-info nil
+         :style-include-default nil
+         :auto-preamble nil
+         :auto-postamble nil
+         :style "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />"
+         :preamble "<div class=\"container\">
+                      <div class=\"gfx\"><span></span></div>
+                      <div class=\"top\">
+                        <div class=\"navigation\">
+                          <a href=\"/\" id=\"selected\">Home</a>
+                          <a href=\"/spa/SPA.html\">S.P.A.</a>
+                          <a href=\"/reading/Reading.html\">Reading</a>
+                          <a href=\"/programming/Programming.html\">Programming</a>
+                          <a href=\"/iccad/ICCAD.html\">ICCAD</a>
+                          <a href=\"/computer/Computer.html\">Computer</a>
+                          <a href=\"/emacs/Emacs.html\">Emacs</a>
+                        </div>
+                        <div class=\"pattern\"><span></span></div>
+                        <div class=\"header\">
+                          <h1>The Power of Mind</h1>
+                          <p>Observe, Think and Practise</p>
+                        </div>
+                        <div class=\"pattern\"><span></span></div>
+                      </div>
+                      <div class=\"content\">
+                      <div class=\"spacer\"></div>"
+         :postamble "  </div>
+                       <div class=\"footer\">&copy; 2009 Bo Wang</div>
+                     </div>"
          :publishing-function org-publish-org-to-html)
         ("emacs"
          :base-directory "~/muse/source/emacs"
