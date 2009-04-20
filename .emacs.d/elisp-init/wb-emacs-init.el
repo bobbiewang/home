@@ -2474,13 +2474,13 @@ Returns nil if it is not visible in the current calendar window."
                       <div class=\"gfx\"><span></span></div>
                       <div class=\"top\">
                         <div class=\"navigation\">
-                          <a href=\"/\" id=\"selected\">Home</a>
-                          <a href=\"/spa/SPA.html\">S.P.A.</a>
-                          <a href=\"/reading/Reading.html\">Reading</a>
-                          <a href=\"/programming/Programming.html\">Programming</a>
-                          <a href=\"/iccad/ICCAD.html\">ICCAD</a>
-                          <a href=\"/computer/Computer.html\">Computer</a>
-                          <a href=\"/emacs/Emacs.html\">Emacs</a>
+                          <a href=\"index.html\" id=\"selected\">Home</a>
+                          <a href=\"spa/SPA.html\">S.P.A.</a>
+                          <a href=\"reading/Reading.html\">Reading</a>
+                          <a href=\"programming/Programming.html\">Programming</a>
+                          <a href=\"iccad/ICCAD.html\">ICCAD</a>
+                          <a href=\"computer/Computer.html\">Computer</a>
+                          <a href=\"emacs/Emacs.html\">Emacs</a>
                         </div>
                         <div class=\"pattern\"><span></span></div>
                         <div class=\"header\">
@@ -2499,6 +2499,50 @@ Returns nil if it is not visible in the current calendar window."
          :base-directory "~/muse/source/emacs"
          :publishing-directory "~/public_html/emacs"
          :base-extension "org"
+         :author-info nil
+         :creator-info nil
+         :style-include-default nil
+         :auto-preamble nil
+         :auto-postamble nil
+         :style "<link rel=\"stylesheet\" type=\"text/css\" href=\"../style.css\" />"
+         :preamble "<div class=\"container\">
+                      <div class=\"gfx\"><span></span></div>
+                      <div class=\"top\">
+                        <div class=\"navigation\">
+                          <a href=\"../index.html\">Home</a>
+                          <a href=\"spa/SPA.html\">S.P.A.</a>
+                          <a href=\"reading/Reading.html\">Reading</a>
+                          <a href=\"programming/Programming.html\">Programming</a>
+                          <a href=\"iccad/ICCAD.html\">ICCAD</a>
+                          <a href=\"computer/Computer.html\">Computer</a>
+                          <a href=\"emacs/Emacs.html\" id=\"selected\">Emacs</a>
+                        </div>
+                        <div class=\"pattern\"><span></span></div>
+                        <div class=\"header\">
+                          <h1>The Power of Mind</h1>
+                          <p>Observe, Think and Practise</p>
+                        </div>
+                        <div class=\"pattern\"><span></span></div>
+                      </div>
+                      <div class=\"content\">
+                      <div class=\"spacer\"></div>"
+         :postamble "  </div>
+                       <div class=\"footer\">
+                         <div class=\"left\">
+                           &copy; 2009
+                           <a href=\"index.html\">Website.com</a>.
+                           Valid
+                           <a href=\"http://jigsaw.w3.org/css-validator/check/referer\">CSS</a>
+                           &amp;
+                           <a href=\"http://validator.w3.org/check?uri=referer\">XHTML</a>
+                         </div>
+                         <div class=\"right\">
+                           <a href=\"index.html\">Website</a>
+                           by
+                           <a href=\"../index.html\">Bo Wang</a>
+                         </div>
+                       </div>
+                     </div>"
          :publishing-function org-publish-org-to-html)
         ("computer"
          :base-directory "~/muse/source/computer"
@@ -2539,6 +2583,8 @@ Returns nil if it is not visible in the current calendar window."
 (setq org-agenda-ndays 7)
 ;; Agenda Overview 从周几开始显示，缺省 1 表示周一，nil 表示当天
 (setq org-agenda-start-on-weekday nil)
+;; 在 Clock Report 中最多显示第 4 级的任务
+(setq org-agenda-clockreport-parameter-plist '(:link t :maxlevel 4))
 
 (add-hook 'org-agenda-mode-hook 'hl-line-mode)
 
