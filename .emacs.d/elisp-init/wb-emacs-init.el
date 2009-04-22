@@ -2867,6 +2867,8 @@ Returns nil if it is not visible in the current calendar window."
 
 ;;; 全局键绑定
 
+(defalias 'sbke 'save-buffers-kill-emacs)
+
 ;; C-x 3 缺省用 follow-mode 显示当前 buffer
 ;; (global-set-key (kbd "C-x 3") 'follow-delete-other-windows-and-split)
 
