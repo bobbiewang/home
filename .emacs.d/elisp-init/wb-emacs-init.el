@@ -2184,12 +2184,8 @@ the length of the whitespace"
 
 ;; Rails Snippets
 (robust-require yasnippet
-  (defun wb-load-yasnippets ()
-    (interactive)
-    (yas/load-directory "~/.emacs.d/elisp-personal/yasnippets"))
-
   (yas/initialize)
-  (wb-load-yasnippets))
+  (yas/load-directory "~/.emacs.d/elisp-personal/yasnippets"))
 
 ;; YAML 支持
 (robust-require yaml-mode
@@ -2876,7 +2872,7 @@ Returns nil if it is not visible in the current calendar window."
 ;;; 全局键绑定
 
 ;; C-x 3 缺省用 follow-mode 显示当前 buffer
-(global-set-key (kbd "C-x 3") 'follow-delete-other-windows-and-split)
+;; (global-set-key (kbd "C-x 3") 'follow-delete-other-windows-and-split)
 
 ;; C-x n/p 实现向后/向前的 C-x o
 (global-set-key (kbd "C-x p") 'previous-multiframe-window)
