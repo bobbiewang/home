@@ -2184,8 +2184,12 @@ the length of the whitespace"
 
 ;; Rails Snippets
 (robust-require yasnippet
+  (defun wb-load-yasnippets ()
+    (interactive)
+    (yas/load-directory "~/.emacs.d/elisp-personal/yasnippets"))
+
   (yas/initialize)
-  (yas/load-directory "~/.emacs.d/elisp-personal/yasnippets"))
+  (wb-load-yasnippets))
 
 ;; YAML 支持
 (robust-require yaml-mode
