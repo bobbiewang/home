@@ -1902,7 +1902,7 @@ directory, select directory. Lastly the file is opened."
 ;; smart-compile 根据当前文件名，提供合适的编译、运行命令
 (robust-require smart-compile+
   (setq smart-compile-alist
-        '(("\\.c$"          . "gcc -o %n %f")
+        '(("\\.c$"          . "gcc -Wall -ggdb -o %n %f")
           ("\\.[Cc]+[Pp]*$" . "g++ -o %n %f")
           ("\\.java$"       . "javac %f")
           ("\\.f90$"        . "f90 %f -o %n")
