@@ -1899,17 +1899,10 @@ directory, select directory. Lastly the file is opened."
 
 ;;;; wb-de.el
 
-;; smart compile 是一个非常好用的 elisp。它的设置也相当简单。只要对相应的后缀
-;; 定义 compile 和 run 的命令就行了。格式也列在下面。
-;; smart-executable-alist 是用来在调用 smart-run 时是否需要 compile。所以
-;; 脚本一般都要加入到这个列表中。除非你只用 smart-compile 运行。
-(robust-require smart-compile
-  ;;   %F  absolute pathname            ( /usr/local/bin/netscape.bin )
-  ;;   %f  file name without directory  ( netscape.bin )
-  ;;   %n  file name without extention  ( netscape )
-  ;;   %e  extention of file name       ( bin )
+;; smart-compile 根据当前文件名，提供合适的编译、运行命令
+(robust-require smart-compile+
   (setq smart-compile-alist
-        '(("\\.c$"          . "g++ -o %n %f")
+        '(("\\.c$"          . "gcc -o %n %f")
           ("\\.[Cc]+[Pp]*$" . "g++ -o %n %f")
           ("\\.java$"       . "javac %f")
           ("\\.f90$"        . "f90 %f -o %n")
@@ -1956,7 +1949,8 @@ directory, select directory. Lastly the file is opened."
           "%n.ahk"
           "%n.pm"
           "%n.bat"
-          "%n.sh")))
+          "%n.sh"))
+  ())
 
 ;;;; wb-elispde.el
 
@@ -2046,8 +2040,9 @@ directory, select directory. Lastly the file is opened."
   (setq c-macro-cppflags " ")
   (setq c-macro-prompt-flag t)
   ;; 编译命令
-  (define-key c-mode-map [(shift f7)] 'compile)
-  (define-key c-mode-map [(f7)] 'wb-onekey-compile)
+  (when (featurep 'smart-compile+)
+    (define-key c-mode-map [(f5)] 'smart-run)
+    (define-key c-mode-map [(f7)] 'smart-compile))
   ;; 一起启动的 Minor Modes
   (setq hs-minor-mode t)
   (setq abbrev-mode t)
@@ -2080,13 +2075,6 @@ directory, select directory. Lastly the file is opened."
 (add-hook 'c++-mode-hook 'wb-c++-mode-hook)
 
 ;; 设置编译命令和环境
-(defun wb-onekey-compile ()
-  "Save buffers and start compile"
-  (interactive)
-  (save-some-buffers t)
-  (setq compilation-read-command nil)
-  (compile compile-command)
-  (setq compilation-read-command t))
 
 (setq compilation-window-height 8)
 (setq compilation-finish-functions
@@ -2857,10 +2845,18 @@ Returns nil if it is not visible in the current calendar window."
             (define-key function-key-map (kbd "\e[l")   [C-f2])
             (define-key function-key-map (kbd "\e[Z")   [S-f2])
             (define-key function-key-map (kbd "\e\e[N") [M-f2])
+            (define-key function-key-map (kbd "\e[Q")   [f5])
+            (define-key function-key-map (kbd "\e[o")   [C-f5])
+            (define-key function-key-map (kbd "\e[c")   [S-f5])
+            (define-key function-key-map (kbd "\e\e[Q") [M-f5])
+            (define-key function-key-map (kbd "\e[S")   [f7])
+            (define-key function-key-map (kbd "\e[q")   [C-f7])
+            (define-key function-key-map (kbd "\e[e")   [S-f7])
+            (define-key function-key-map (kbd "\e\e[q") [M-f7])
             (define-key function-key-map (kbd "\e[V")   [f10])
             (define-key function-key-map (kbd "\e[t")   [C-f10])
             (define-key function-key-map (kbd "\e[h")   [S-f10])
-            (define-key function-key-map (kbd "\e\eV") [M-f10])
+            (define-key function-key-map (kbd "\e\eV")  [M-f10])
             (define-key function-key-map (kbd "\e[W")   [f11])
             (define-key function-key-map (kbd "\e[u")   [C-f11])
             (define-key function-key-map (kbd "\e[i")   [S-f11])
