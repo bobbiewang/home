@@ -1128,7 +1128,7 @@ replace. Replace the text that you're presently isearching for."
 
 ;; 设置缺省的 mode 为 text-mode，而不是一点功能都没有的 fundamental-mode
 (setq default-major-mode 'text-mode)
-(add-hook 'text-mode-hook 'turn-on-auto-fill)
+;; (add-hook 'text-mode-hook 'turn-on-auto-fill)
 
 ;; 选中了一些文字时，如果再输入一个字符，这个字符把选中的文字替换掉，而
 ;; 不是直接在光标的位置插入。也可以按 DEL 将选中的文件删除
