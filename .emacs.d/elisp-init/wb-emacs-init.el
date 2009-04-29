@@ -937,6 +937,7 @@ Argument ARG Key."
   (with-without-library "color-theme"
     ((require 'color-theme)
      (color-theme-initialize)
+     ;; (color-theme-calm-forest)
      (color-theme-dark-laptop))
     ((setq default-frame-alist
            '((foreground-color . "Wheat")
@@ -2043,6 +2044,9 @@ directory, select directory. Lastly the file is opened."
   (when (featurep 'smart-compile+)
     (define-key c-mode-map [(f5)] 'smart-run)
     (define-key c-mode-map [(f7)] 'smart-compile))
+  ;; 调试环境
+  (setq gdb-show-main t)
+  (setq gdb-many-windows t)
   ;; 一起启动的 Minor Modes
   (setq hs-minor-mode t)
   (setq abbrev-mode t)
@@ -2085,8 +2089,8 @@ directory, select directory. Lastly the file is opened."
           (if (string-match "exited abnormally" str)
               ;;there were errors
               (message "compilation errors, press C-x ` to visit")
-            ;;no errors, make the compilation window go away in 0.5 seconds
-            (run-at-time .5 nil 'delete-windows-on buf)
+            ;; no errors, make the compilation window go away in 2 seconds
+            (run-at-time 2 nil 'delete-windows-on buf)
             (message "NO COMPILATION ERRORS!")))))
 
 (add-hook 'gud-mode-hook
