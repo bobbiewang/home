@@ -1382,9 +1382,10 @@ directory, select directory. Lastly the file is opened."
 (robust-require ido
   (setq ido-save-directory-list-file    ; 自定义 ido 文件的路径
         (expand-file-name "~/.emacs.d/.ido.last"))
-  (ido-mode t)                       ; 启用 ido mode
-  (setq ido-enable-flex-matching t)  ; 可以用 wei 匹配文件名 wb-emacs-init.el
-  (setq ido-use-filename-at-point t) ; 先查找光标处文件，可以用于替换 ffap
+  (ido-mode t)                         ; 启用 ido mode
+  (setq ido-enable-flex-matching t)    ; 可以用 wei 匹配文件名 wb-emacs-init.el
+  (setq ido-create-new-buffer 'always) ; 没有名字匹配的 buffer 时，直接创建新 buffer
+  (setq ido-use-filename-at-point t)   ; 先查找光标处文件，可以用于替换 ffap
   (add-hook 'ido-setup-hook
             (lambda ()
               ;(define-key ido-completion-map [tab] 'ido-complete)
@@ -2431,6 +2432,13 @@ Returns nil if it is not visible in the current calendar window."
 (setq gnus-init-file "~/.emacs.d/elisp-init/wb-gnus.el")
 
 ;;; Org Mode
+
+(add-hook 'org-mode-hook
+          (lambda ()
+            ;; 使用 yasnippet
+            (make-variable-buffer-local 'yas/trigger-key)
+            (setq yas/trigger-key [tab])
+            (define-key yas/keymap [tab] 'yas/next-field-group)))
 
 ;; 用 RET 而不是 C-c C-o 打开连接，这要在加载 org 前设置
 (setq org-return-follows-link t)
