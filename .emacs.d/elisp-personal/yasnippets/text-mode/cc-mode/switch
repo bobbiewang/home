@@ -1,0 +1,12 @@
+#name : switch (...) { ... }
+# --
+switch (${1:expression}) {
+case ${2:expression}:
+    ${3:statement}
+    break;
+case ${4:expression}:
+    ${5:statement}
+    break;
+default:
+    ${6:statement}
+}
