@@ -2672,6 +2672,9 @@ Returns nil if it is not visible in the current calendar window."
 
 ;; org-export-htmlize-output-type
 
+;; 缺省不把正文中的 ^、_ 作为上下标的标志
+(setq org-export-with-sub-superscripts nil)
+
 ;; Agenda 中不显示某些继承的 tag
 (setq org-tags-exclude-from-inheritance '("PROJECT"))
 
