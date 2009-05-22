@@ -1672,7 +1672,7 @@ directory, select directory. Lastly the file is opened."
        (add-hook 'muse-before-publish-hook
                  'wb-remove-leading-space)
        (add-hook 'muse-after-publish-hook
-                 'wb-remove-html-cjk-space)
+                 'wb-muse-remove-html-cjk-space)
 
 
        ;; 辅助函数
@@ -1683,7 +1683,7 @@ directory, select directory. Lastly the file is opened."
            (file-name-directory muse-publishing-current-output-path))
           file))
 
-       (defun wb-remove-html-cjk-space ()
+       (defun wb-muse-remove-html-cjk-space ()
          "删除输出 HTML 时两行中文之间的空格。"
          (when (string= (muse-style-element :base muse-publishing-current-style) "html")
            (save-excursion
@@ -2671,6 +2671,21 @@ Returns nil if it is not visible in the current calendar window."
              (org-agenda-skip-entry-if 'regexp "DONE")))))))
 
 ;; org-export-htmlize-output-type
+
+(defun wb-org-remove-html-cjk-space ()
+  "删除输出 HTML 时两行中文之间的空格。"
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward "\\(\\cc\\)\n\\(\\cc\\)" nil t)
+      (unless (get-text-property (match-beginning 0) 'read-only)
+        (replace-match "\\1\\2")))
+    (goto-char (point-min))
+    (while (re-search-forward "\\([^\n]\\)\n\\(.\\)" nil t)
+      (unless (get-text-property (match-beginning 0) 'read-only)
+        (replace-match "\\1 \\2")))))
+
+(add-hook 'org-export-preprocess-final-hook
+          'wb-org-remove-html-cjk-space)
 
 ;; 缺省不把正文中的 ^、_ 作为上下标的标志
 (setq org-export-with-sub-superscripts nil)
