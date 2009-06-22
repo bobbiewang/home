@@ -2538,6 +2538,9 @@ Returns nil if it is not visible in the current calendar window."
   (setq org-special-ctrl-a/e t)
   (setq org-yank-adjusted-subtrees t)
 
+  ;; 每小时保存一次所有的 org 文件
+  (run-at-time "00:59" 3600 'org-save-all-org-buffers)
+
   ;;;;;;;;;;;;;;;
   ;; NOTE 设置 ;;
   ;;;;;;;;;;;;;;;
