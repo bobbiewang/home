@@ -2506,40 +2506,106 @@ Returns nil if it is not visible in the current calendar window."
 
 ;;; Org Mode
 
-(add-hook 'org-mode-hook
-          (lambda ()
-            ;; 使用 yasnippet
-            (make-variable-buffer-local 'yas/trigger-key)
-            (setq yas/trigger-key [tab])
-            (define-key yas/keymap [tab] 'yas/next-field-group)))
+(robust-require org-install ; 下载 Org 后用 make 命令生成 org-install 文件
+  ;;;;;;;;;;;;;;
+  ;; 基本设置 ;;
+  ;;;;;;;;;;;;;;
 
-;; 用 RET 而不是 C-c C-o 打开连接，这要在加载 org 前设置
-(setq org-return-follows-link t)
+  ;; 设置使用 Org Mode 的文件后缀
+  (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
-;; 下载 Org 后用 make 命令生成 org-install 文件
-(robust-require org-install)
+  ;; 设置 mode hook
+  (add-hook 'org-mode-hook
+            (lambda ()
+              ;; 使用 yasnippet
+              (make-variable-buffer-local 'yas/trigger-key)
+              (setq yas/trigger-key [tab])
+              (define-key yas/keymap [tab] 'yas/next-field-group)
+              ;; 激活 flyspell mode 进行拼写检查
+              (flyspell-mode 1)))
 
-;; 设置使用 Org Mode 的文件后缀
-(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
-;; 设置几个方便使用 Org 的全局键绑定
-(define-key global-map "\C-cl" 'org-store-link)
-(define-key global-map "\C-ca" 'org-agenda)
+  ;; 设置几个方便使用 Org 的全局键绑定和函数
+  (define-key global-map "\C-cl" 'org-store-link)
+  (define-key global-map "\C-ca" 'org-agenda)
 
-(setq org-publish-project-alist
-      '(("index"
-         :base-directory "~/muse/source"
-         :publishing-directory "~/public_html/"
-         :base-extension "org"
-         :section-numbers nil
-         :table-of-contents nil
-         :author-info nil
-         :creator-info nil
-         :style-include-default nil
-         :auto-preamble nil
-         :auto-postamble nil
-         :style "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />"
-         :preamble "<div class=\"container\">
+  (defun gtd ()
+    (interactive)
+    (find-file "~/.dropbox/GTD/gtd"))
+
+  ;; 微调 Org 中的键绑定的行为
+  (setq org-return-follows-link t)    ; 用 RET 而不是 C-c C-o 打开连接
+  (setq org-special-ctrl-a/e t)
+  (setq org-yank-adjusted-subtrees t)
+
+  ;;;;;;;;;;;;;;;
+  ;; NOTE 设置 ;;
+  ;;;;;;;;;;;;;;;
+
+  ;; 调整一些内容的显示
+
+  (defface org-date
+    '((((class color) (background light)) (:foreground "#7f7f7f" :underline t))
+      (((class color) (background dark)) (:foreground "#7f7f7f" :underline t))
+      (t (:underline t)))
+    "Face for org dates.")
+
+  (defface org-embedded-code-face
+    '((t (:foreground "grey40")))
+    "Used in org-mode to indicate code block.")
+
+  (font-lock-add-keywords
+   'org-mode
+   '(("#\\+BEGIN_SRC.*$" (0 'org-embedded-code-face t))
+     ("#\\+END_SRC" (0 'org-embedded-code-face t)))
+   t)
+
+  ;; 利用 iimage 在 Org 文档中显示图片
+  (with-library "iimage"
+    (defun org-toggle-iimage-in-org ()
+      "display images in your org file"
+      (interactive)
+      (if (face-underline-p 'org-link)
+          (set-face-underline-p 'org-link nil)
+        (set-face-underline-p 'org-link t))
+      (iimage-mode)))
+
+  ;; 微调 publish 时的行为
+  (setq org-export-with-sub-superscripts nil) ; 缺省不把正文中的 ^、_ 作为上下标的标志
+  (setq org-export-html-inline-images t)      ; 缺省图片都内嵌到文档中
+  ;; org-export-htmlize-output-type
+
+  (defun wb-org-remove-html-cjk-space ()
+    "删除输出 HTML 时两行中文之间的空格。"
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward "\\(\\cc\\)\n\\(\\cc\\)" nil t)
+        (unless (get-text-property (match-beginning 0) 'read-only)
+          (replace-match "\\1\\2")))
+      ;; (goto-char (point-min))
+      ;; (while (re-search-forward "\\([^\n]\\)\n\\(.\\)" nil t)
+      ;;   (unless (get-text-property (match-beginning 0) 'read-only)
+      ;;     (replace-match "\\1 \\2")))
+      ))
+
+  (add-hook 'org-export-preprocess-final-hook
+            'wb-org-remove-html-cjk-space)
+
+  ;; 定义 Org 文档项目
+  (setq org-publish-project-alist
+        '(("index"
+           :base-directory "~/muse/source"
+           :publishing-directory "~/public_html/"
+           :base-extension "org"
+           :section-numbers nil
+           :table-of-contents nil
+           :author-info nil
+           :creator-info nil
+           :style-include-default nil
+           :auto-preamble nil
+           :auto-postamble nil
+           :style "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />"
+           :preamble "<div class=\"container\">
                       <div class=\"gfx\"><span></span></div>
                       <div class=\"top\">
                         <div class=\"navigation\">
@@ -2560,21 +2626,21 @@ Returns nil if it is not visible in the current calendar window."
                       </div>
                       <div class=\"content\">
                       <div class=\"spacer\"></div>"
-         :postamble "  </div>
+           :postamble "  </div>
                        <div class=\"footer\">&copy; 2009 Bo Wang</div>
                      </div>"
-         :publishing-function org-publish-org-to-html)
-        ("emacs"
-         :base-directory "~/muse/source/emacs"
-         :publishing-directory "~/public_html/emacs"
-         :base-extension "org"
-         :author-info nil
-         :creator-info nil
-         :style-include-default nil
-         :auto-preamble nil
-         :auto-postamble nil
-         :style "<link rel=\"stylesheet\" type=\"text/css\" href=\"../style.css\" />"
-         :preamble "<div class=\"container\">
+           :publishing-function org-publish-org-to-html)
+          ("emacs"
+           :base-directory "~/muse/source/emacs"
+           :publishing-directory "~/public_html/emacs"
+           :base-extension "org"
+           :author-info nil
+           :creator-info nil
+           :style-include-default nil
+           :auto-preamble nil
+           :auto-postamble nil
+           :style "<link rel=\"stylesheet\" type=\"text/css\" href=\"../style.css\" />"
+           :preamble "<div class=\"container\">
                       <div class=\"gfx\"><span></span></div>
                       <div class=\"top\">
                         <div class=\"navigation\">
@@ -2595,7 +2661,7 @@ Returns nil if it is not visible in the current calendar window."
                       </div>
                       <div class=\"content\">
                       <div class=\"spacer\"></div>"
-         :postamble "  </div>
+           :postamble "  </div>
                        <div class=\"footer\">
                          <div class=\"left\">
                            &copy; 2009
@@ -2612,201 +2678,171 @@ Returns nil if it is not visible in the current calendar window."
                          </div>
                        </div>
                      </div>"
-         :publishing-function org-publish-org-to-html)
-        ("computer"
-         :base-directory "~/muse/source/computer"
-         :publishing-directory "~/public_html/computer"
-         :base-extension "org"
-         :publishing-function org-publish-org-to-html)
-        ("iccad"
-         :base-directory "~/muse/source/iccad"
-         :publishing-directory "~/public_html/iccad"
-         :base-extension "org"
-         :publishing-function org-publish-org-to-html)
-        ("programming"
-         :base-directory "~/muse/source/programming"
-         :publishing-directory "~/public_html/programming"
-         :base-extension "org"
-         :publishing-function org-publish-org-to-html)
-        ("reading"
-         :base-directory "~/muse/source/reading"
-         :publishing-directory "~/public_html/reading"
-         :base-extension "org"
-         :publishing-function org-publish-org-to-html)
-        ("spa"
-         :base-directory "~/muse/source/spa"
-         :publishing-directory "~/public_html/spa"
-         :base-extension "org"
-         :publishing-function org-publish-org-to-html)
-        ("website" :components ("index" "emacs" "computer" "iccad"
-                                "programming" "reading" "spa"))))
+           :publishing-function org-publish-org-to-html)
+          ("computer"
+           :base-directory "~/muse/source/computer"
+           :publishing-directory "~/public_html/computer"
+           :base-extension "org"
+           :publishing-function org-publish-org-to-html)
+          ("iccad"
+           :base-directory "~/muse/source/iccad"
+           :publishing-directory "~/public_html/iccad"
+           :base-extension "org"
+           :publishing-function org-publish-org-to-html)
+          ("programming"
+           :base-directory "~/muse/source/programming"
+           :publishing-directory "~/public_html/programming"
+           :base-extension "org"
+           :publishing-function org-publish-org-to-html)
+          ("reading"
+           :base-directory "~/muse/source/reading"
+           :publishing-directory "~/public_html/reading"
+           :base-extension "org"
+           :publishing-function org-publish-org-to-html)
+          ("spa"
+           :base-directory "~/muse/source/spa"
+           :publishing-directory "~/public_html/spa"
+           :base-extension "org"
+           :publishing-function org-publish-org-to-html)
+          ("website" :components ("index" "emacs" "computer" "iccad"
+                                  "programming" "reading" "spa"))))
 
-;; iimage
+  ;;;;;;;;;;;;;;;
+  ;; TODO 设置 ;;
+  ;;;;;;;;;;;;;;;
 
-;; 设置 agenda 相关文件的位置
-(setq org-agenda-files '("~/.dropbox/GTD/gtd"))
-;; 在 Agenda Overview 中不显示已完成的任务
-(setq org-agenda-skip-deadline-if-done t)
-(setq org-agenda-skip-scheduled-if-done t)
-;; Agenda Overview 显示的天数
-(setq org-agenda-ndays 7)
-;; Agenda Overview 从周几开始显示，缺省 1 表示周一，nil 表示当天
-(setq org-agenda-start-on-weekday nil)
-;; 在 Clock Report 中最多显示第 4 级的任务
-(setq org-agenda-clockreport-parameter-plist '(:link t :maxlevel 4))
+  ;; 集成 remember，并设置模板
+  (robust-require remember
+    (org-remember-insinuate)
+    (setq org-directory "~/.dropbox/GTD/")
+    (setq org-default-notes-file (concat org-directory "/gtd"))
+    (setq org-remember-templates
+          '(("Todo" ?t "* TODO %? %^g\n  %u" "gtd" "Inbox")
+            ("Note" ?n "* %?\n  %T" "notes" top)))
+    ;; 正向记录 note，新的在下面
+    (setq org-reverse-note-order nil)
+    ;; 设置一个全局键绑定快速调用 remember
+    (global-set-key (kbd "C-M-r") 'remember))
 
-(add-hook 'org-agenda-mode-hook 'hl-line-mode)
+  ;; 微调 Refile 操作
+  (setq org-refile-targets '((org-agenda-files . (:maxlevel . 2))))
+  (setq org-completion-use-ido t)       ; 使用 ido 方式的补全 (v6.13)
+  (setq org-refile-use-outline-path t)  ; 使用多级的 path（设为 'file 则包括文件名）
+  (setq org-outline-path-complete-in-steps t) ; 多级的 path 依次完成
 
-;; 设置 TODO 关键字的 face
-(setq org-todo-keyword-faces
-      '(("TODO"      . org-todo)
-        ("ONGO"      . (:foreground "red" :weight bold))
-        ("WAIT"      . (:foreground "grey80" :background "grey40"))
-        ("DELE"      . (:foreground "grey40"))
-        ("CANCELED"  . (:foreground "blue" :weight bold))))
+  ;; 在 Agenda 中高亮当前行
+  (add-hook 'org-agenda-mode-hook
+            '(lambda ()
+               (hl-line-mode 1)))
 
-;; 设置 TAG 的 face (v6.14)
-(setq org-tag-faces
-      '(("PROJECT"    . org-level-2)))
+  ;; 设定 agenda 文件列表
+  (setq org-agenda-files '("~/.dropbox/GTD/gtd"))
 
-;; 把任务的状态转换情况记录到 drawer 里，缺省为 LOGBOOK
-;; 该变量同时设置 clock 记录位置（org-clock-into-drawer）
-(setq org-log-into-drawer t)
+  ;; Agenda 中不显示某些继承的 tag
+  (setq org-tags-exclude-from-inheritance '("PROJECT"))
 
-;; 自定义 Agenda Custom View
-(setq org-agenda-custom-commands
-      '(("c" . "Context Agenda View")
-        ("co" agenda "Office Agenda"
-         ((org-agenda-skip-function
-           (lambda nil
-             (org-agenda-skip-entry-if 'notregexp "OFFICE")))
-          (org-agenda-ndays 1)
-          (org-agenda-overriding-header "Today's Office tasks: ")))
-        ("cp" agenda "Office+Computer Agenda"
-         ((org-agenda-skip-function
-           (lambda nil
-             (org-agenda-skip-entry-if 'notregexp "OFFICE\\|COMPUTER")))
-          (org-agenda-ndays 1)
-          (org-agenda-overriding-header "Today's Office+Computer tasks: ")))
-        ("ch" agenda "Home Agenda"
-         ((org-agenda-skip-function
-           (lambda nil
-             (org-agenda-skip-entry-if 'notregexp "HOME")))
-          (org-agenda-ndays 1)
-          (org-agenda-overriding-header "Today's Office tasks: ")))
-        ("ci" agenda "Home+Computer Agenda"
-         ((org-agenda-skip-function
-           (lambda nil
-             (org-agenda-skip-entry-if 'notregexp "HOME\\|COMPUTER")))
-          (org-agenda-ndays 1)
-          (org-agenda-overriding-header "Today's Home+Computer tasks: ")))
-        ("ce" agenda "Errand Agenda"
-         ((org-agenda-skip-function
-           (lambda nil
-             (org-agenda-skip-entry-if 'notregexp "ERRAND")))
-          (org-agenda-ndays 1)
-          (org-agenda-overriding-header "Today's Errand tasks: ")))
-        ("u" alltodo ""
-         ((org-agenda-skip-function
-           (lambda nil
-             (org-agenda-skip-entry-if 'scheduled 'deadline
-                                       'regexp "<[^>\n]+>")))
-          (org-agenda-overriding-header "Unscheduled TODO entries")))
-        ("x" . "Checklist Exporters")
-        ("xa" agenda "Agenda Checklist"
-         ((org-agenda-prefix-format " [ ] ")
-          (org-agenda-with-colors nil)
-          (org-agenda-remove-tags t)))
-        ("xc" "Context Checklist"
-         ((tags "PROJECT"
-                ((org-agenda-overriding-header "PROJECT:")))
-          (tags "ANYWHERE"
-                ((org-agenda-overriding-header "ANYWHERE:")))
-          (tags "OFFICE"
-                ((org-agenda-overriding-header "OFFICE:")))
-          (tags "COMPUTER"
-                ((org-agenda-overriding-header "COMPUTER:")))
-          (tags "HOME"
-                ((org-agenda-overriding-header "HOME:")))
-          (tags "ERRAND"
-                ((org-agenda-overriding-header "ERRAND:"))))
-         ((org-use-tag-inheritance nil)
-          (org-agenda-prefix-format " [ ] ")
-          (org-agenda-with-colors nil)
-          (org-agenda-remove-tags t)
-          (org-agenda-add-entry-text-maxlines 5)
-          (org-agenda-skip-function
-           (lambda nil
-             (org-agenda-skip-entry-if 'regexp "DONE")))))))
+  ;; 以类似设置 TAG 的界面设置 TODO KEYWORD
+  (setq org-use-fast-todo-selection t)
 
-;; org-export-htmlize-output-type
+  ;; 在 Agenda Overview 中不显示已完成的任务
+  (setq org-agenda-skip-deadline-if-done t)
+  (setq org-agenda-skip-scheduled-if-done t)
+  ;; Agenda Overview 显示的天数
+  (setq org-agenda-ndays 7)
+  ;; Agenda Overview 从周几开始显示，缺省 1 表示周一，nil 表示当天
+  (setq org-agenda-start-on-weekday nil)
 
-(defun wb-org-remove-html-cjk-space ()
-  "删除输出 HTML 时两行中文之间的空格。"
-  (save-excursion
-    (goto-char (point-min))
-    (while (re-search-forward "\\(\\cc\\)\n\\(\\cc\\)" nil t)
-      (unless (get-text-property (match-beginning 0) 'read-only)
-        (replace-match "\\1\\2")))
-    ; (goto-char (point-min))
-    ; (while (re-search-forward "\\([^\n]\\)\n\\(.\\)" nil t)
-    ;   (unless (get-text-property (match-beginning 0) 'read-only)
-    ;     (replace-match "\\1 \\2")))
-    ))
+  ;; 设置 TODO 关键字的 face
+  (setq org-todo-keyword-faces
+        '(("TODO"      . org-todo)
+          ("ONGO"      . (:foreground "red" :weight bold))
+          ("WAIT"      . (:foreground "grey80" :background "grey40"))
+          ("DELE"      . (:foreground "grey40"))
+          ("CANCELED"  . (:foreground "blue" :weight bold))))
 
-(add-hook 'org-export-preprocess-final-hook
-          'wb-org-remove-html-cjk-space)
+  ;; 设置 TAG 的 face (v6.14)
+  (setq org-tag-faces
+        '(("PROJECT"    . org-level-2)))
 
-;; 缺省不把正文中的 ^、_ 作为上下标的标志
-(setq org-export-with-sub-superscripts nil)
+  ;; 把任务的状态转换情况记录到 drawer 里，缺省为 LOGBOOK
+  ;; 该变量同时设置 clock 记录位置（org-clock-into-drawer）
+  (setq org-log-into-drawer t)
 
-;; Agenda 中不显示某些继承的 tag
-(setq org-tags-exclude-from-inheritance '("PROJECT"))
+  ;; 调整 Clock（计时）行为
+  (setq org-clock-persist t) ; 保存计时的内容，以及计时历史；启动 Emacs 时重新载入
+  (setq org-clock-persistence-insinuate) ; Emacs 重启后继续计时
+  (setq org-clock-in-resume t)           ; 计时时继续未完成的计时
+  (setq org-clock-into-drawer t)         ; 计时信息记录到 drawer 里
+  (setq org-clock-out-remove-zero-time-clocks t) ; 如果任务耗时为 0，删去计时内容
 
-;; 以类似设置 TAG 的界面设置 TODO KEYWORD
-(setq org-use-fast-todo-selection t)
-;; 直观的 Refile 操作
-(setq org-refile-targets '((org-agenda-files . (:maxlevel . 2))))
-(setq org-refile-use-outline-path t)
+  ;; 在 Clock Report 中最多显示第 4 级的任务
+  (setq org-agenda-clockreport-parameter-plist '(:link t :maxlevel 4))
 
-(defface org-embedded-code-face
-  '((t (:foreground "grey40")))
-  "Used in org-mode to indicate code block.")
-
-(defface org-date
-  '((((class color) (background light)) (:foreground "#7f7f7f" :underline t))
-    (((class color) (background dark)) (:foreground "#7f7f7f" :underline t))
-    (t (:underline t)))
-  "Face for org dates.")
-
-(font-lock-add-keywords
- 'org-mode
- '(("#\\+BEGIN_SRC.*$" (0 'org-embedded-code-face t))
-   ("#\\+END_SRC" (0 'org-embedded-code-face t)))
- t)
-
-;; 在一些操作中（如 Refile）尽可能使用 ido 方式的补全 (v6.13)
-(setq org-completion-use-ido t)
-
-(defun gtd ()
-  (interactive)
-  (find-file "~/.emacs.d/org/gtd"))
-
-;; 调用 remember 时使用 org 的模板
-(robust-require remember
-  (org-remember-insinuate)
-  (setq org-directory "~/.dropbox/GTD/")
-  (setq org-default-notes-file (concat org-directory "/gtd"))
-  (setq org-remember-templates
-        '(("Todo" ?t "* TODO %? %^g\n  %u" "gtd" "Inbox")
-          ("Note" ?n "* %?\n  %T" "notes" top)))
-
-  ;; 记住调用 remember 时的位置（使用 org-store-link）
-  (setq remember-annotation-functions 'org-remember-annotation)
-  ;; 正向记录 note，新的在下面
-  (setq org-reverse-note-order nil)
-  ;; 设置一个全局键绑定快速调用 remember
-  (global-set-key (kbd "C-M-r") 'remember))
+  ;; 自定义 Agenda Custom View
+  (setq org-agenda-custom-commands
+        '(("c" . "Context Agenda View")
+          ("co" agenda "Office Agenda"
+           ((org-agenda-skip-function
+             (lambda nil
+               (org-agenda-skip-entry-if 'notregexp "OFFICE")))
+            (org-agenda-ndays 1)
+            (org-agenda-overriding-header "Today's Office tasks: ")))
+          ("cp" agenda "Office+Computer Agenda"
+           ((org-agenda-skip-function
+             (lambda nil
+               (org-agenda-skip-entry-if 'notregexp "OFFICE\\|COMPUTER")))
+            (org-agenda-ndays 1)
+            (org-agenda-overriding-header "Today's Office+Computer tasks: ")))
+          ("ch" agenda "Home Agenda"
+           ((org-agenda-skip-function
+             (lambda nil
+               (org-agenda-skip-entry-if 'notregexp "HOME")))
+            (org-agenda-ndays 1)
+            (org-agenda-overriding-header "Today's Office tasks: ")))
+          ("ci" agenda "Home+Computer Agenda"
+           ((org-agenda-skip-function
+             (lambda nil
+               (org-agenda-skip-entry-if 'notregexp "HOME\\|COMPUTER")))
+            (org-agenda-ndays 1)
+            (org-agenda-overriding-header "Today's Home+Computer tasks: ")))
+          ("ce" agenda "Errand Agenda"
+           ((org-agenda-skip-function
+             (lambda nil
+               (org-agenda-skip-entry-if 'notregexp "ERRAND")))
+            (org-agenda-ndays 1)
+            (org-agenda-overriding-header "Today's Errand tasks: ")))
+          ("u" alltodo ""
+           ((org-agenda-skip-function
+             (lambda nil
+               (org-agenda-skip-entry-if 'scheduled 'deadline
+                                         'regexp "<[^>\n]+>")))
+            (org-agenda-overriding-header "Unscheduled TODO entries")))
+          ("x" . "Checklist Exporters")
+          ("xa" agenda "Agenda Checklist"
+           ((org-agenda-prefix-format " [ ] ")
+            (org-agenda-with-colors nil)
+            (org-agenda-remove-tags t)))
+          ("xc" "Context Checklist"
+           ((tags "PROJECT"
+                  ((org-agenda-overriding-header "PROJECT:")))
+            (tags "ANYWHERE"
+                  ((org-agenda-overriding-header "ANYWHERE:")))
+            (tags "OFFICE"
+                  ((org-agenda-overriding-header "OFFICE:")))
+            (tags "COMPUTER"
+                  ((org-agenda-overriding-header "COMPUTER:")))
+            (tags "HOME"
+                  ((org-agenda-overriding-header "HOME:")))
+            (tags "ERRAND"
+                  ((org-agenda-overriding-header "ERRAND:"))))
+           ((org-use-tag-inheritance nil)
+            (org-agenda-prefix-format " [ ] ")
+            (org-agenda-with-colors nil)
+            (org-agenda-remove-tags t)
+            (org-agenda-add-entry-text-maxlines 5)
+            (org-agenda-skip-function
+             (lambda nil
+               (org-agenda-skip-entry-if 'regexp "DONE"))))))))
 
 ;;; Anything
 (robust-require anything-config
