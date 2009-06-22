@@ -1218,6 +1218,15 @@ replace. Replace the text that you're presently isearching for."
 (setq resize-mini-windows 'grow-only) ; 允许 minibuffer 变化大小
 (setq enable-recursive-minibuffers t) ; 可以递归的使用 minibuffer
 
+;; M-@ 选择当前整个单词，原来的功能可以用 C-@ M-f 代替
+(defun wb-mark-word (&optional arg allow-extend)
+  (interactive "P\np")
+  (progn
+    (mark-word arg allow-extend)
+    (skip-chars-backward "a-zA-Z")))
+
+(global-set-key (kbd "M-@") 'wb-mark-word)
+
 ;; Preserve hard links to the file you’re editing (this is especially important if you edit system files).
 ;; (setq backup-by-copying-when-linked t)
 ;; Preserve the owner and group of the file you’re editing (this is especially important if you edit files as root).
