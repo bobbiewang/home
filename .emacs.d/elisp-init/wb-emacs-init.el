@@ -3018,6 +3018,9 @@ Returns nil if it is not visible in the current calendar window."
 ;; 用 C-2 设置 mark，和 C-@ 键位相同，但不用按 Shift
 (global-set-key [?\C-2] 'set-mark-command)
 
+;; 相应的修改 pop-global-mark，使用 C-x C-2
+(global-set-key (kbd "C-x C-2") 'pop-global-mark)
+
 ;; 下面的 C-x LETTER 都没有定义。在缺省情况下，Emacs 会自动转为对应的
 ;; C-x letter 版本，可以自定义一些自己喜欢的命令
 (global-set-key "\C-xB" 'bury-buffer)
