@@ -2524,6 +2524,8 @@ Returns nil if it is not visible in the current calendar window."
               ;; 激活 flyspell mode 进行拼写检查
               (flyspell-mode 1)))
 
+  ;; Org 文档内容都用 utf-8-unix 编码
+  (add-to-list 'auto-coding-alist '("org\\'" . utf-8-unix))
 
   ;; 设置几个方便使用 Org 的全局键绑定和函数
   (define-key global-map "\C-cl" 'org-store-link)
@@ -2546,6 +2548,8 @@ Returns nil if it is not visible in the current calendar window."
   ;;;;;;;;;;;;;;;
 
   ;; 调整一些内容的显示
+
+  (setq org-hide-block-startup t)       ; 隐藏所有 block
 
   (defface org-date
     '((((class color) (background light)) (:foreground "#7f7f7f" :underline t))
