@@ -217,10 +217,8 @@ If optional argument GOTO is non-nil, go to that line."
     (indent-for-tab-command)))
 
 ;; 删除行尾的空白，只作用于某些指定的 major mode，比较安全
-;; 可以设置为在写文件的时候自动运行
-;; (add-hook (if (boundp 'write-file-functions) 'write-file-functions
-;;             'write-file-hooks) 'my-delete-trailing-whitespace)
-(defun my-delete-trailing-whitespace ()
+;; 可以设置为在写文件的时候（write-file-functions）自动运行
+(defun wb-delete-trailing-whitespace ()
   "Delete all trailing whitespace in buffer.
 Return values are suitable for use with `write-file-functions'."
   (condition-case nil
@@ -228,8 +226,8 @@ Return values are suitable for use with `write-file-functions'."
         ;; Don't want to do this to mail messages, etc.
         ;; Would an exclude list be better?
         ;; Error was occurring in VM-mode for some reason.
-        (when (memq major-mode '(text-mode sh-mode emacs-lisp-mode
-                                           f90-mode awk-mode c-mode))
+        (when (memq major-mode '(text-mode emacs-lisp-mode
+                                           org-mode c-mode))
           (message "Cleaning up whitespace...")
           (delete-trailing-whitespace)
           (message "Cleaning up whitespace...done")
@@ -1190,6 +1188,10 @@ replace. Replace the text that you're presently isearching for."
 ;; 设置缺省的 mode 为 text-mode，而不是一点功能都没有的 fundamental-mode
 (setq default-major-mode 'text-mode)
 ;; (add-hook 'text-mode-hook 'turn-on-auto-fill)
+
+;; 保存某些文件时删除行尾的空白
+(add-hook (if (boundp 'write-file-functions) 'write-file-functions
+            'write-file-hooks) 'wb-delete-trailing-whitespace)
 
 ;; 选中了一些文字时，如果再输入一个字符，这个字符把选中的文字替换掉，而
 ;; 不是直接在光标的位置插入。也可以按 DEL 将选中的文件删除
