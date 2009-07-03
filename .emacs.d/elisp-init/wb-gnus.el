@@ -134,9 +134,16 @@
             (setq fill-column 80)
             (gnus-article-fill-long-lines)))
 
+;; 查看 HTML 邮件的文本副本
+;; http://www.emacswiki.org/emacs/MimeTypesWithGnus
+(eval-after-load "mm-decode"
+  '(progn
+     (add-to-list 'mm-discouraged-alternatives "text/html")
+     (add-to-list 'mm-discouraged-alternatives "text/richtext")))
+
 ;; 隐藏 citation，需要时可以用 W W c 命令显示
 ;; (setq gnus-treat-hide-citation t)
- 
+
 ;; 隐藏 signature，需要时可以用 W W s 命令显示
 ;; (setq gnus-treat-hide-signature t)
 
