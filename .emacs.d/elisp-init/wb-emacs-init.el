@@ -689,6 +689,18 @@ Argument ARG Key."
           (setq i (+ i 1))))))
   (beginning-of-buffer))
 
+(defun hex-to-latex ()
+  "把 HEX 格式（0-255）的颜色转成 Latex 格式（0-1）的颜色"
+  (interactive)
+  '(calc-precision 3)
+  (let* ((hex (current-word))
+  (num1 (format "%d" (string-to-number (substring hex 0 2) 16)))
+  (num2 (format "%d" (string-to-number (substring hex 2 4) 16)))
+  (num3 (format "%d" (string-to-number (substring hex 4 6) 16)))
+  (arg-to-calc (concat num1 "/255," num2 "/255," num3 "/255")))
+    (message "Saved %s" (calc-eval arg-to-calc ","))
+    (kill-new (calc-eval arg-to-calc ","))))
+
 ;; command to start automatic documentation generation
 (defvar generate-doc-command "doc.bat"
   "Shell command to start the automatic documentation generation.")
@@ -1458,6 +1470,7 @@ directory, select directory. Lastly the file is opened."
   (setq ido-enable-flex-matching t)    ; 可以用 wei 匹配文件名 wb-emacs-init.el
   (setq ido-create-new-buffer 'always) ; 没有名字匹配的 buffer 时，直接创建新 buffer
   (setq ido-use-filename-at-point t)   ; 先查找光标处文件，可以用于替换 ffap
+  (ido-everywhere t)                   ; 在任何读取文件、目录的地方使用 ido
   (add-hook 'ido-setup-hook
             (lambda ()
               ;(define-key ido-completion-map [tab] 'ido-complete)
@@ -1617,6 +1630,7 @@ directory, select directory. Lastly the file is opened."
 ;; Color support
 (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+(setq comint-prompt-read-only t)        ; 设置 Shell 提示符的文字为只读
 
 ;;;; wb-template.el
 
