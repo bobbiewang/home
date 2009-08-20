@@ -265,9 +265,10 @@ fi
 
 if [ -n "$ENV" ]; then
     FOUNDRY=$RTF
-    CDPATH=$CDPATH:$ENV/base/pkg:$ENV/or5g00/pkg:$ENV/base/pkg:$ENV/or5g00/pkg/o5gplace
-    CDPATH=$CDPATH:$ENV/or5s00/pkg:$ENV/mg5g00/pkg:$ENV/mj5g00/pkg
-    CDPATH=$CDPATH:$ENV/ep5g00/pkg:$ENV/ep5a00/pkg:$ENV/ep5m00/pkg
+    CDPATH=$CDPATH:$ENV/base/pkg:$ENV/or5g00/pkg:$ENV/or5s00/pkg
+    CDPATH=$CDPATH:$ENV/mg5g00/pkg:$ENV/mj5g00/pkg:$ENV/mj5g00e/pkg:$ENV/mg5a00/pkg
+    CDPATH=$CDPATH:$ENV/ep5g00/pkg:$ENV/ep5g00p/pkg:$ENV/ep5a00/pkg:$ENV/ep5m00/pkg
+    CDPATH=$CDPATH:$ENV/ep5c00/pkg:$ENV/ep5c00a/pkg
 fi
 
 # Local Variables:
