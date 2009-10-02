@@ -1279,39 +1279,76 @@ move the point to the first non-space character, if it exists."
     ))
 (global-set-key [?\C-a] 'wb-beginning-of-line)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 有时觉得选中再用C-w或者M-w很麻烦，有点羡慕vim中类似dd和yy的功能。然后发现没有选
-;; 中一块内容时，C-w和M-w都没有任何作用，刚好利用一下。
-;; 将下面内容加入.emacs，则当你选中一块区域时，C-w和M-w做的事和以前完全相同。如果没
-;; 有选中区域，则C-w是kill当前行，M-w是copy当前行，就像dd和yy一样。而且可以传递参数
-;; 给C-w和M-w，表示kill或者copy多行，行数从当前行算起，负数表示往前。
-;; 注：两个变量wb-kill-ring-save-include-last-newline（默认为nil)和
-;;     wb-kill-region-include-last-newline（默认为t）设置是否将最后一行的换行符包含
-;;     进去
-(defun wb-kill-ring-save (&optional line)
-  "This function is a enhancement of `kill-ring-save', which is normal used
-to copy a region.  This function will do exactly as `kill-ring-save' if
-there is a region selected when it is called. If there is no region, then do
-copy lines as `yy' in vim."
-  (interactive "P")
-  (unless (or line (and mark-active (not (equal (mark) (point)))))
-    (setq line 1))
-  (if line
-      (let ((beg (line-beginning-position))
-            (end (line-end-position)))
-        (when (>= line 2)
-          (setq end (line-end-position line)))
-        (when (<= line -2)
-          (setq beg (line-beginning-position (+ line 2))))
-        (if (and wb-kill-ring-save-include-last-newline
-                 (not (= end (point-max))))
-            (setq end (1+ end)))
-        (kill-ring-save beg end))
-    (call-interactively 'kill-ring-save)))
-;; set the following var to t if you like a newline to the end of copied text.
-(setq wb-kill-ring-save-include-last-newline nil)
-;; bind it
-(global-set-key [?\M-w] 'wb-kill-ring-save)
+;; DWIM (Do What I Mean) 版本的 M-w
+;; 1. 如果有 region，则复制 region
+;; 2. 如果没有 region，自动识别并复制网址和邮件地址，如果 2 者都没有找
+;;    到的话，就把复制当前行
+;; 3. M-w 之后，紧接着按以下键可以指定复制内容
+;;    - w: word
+;;    - l: list
+;;    - s: sexp
+;;    - f: file name
+;; 4. 可以接受 prefix，比如
+;;    - M-3 M-w     拷贝 3 行
+;;    - M-3 M-w w   拷贝 3 个词
+
+(defun wb-kill-ring-save-dwim ()
+  "This command dwim on saving text.
+
+If region is active, call `kill-ring-save'. Else, call
+`wb-kill-ring-save-thing-at-point'.
+
+This command is to be used interactively."
+  (interactive)
+  (if (use-region-p)
+      (call-interactively 'kill-ring-save)
+    (call-interactively 'wb-kill-ring-save-thing-at-point)))
+
+(defun wb-kill-ring-save-thing-at-point (&optional n)
+  "Save THING at point to kill-ring."
+  (interactive "p")
+  (let ((things '((?l . list) (?f . filename) (?w . word) (?s . sexp)))
+        (message-log-max)
+        beg t-a-p thing event)
+    (flet ((get-thing ()
+                      (save-excursion
+                        (beginning-of-thing thing)
+                        (setq beg (point))
+                        (if (= n 1)
+                            (end-of-thing thing)
+                          (forward-thing thing n))
+                        (buffer-substring beg (point)))))
+      ;; try detecting url email and fall back to 'line'
+      (dolist (thing '(url email line))
+        (when (bounds-of-thing-at-point thing)
+          (setq t-a-p (get-thing))
+          ;; remove the last newline character
+          (if (not wb-kill-ring-save-dwim-include-last-newline)
+              (when (and (eq thing 'line)
+                         (>= (length t-a-p) 1)
+                         (equal (substring t-a-p -1) "\n"))
+                (setq t-a-p (substring t-a-p 0 -1))))
+          (kill-new t-a-p)
+          (message "%s" t-a-p)
+          (return nil)))
+      (setq event (read-event nil))
+      (when (setq thing (cdr (assoc event things)))
+        (clear-this-command-keys t)
+        (if (not (bounds-of-thing-at-point thing))
+            (message "No %s at point" thing)
+          (setq t-a-p (get-thing))
+          (kill-new t-a-p 'replace)
+          (message "%s" t-a-p))
+        (setq last-input-event nil))
+      (when last-input-event
+        (clear-this-command-keys t)
+        (setq unread-command-events (list last-input-event))))))
+
+;; set the following var to t if you like a newline to the end of
+;; copied text.
+(setq wb-kill-ring-save-dwim-include-last-newline nil)
+
+(global-set-key (kbd "M-w") 'wb-kill-ring-save-dwim)
 
 (defun wb-kill-region (&optional line)
   "This function is a enhancement of `kill-region', which is normal used to
