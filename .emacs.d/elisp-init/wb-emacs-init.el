@@ -1400,8 +1400,6 @@ do kill lines as `dd' in vim."
 ;; 备份设置方法，直接拷贝
 (setq backup-by-copying t)
 (setq make-backup-files t)
-;; 使用 Tramp 编辑文件时，也使用和 backup-directory 相同的备份目录
-;; (setq tramp-backup-directory-alist backup-directory-alist)
 
 ;; Auto Save 策略
 ;; auto-save-default 为 t（除了 batch mode），所以缺省打开 Auto Save
@@ -1409,8 +1407,8 @@ do kill lines as `dd' in vim."
 (setq auto-save-timeout 30)              ; 至少 N 秒后才自动保存
 (setq delete-auto-save-files t)
 (setq auto-save-file-name-transforms
-      `(;; 缺省值，Tramp 编辑文件时，自动保存到本地的 tmp 目录
-        ("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
+      `(;; 通过 Tramp 编辑文件时，自动保存到本地的 tmp 目录
+        (tramp-file-name-regexp
          ,(concat temporary-file-directory "\\2") t)
         ;; 编辑 dropbox 的文件时，自动保存到本地的 tmp 目录
         ("\\`/?\\([^/]*/\\)*\\.?[Dd]ropbox/\\([^/]*/\\)*\\([^/]*\\)\\'"
@@ -2922,7 +2920,18 @@ Returns nil if it is not visible in the current calendar window."
 
 ;;; Tramp
 
-(setq tramp-persistency-file-name "~/.emacs.d/.tramp")
+(eval-after-load "tramp"
+    '(progn
+       (when *win32p*
+         (setq tramp-default-method "plink")
+         (setq max-lisp-eval-depth (* 9 9 9 9 9 9 9 9))
+         (setq max-specpdl-size (* 9 9 9 9 9 9 9 9))
+         (setq tramp-shell-prompt-pattern
+               "\\(?:^\\|\r\\)[^#$%>\n]*\n?[^#$%>\n]*#?[#$%>] *\\(\e\\[[0-9;]*[a-zA-Z] *\\)*"))
+       (setq tramp-persistency-file-name "~/.emacs.d/.tramp")
+       ;; 使用 Tramp 编辑文件时，也使用和 backup-directory 相同的备份目录
+       (setq tramp-backup-directory-alist backup-directory-alist))
+
 
 ;;; etags
 
