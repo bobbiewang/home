@@ -1414,7 +1414,7 @@ do kill lines as `dd' in vim."
 (setq delete-auto-save-files t)
 (setq auto-save-file-name-transforms
       `(;; 通过 Tramp 编辑文件时，自动保存到本地的 tmp 目录
-        (tramp-file-name-regexp
+        ("\\`/\\([^[/:]+\\|[^/]+]\\):"  ; tramp-file-name-regexp 的内容
          ,(concat temporary-file-directory "\\2") t)
         ;; 编辑 dropbox 的文件时，自动保存到本地的 tmp 目录
         ("\\`/?\\([^/]*/\\)*\\.?[Dd]ropbox/\\([^/]*/\\)*\\([^/]*\\)\\'"
