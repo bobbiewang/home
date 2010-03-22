@@ -2950,7 +2950,7 @@ Returns nil if it is not visible in the current calendar window."
                "\\(?:^\\|\r\\)[^#$%>\n]*\n?[^#$%>\n]*#?[#$%>] *\\(\e\\[[0-9;]*[a-zA-Z] *\\)*"))
        (setq tramp-persistency-file-name "~/.emacs.d/.tramp")
        ;; 使用 Tramp 编辑文件时，也使用和 backup-directory 相同的备份目录
-       (setq tramp-backup-directory-alist backup-directory-alist))
+       (setq tramp-backup-directory-alist backup-directory-alist)))
 
 
 ;;; etags
