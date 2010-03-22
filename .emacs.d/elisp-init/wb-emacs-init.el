@@ -949,8 +949,14 @@ Argument ARG Key."
 
 ;; 滚动页面的方式
 (setq scroll-step 1
+      ;; 光标移动到离顶端/底端多少行开始滚动。设置为 0 表示到达顶端/底
+      ;; 端才滚动；设置为 3 表示距离顶端/底端 3 行就开始滚动
       scroll-margin 3
-      scroll-conservatively 10000)
+      ;; 光标越出屏幕时，跳回屏幕的行数。设置为 0 的话，光标跳回屏幕中
+      ;; 心；设置为一个很大的值，相当于禁止这个功能
+      scroll-conservatively 10000
+      ;; 翻屏时保持光标在屏幕的位置
+      scroll-preserve-screen-position 1)
 
 ;;; Display
 
@@ -1514,6 +1520,16 @@ directory, select directory. Lastly the file is opened."
               (ibuffer-switch-to-saved-filter-groups "default"))))
 
 ;; 一些 buffer 长时间不用的话自动关闭
+
+;; midnight 是 Emacs 自带的扩展，可以用一系列 clean-buffer-list- 变量，
+;; 根据 buffer 的名字设置或排除需要自动关闭的 buffer。缺省在半夜进行
+;; buffer 的清理，也可以直接运行命令 clean-buffer-list 手动关闭设置的
+;; buffer
+(robust-require midnight
+  ;; 关闭超过 30 天没有使用的 buffer
+  (setq clean-buffer-list-delay-general 30)
+)
+;; tempbuf 可以指定需要处理的 mode
 ;; 可以用 (mapc (lambda (x) (add-hook x 'turn-on-tempbuf-mode))
 ;;         '(dired-mode-hook custom-mode-hook)))
 ;; 方式批量设置，但可读性还是分开设置的好
@@ -1530,9 +1546,13 @@ directory, select directory. Lastly the file is opened."
              (or (file-exists-p (file-name-directory buffer-file-name))
                  (make-directory (file-name-directory buffer-file-name) t))))
 
+;; 删除文件、目录时移动到垃圾箱
+;; ~/.local/share/Trash 或 ~/.Trash
+(setq delete-by-moving-to-trash t)
+
 ;; Dired Settings
 
-;;设置 ls 的参数（缺省为 -al），显示易读的大小，按版本排序
+;; 设置 ls 的参数（缺省为 -al），显示易读的大小，按版本排序
 (setq dired-listing-switches "-avhl")
 
 ;; dired-mode 下不折行显示
