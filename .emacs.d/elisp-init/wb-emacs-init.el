@@ -1731,7 +1731,7 @@ directory, select directory. Lastly the file is opened."
 ;; (with-library "company"
 ;;   (autoload 'company-mode "company" nil t)
 ;;   (setq company-idle-delay t)
-v;;   (setq company-begin-commands '(self-insert-command)))
+;;   (setq company-begin-commands '(self-insert-command)))
 
 ;;;; wb-muse.el
 
