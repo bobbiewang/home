@@ -1024,7 +1024,7 @@ Argument ARG Key."
 ;; 单独设置背景色
 ;; (set-background-color "darkblue")
 
-;;; View, Navigator
+;;; View, Navigation
 
 ;; 支持查看图片
 (auto-image-file-mode t)
@@ -1520,6 +1520,12 @@ directory, select directory. Lastly the file is opened."
               (define-key ido-completion-map "\C-n" 'ido-next-match)
               (define-key ido-completion-map "\C-p" 'ido-prev-match))))
 
+
+;; saveplace，打开文件的时候，光标自动跳转到上次退出的地方
+(robust-require saveplace
+  (setq-default save-place t)
+  (setq save-place-file (expand-file-name "~/.emacs.d/.emacs-places")))
+
 ;; ibuffer
 (with-library "ibuffer"
   (autoload 'ibuffer "ibuffer" "Dired lik Ibuffer." t)
@@ -1715,10 +1721,17 @@ directory, select directory. Lastly the file is opened."
 
 (robust-require snippet)
 
-(with-library "company"
-  (autoload 'company-mode "company" nil t)
-  (setq company-idle-delay t)
-  (setq company-begin-commands '(self-insert-command)))
+
+(robust-require auto-complete-config
+  (ac-config-default)
+  ;; 缺省禁止，要手工 M-x auto-complete-mode 激活
+  (global-auto-complete-mode nil))
+
+;; M-x company-mode 激活
+;; (with-library "company"
+;;   (autoload 'company-mode "company" nil t)
+;;   (setq company-idle-delay t)
+v;;   (setq company-begin-commands '(self-insert-command)))
 
 ;;;; wb-muse.el
 
