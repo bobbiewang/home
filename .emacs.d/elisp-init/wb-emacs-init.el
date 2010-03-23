@@ -1721,17 +1721,16 @@ directory, select directory. Lastly the file is opened."
 
 (robust-require snippet)
 
-
 (robust-require auto-complete-config
   (ac-config-default)
-  ;; 缺省禁止，要手工 M-x auto-complete-mode 激活
+  ;; 缺省禁止，需要 M-x auto-complete-mode 激活
   (global-auto-complete-mode nil))
 
-;; M-x company-mode 激活
-;; (with-library "company"
-;;   (autoload 'company-mode "company" nil t)
-;;   (setq company-idle-delay t)
-;;   (setq company-begin-commands '(self-insert-command)))
+;; 需要 M-x company-mode 激活
+(with-library "company"
+  (autoload 'company-mode "company" nil t)
+  (setq company-idle-delay t)
+  (setq company-begin-commands '(self-insert-command)))
 
 ;;;; wb-muse.el
 
