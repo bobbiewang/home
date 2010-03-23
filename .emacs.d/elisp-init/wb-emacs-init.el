@@ -1722,6 +1722,8 @@ directory, select directory. Lastly the file is opened."
 (robust-require snippet)
 
 (robust-require auto-complete-config
+  ;; TODO 最好自动获取 dict 目录
+  (add-to-list 'ac-dictionary-directories "~/.emacs.d/elisp-3rdparty/auto-complete-1.2/dict")
   (ac-config-default)
   ;; 缺省禁止，需要 M-x auto-complete-mode 激活
   (global-auto-complete-mode nil))
@@ -2601,9 +2603,10 @@ Returns nil if it is not visible in the current calendar window."
   (add-hook 'org-mode-hook
             (lambda ()
               ;; 使用 yasnippet
-              (make-variable-buffer-local 'yas/trigger-key)
-              (setq yas/trigger-key [tab])
-              (define-key yas/keymap [tab] 'yas/next-field-group)
+              (when (featurep 'yasnippet)
+                (make-variable-buffer-local 'yas/trigger-key)
+                (setq yas/trigger-key [tab])
+                (define-key yas/keymap [tab] 'yas/next-field-group))
               ;; 激活 flyspell mode 进行拼写检查
               (flyspell-mode 1)))
 
