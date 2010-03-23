@@ -1731,6 +1731,24 @@ directory, select directory. Lastly the file is opened."
 ;; 需要 M-x company-mode 激活
 (with-library "company"
   (autoload 'company-mode "company" nil t)
+  ;; 只使用一些当前支持的 backend
+  (setq company-backends
+        '(company-elisp
+          company-nxml
+          company-css
+          company-eclim
+          ;; company-semantic
+          ;; company-clang
+          company-xcode
+          ;; company-ropemacs
+          (company-gtags
+           company-etags
+           company-dabbrev-code
+           ;; company-pysmell
+           company-keywords)
+          company-oddmuse
+          company-files
+          company-dabbrev))
   (setq company-idle-delay t)
   (setq company-begin-commands '(self-insert-command)))
 
