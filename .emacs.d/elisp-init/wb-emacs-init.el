@@ -1673,9 +1673,8 @@ directory, select directory. Lastly the file is opened."
 
 ;; 添加自己的 info 文件目录，可以在 list 里添加多个目录
 ;; 也可以通过 shell 的环境变量 $INFOPATH 设置
-(setq Info-default-directory-list (append
-                                   Info-default-directory-list
-                                   '("~/.emacs.d/info")))
+(setq Info-default-directory-list
+      (cons "~/.emacs.d/info" Info-default-directory-list))
 
 ;; Xray provides a way to display internal Emacs object structures.
 ;; Usage: M-x xray-symbol RET describe-function RET
