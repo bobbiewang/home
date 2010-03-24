@@ -1721,8 +1721,10 @@ directory, select directory. Lastly the file is opened."
 (robust-require snippet)
 
 (robust-require auto-complete-config
-  ;; TODO 最好自动获取 dict 目录
-  (add-to-list 'ac-dictionary-directories "~/.emacs.d/elisp-3rdparty/auto-complete-1.2/dict")
+  ;; 使用 auto-complete 自带的 dict
+  (add-to-list 'ac-dictionary-directories
+               (concat (file-name-directory (locate-library "auto-complete-config"))
+                       "dict")
   (ac-config-default)
   ;; 缺省禁止，需要 M-x auto-complete-mode 激活
   (global-auto-complete-mode nil))
