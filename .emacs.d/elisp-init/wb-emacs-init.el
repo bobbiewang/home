@@ -1740,27 +1740,28 @@ directory, select directory. Lastly the file is opened."
                        "dict")
   (ac-config-default)
   ;; 缺省禁止，需要 M-x auto-complete-mode 激活
-  (global-auto-complete-mode nil))
+  (global-auto-complete-mode nil)))
 
-;; 需要 M-x company-mode 激活
+;; M-x company-mode 激活，M-n、M-p 在候选内容中选择，C-s、C-r、C-o 在候
+;; 选内容中搜索
 (with-library "company"
   (autoload 'company-mode "company" nil t)
-  ;; 只使用一些当前支持的 backend
+  ;; 只使用部分 backend
   (setq company-backends
         '(company-elisp
-          company-nxml
-          company-css
-          company-eclim
+          ;; company-nxml
+          ;; company-css
+          ;; company-eclim
           ;; company-semantic
           ;; company-clang
-          company-xcode
+          ;; company-xcode
           ;; company-ropemacs
           (company-gtags
            company-etags
            company-dabbrev-code
            ;; company-pysmell
            company-keywords)
-          company-oddmuse
+          ;; company-oddmuse
           company-files
           company-dabbrev))
   (setq company-idle-delay t)
