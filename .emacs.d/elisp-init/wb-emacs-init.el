@@ -2630,13 +2630,16 @@ Returns nil if it is not visible in the current calendar window."
   ;; 设置 mode hook
   (add-hook 'org-mode-hook
             (lambda ()
+              ;; 激活 flyspell mode 进行拼写检查
+              (flyspell-mode 1)
               ;; 使用 yasnippet
               (when (featurep 'yasnippet)
                 (make-variable-buffer-local 'yas/trigger-key)
                 (setq yas/trigger-key [tab])
-                (define-key yas/keymap [tab] 'yas/next-field-group))
-              ;; 激活 flyspell mode 进行拼写检查
-              (flyspell-mode 1)))
+                (defun yas/org-very-safe-expand ()
+                  (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
+                (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
+                (define-key yas/keymap [tab] 'yas/next-field))))
 
   ;; Org 文档内容都用 utf-8-unix 编码
   (add-to-list 'auto-coding-alist '("org\\'" . utf-8-unix))
