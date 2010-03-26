@@ -2178,26 +2178,31 @@ directory, select directory. Lastly the file is opened."
 (with-library "gtags"
     (autoload 'gtags-mode "gtags" "" t))
 
-(robust-require xgtags
-  (defun xgtags-pop-stack ()
-    "Move to previous point on the stack."
-    (interactive)
-    (let ((delete (and xgtags-kill-buffers
-                       (not (xgtags--stacked-p (current-buffer)))))
-          (context (xgtags--pop-context)))
-      (assert context nil "The tags stack is empty")
-      (when delete
-        (kill-buffer (current-buffer)))
-      (when (> (count-windows) 1)       ; 增加这两行代码，退出 xgtags 时
-        (delete-window))                ; 关闭因为 xgtags 弹出的 window
-      (xgtags--update-buffer context)
-      (switch-to-buffer (xgtags--context-buffer context))
-      (goto-char (xgtags--context-point context))))
+(with-library "xgtags"
+  (setq xgtags-overwrite-global-bindings nil) ; 不覆盖 etags 的 M-. M-* 等键绑定
+  (autoload 'xgtags-mode "xgtags" "" t)
 
-  (add-hook 'xgtags-select-mode-hook
-              (lambda ()
-                (define-key xgtags-select-mode-map (kbd "o")
-                  'xgtags-select-tag-near-point))))
+  (eval-after-load "xgtags"
+    '(progn
+       (defun xgtags-pop-stack ()
+         "Move to previous point on the stack."
+         (interactive)
+         (let ((delete (and xgtags-kill-buffers
+                            (not (xgtags--stacked-p (current-buffer)))))
+               (context (xgtags--pop-context)))
+           (assert context nil "The tags stack is empty")
+           (when delete
+             (kill-buffer (current-buffer)))
+           (when (> (count-windows) 1)       ; 增加这两行代码，退出 xgtags 时
+             (delete-window))                ; 关闭因为 xgtags 弹出的 window
+           (xgtags--update-buffer context)
+           (switch-to-buffer (xgtags--context-buffer context))
+           (goto-char (xgtags--context-point context))))
+
+       (add-hook 'xgtags-select-mode-hook
+                 (lambda ()
+                   (define-key xgtags-select-mode-map (kbd "o")
+                     'xgtags-select-tag-near-point))))))
 
 ;; emacs21 好像没有 number-sequence 函数，那就用其它代替好了。比如
 ;; (require 'cl) 后用 loop 命令，或者这样
