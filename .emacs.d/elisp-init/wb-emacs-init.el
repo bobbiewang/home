@@ -1609,7 +1609,7 @@ directory, select directory. Lastly the file is opened."
 
 ;; 删除文件、目录时移动到垃圾箱
 ;; ~/.local/share/Trash 或 ~/.Trash
-(setq delete-by-moving-to-trash t)
+;; (setq delete-by-moving-to-trash t)   ; 和 Emacs Daemon 冲突，禁止
 
 ;; Dired Settings
 
