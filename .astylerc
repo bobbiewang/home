@@ -1,0 +1,8 @@
+--indent=spaces=4
+--brackets=linux
+--indent-namespaces
+--indent-preprocessor
+--pad-oper
+# --lineend=linux     # astyle 1.24 才支持
+#--align-pointer=name # astyle 1.24 才支持
+--suffix=none
