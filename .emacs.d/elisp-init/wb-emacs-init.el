@@ -769,8 +769,8 @@ Argument ARG Key."
 ;; 设置 Emacs 启动后的缺省路径
 (setq default-directory "~/")
 
-;; 在 *Message* buffer 里保留 256 条消息，缺省只保留 100 条
-(setq message-log-max 256)
+;; 在 *Message* buffer 里保留消息的行数，缺省只保留 100 行
+(setq message-log-max 1024)
 
 ;; t：遇到错误的时候自动进入 Debugger
 (setq debug-on-error nil)
@@ -941,11 +941,12 @@ Argument ARG Key."
 ;; (setq ring-bell-function (lambda ()))
 (setq visible-bell t)
 
-;; 支持滚轮鼠标
-(mouse-wheel-mode t)
+(when window-system
+  ;; 支持滚轮鼠标
+  (mouse-wheel-mode t)
 
-;; 当鼠标移动的时候自动转换 frame，window 或者 minibuffer
-(setq mouse-autoselect-window t)
+  ;; 当鼠标移动的时候自动转换 frame，window 或者 minibuffer
+  (setq mouse-autoselect-window t))
 
 ;; 滚动页面的方式
 (setq scroll-step 1
@@ -3006,8 +3007,44 @@ Returns nil if it is not visible in the current calendar window."
 
 ;;; etags
 
-;; 让 etags 在当前目录和上四级目录中搜索 TAGS 文件
-(setq tags-table-list '("." ".." "../.." "../../.." "../../../.."))
+(eval-after-load "etags"
+  '(progn
+     (defun wb-find-tags-file-r (path)
+       "find the tags file from the parent directories"
+       (let* ((parent (file-name-directory path))
+              (possible-tags-file (concat parent "TAGS")))
+         (cond
+          ((file-exists-p possible-tags-file)
+           (message "Found tags file %s" possible-tags-file)
+           (throw 'found-it possible-tags-file))
+          ((string= "/TAGS" possible-tags-file) (error "no tags file found"))
+          (t (wb-find-tags-file-r (directory-file-name parent))))))
+
+     (defun wb-find-tags-file ()
+       "recursively searches each parent directory for a file
+        named 'TAGS' and returns the path to that file or nil if
+        a tags file is not found. Returns nil if the buffer is
+        not visiting a file"
+       (if (buffer-file-name)
+           (catch 'found-it
+             (wb-find-tags-file-r (buffer-file-name)))
+         (error "buffer is not visiting a file")))
+
+     (defun wb-set-tags-file-path ()
+       "calls `wb-find-tags-file' to recursively search up the
+        directory tree to find a file named 'TAGS'. If found, set
+        'tags-table-list' with that path as an argument otherwise
+        raises an error."
+       (interactive)
+       (setq tags-table-list (list (wb-find-tags-file))))
+
+     ;; 如果同一个 tag 有不同结果，etags-select 能显示出列表
+     (robust-require etags-select
+       (global-set-key "\M-." 'etags-select-find-tag)
+       (global-set-key "\M-?" 'etags-select-find-tag-at-point)
+       (define-key etags-select-mode-map (kbd "RET") 'etags-select-goto-tag)
+       (define-key etags-select-mode-map "o" 'etags-select-goto-tag-other-window)
+       )))
 
 ;; 一些生成 TAGS 的命令
 ;; 可以考虑使用 http://www.sixfingeredman.net/proj/xemacs/build-tags.el
@@ -3017,9 +3054,6 @@ Returns nil if it is not visible in the current calendar window."
   (eshell-command
    (format "find %s -type f -name \"*.[ch]\" | etags -" dir-name)))
 
-;; 如果同一个 tag 有不同结果，etags-select 能显示出列表
-(robust-require etags-select
-  (global-set-key "\M-?" 'etags-select-find-tag-at-point))
 
 ;; imenu-tree, tags-tree
 (autoload 'imenu-tree "imenu-tree" "Imenu tree" t)
