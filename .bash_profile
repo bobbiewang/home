@@ -5,25 +5,27 @@
 # 缺省的 umask 在文件 /etc/login.defs 中设置
 #umask 022
 
-# 判断一些程序是否已安装，并设置相应的环境变量
-
-if [ `which dtach 2>/dev/null` ]; then
-    EMACS_SERVER_MODE="dtach"
-elif [ `which screen 2>/dev/null` ]; then
-    EMACS_SERVER_MODE="screen"
-fi
-
-export EMACS_SERVER_MODE
-
-# .privatebashrc 负责一些不适合公开的设置，比如 Proxy 账号、密码等。
-# 这个文件的属性应该设为 600，不进行版本控制（因为可能使用 Public Repos）
-if [ -f ~/.privatebashrc ]; then
-    . ~/.privatebashrc
+# ~/.bashrc-preprocess 负责和 site 相关的设置，在 ~/.bashrc 之前读取。
+# 这些设置本来应该放在 /etc/profile 或者 /etc/bash.bashrc 中，但因为某
+# 些系统没有这些文件的写权限，所以在 $HOME 下增加这个文件。
+# 这个文件的属性应该设为 600，不进行版本控制
+# ~/.bashrc-preprocess 文件应该设置如下环境变量：
+#   - EMACS_SERVER_MODE，可选项有 daemon、screen、dtach 等
+#   - Proxy 账号、密码
+if [ -f ~/.bashrc-preprocess ]; then
+    . ~/.bashrc-preprocess
+else
+    EMACS_SERVER_MODE="daemon"
 fi
 
 # .bashrc 要在 .privatebashrc 后加载，因为可能要用到前者的一些设置
 if [ -f ~/.bashrc ]; then
     . ~/.bashrc
+fi
+
+# ~/.bashrc-postprocess 负责和 site 相关的设置，在 ~/.bashrc 之后读取。
+if [ -f ~/.bashrc-postprocess ]; then
+    . ~/.bashrc-postprocess
 fi
 
 # 如果用户有自己的 ~/bin，加到 PATH 中
