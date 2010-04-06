@@ -2656,7 +2656,7 @@ Returns nil if it is not visible in the current calendar window."
   (add-hook 'org-mode-hook
             (lambda ()
               ;; 激活 flyspell mode 进行拼写检查
-              (flyspell-mode 1)
+              ;; (flyspell-mode 1)
               ;; 使用 yasnippet
               (when (featurep 'yasnippet)
                 (make-variable-buffer-local 'yas/trigger-key)
