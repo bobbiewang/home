@@ -201,6 +201,53 @@ u () {
     fi
 }
 
+# 跳转到某个文件所在目录，所有文件根目录为 $T
+function godir () {
+    local T=~/rel/env
+
+    if [[ -z "$1" ]]; then
+        echo "Usage: godir <regex>"
+        return
+    fi
+    if [[ ! -f $T/.filelist ]]; then
+        echo -n "Creating index..."
+        (cd $T; find . -wholename ./out -prune -o -type f > .filelist)
+        echo " Done"
+        echo ""
+    fi
+    local lines
+    lines=($(grep "$1" $T/.filelist | sed -e 's/\/[^/]*$//' | sort | uniq))
+    if [[ ${#lines[@]} = 0 ]]; then
+        echo "Not found"
+        return
+    fi
+    local pathname
+    local choice
+    if [[ ${#lines[@]} > 1 ]]; then
+        while [[ -z "$pathname" ]]; do
+            local index=1
+            local line
+            for line in ${lines[@]}; do
+                printf "%6s %s\n" "[$index]" $line
+                index=$(($index + 1))
+            done
+            echo
+            echo -n "Select one: "
+            unset choice
+            read choice
+            if [[ $choice -gt ${#lines[@]} || $choice -lt 1 ]]; then
+                echo "Invalid choice"
+                continue
+            fi
+            pathname=${lines[$(($choice-$_arrayoffset))]}
+        done
+    else
+        # even though zsh arrays are 1-based, $foo[0] is an alias for $foo[1]
+        pathname=${lines[0]}
+    fi
+    cd $T/$pathname
+}
+
 ######################################################################
 ## 修改一些危险命令的缺省行为
 ######################################################################
