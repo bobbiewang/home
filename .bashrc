@@ -167,7 +167,7 @@ alias agi='sudo apt-get install'
 alias agr='sudo apt-get remove'
 
 ######################################################################
-## 其他常用命令别名
+## 其他常用命令别名和自定义函数
 ######################################################################
 
 alias so="source"
@@ -179,6 +179,27 @@ alias s="sdcv"
 alias grep="grep --color=auto"
 alias pgrep="ps awx | grep"
 alias tail="tail -32"
+alias ack="ack-grep"
+
+# u N: 向上跳 N 级目录
+# u xx: 寻找当前路径中最后一个 xx，跳到其所在目录
+u () {
+    if expr "$1" : "[1-9][0-9]*$" >/dev/null; then
+        local arg="$1" s=..
+        while [ $((--arg)) -gt 0 ]; do
+            s="$s/.."
+        done
+        cd $s
+    else
+        local i=$(expr "$PWD" : ".*$1") j
+        if [ $i -gt 0 ]; then
+            j=$(expr index "$(expr substr "$PWD" $((++i)) 10000)" /)
+            [ $j -gt 0 ] && cd "$(expr substr "$PWD" 1 $((i+j)))"
+        else
+            echo "ERROR: can't find \"$1\" in \"$PWD\"!" >&2
+        fi
+    fi
+}
 
 ######################################################################
 ## 修改一些危险命令的缺省行为
