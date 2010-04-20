@@ -2537,6 +2537,15 @@ the length of the whitespace"
               (add-hook 'ediff-quit-hook restore-window-configuration 'append)
               (add-hook 'ediff-suspend-hook restore-window-configuration 'append))))
 
+;;; EasyPG Assistant
+
+;; 使用对称加密
+(setq epa-file-encrypt-to nil)
+;; 缓存密码
+(setq epa-file-cache-passphrase-for-symmetric-encryption t)
+;; 允许 auto-saving
+(setq epa-file-inhibit-auto-save nil)
+
 ;;; Calendar, Diary
 
 ;; Calendar
