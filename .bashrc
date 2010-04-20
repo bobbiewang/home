@@ -252,9 +252,34 @@ function godir () {
 ## 修改一些危险命令的缺省行为
 ######################################################################
 
-alias rm='rm -i'
-alias cp='cp -i'
 alias mv='mv -i'
+alias cp='cp -i'
+alias rm='rm -i'
+
+# 建议设置
+# alias rm=safe_rm
+# export TRASH_DIR=$HOME/.__trash
+#
+# 设置 alias 后，使用 /bin/rm 执行真正的删除操作，注意不能用 rm 操作
+# TRASH_DIR 目录及里面文件
+
+safe_rm () {
+    local d t f s
+
+    [ -z "$PS1" ] && (/bin/rm "$@"; return)
+
+    d="${TRASH_DIR:=$HOME/.__trash}/`date +%W`"
+    t=`date +%F_%H-%M-%S`
+    [ -e "$d" ] || mkdir -p "$d" || return
+
+    for f do
+    [ -e "$f" ] || continue
+    s=`basename "$f"`
+    /bin/mv "$f" "$d/${t}_$s" || break
+    done
+
+    echo -e "[$? $t `whoami` `pwd`]$@\n" >> "$d/00rmlog.txt"
+}
 
 ######################################################################
 ## 把常用目录加入 CDPATH
