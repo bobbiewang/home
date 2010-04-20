@@ -3,14 +3,18 @@
 # screen 的初始化文件
 # 系统的全局初始化文件在 /etc/screenrc
 
-# 和256色相关的配置
-term xterm-256color
-attrcolor b ".I"
-termcapinfo xterm-256color 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
-defbce "on"
-
 # 编码转换
 encoding GBK UTF-8
+
+# 和 256 色相关的配置
+# 允许粗体颜色
+attrcolor b ".I"
+# 告诉 screen 如何设置颜色，AB=背景色，AF=前景色
+termcapinfo xterm-256color 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
+# 用当前的背景色擦除背景
+defbce "on"
+# 设置 term
+term xterm-256color
 
 # 使用visual bell
 vbell on
