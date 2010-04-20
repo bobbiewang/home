@@ -1253,7 +1253,8 @@ replace. Replace the text that you're presently isearching for."
 
 ;; Minibuffer 交互功能的设置
 (icomplete-mode t)            ; 自动提示补全函数和变量
-(partial-completion-mode t)   ; 首字母完成功能，比如 q-r-r 相当于 query-replace-regexp
+(when (fboundp 'partial-completion-mode)
+  (partial-completion-mode t))   ; 首字母完成功能，比如 q-r-r 相当于 query-replace-regexp
 (fset 'yes-or-no-p 'y-or-n-p) ; 所有的问题用 y/n 确认，而不用 yes/no
 (setq resize-mini-windows 'grow-only) ; 允许 minibuffer 变化大小
 (setq enable-recursive-minibuffers t) ; 可以递归的使用 minibuffer
@@ -1530,7 +1531,7 @@ directory, select directory. Lastly the file is opened."
   (ido-mode t)                         ; 启用 ido mode
   (setq ido-enable-flex-matching t)    ; 可以用 wei 匹配文件名 wb-emacs-init.el
   (setq ido-create-new-buffer 'always) ; 没有名字匹配的 buffer 时，直接创建新 buffer
-  (setq ido-use-filename-at-point t)   ; 先查找光标处文件，可以用于替换 ffap
+  ;; (setq ido-use-filename-at-point t)   ; 先查找光标处文件，可以用于替换 ffap
   (ido-everywhere t)                   ; 在任何读取文件、目录的地方使用 ido
   (add-hook 'ido-setup-hook
             (lambda ()
