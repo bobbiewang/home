@@ -375,29 +375,6 @@ function set_prompts()
 set_prompts
 export PS1 PS2 PS4
 
-######################################################################
-## 设置 Foundry 工作环境
-######################################################################
-
-if [ -d ~/rel ]; then
-    # *nix 环境
-    ENV=~/rel/env
-    RTF=~/rel/rtf
-elif [ -d /cygdrive/c/rel ]; then
-    # Windows 环境
-    ENV=/cygdrive/c/rel/env
-    RTF=/cygdrive/c/rel/rtf
-    PATH=$PATH:/cygdrive/c/rel/script:/cygdrive/c/rel/script/build
-fi
-
-if [ -n "$ENV" ]; then
-    FOUNDRY=$RTF
-    CDPATH=$CDPATH:$ENV/base/pkg:$ENV/or5g00/pkg:$ENV/or5s00/pkg
-    CDPATH=$CDPATH:$ENV/mg5g00/pkg:$ENV/mj5g00/pkg:$ENV/mj5g00e/pkg:$ENV/mg5a00/pkg
-    CDPATH=$CDPATH:$ENV/ep5g00/pkg:$ENV/ep5g00p/pkg:$ENV/ep5a00/pkg:$ENV/ep5m00/pkg
-    CDPATH=$CDPATH:$ENV/ep5c00/pkg:$ENV/ep5c00a/pkg
-fi
-
 # Local Variables:
 # coding: utf-8-unix
 # mode: outline-minor
