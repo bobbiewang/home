@@ -25,23 +25,32 @@
     (put-text-property 0 (length msg) 'face 'font-lock-warning-face msg)
     (insert msg)
     (insert "\n")))
-    
+
 ;; 输入 .emacs 加载时间
 
 (defvar *emacs-load-start-time* (current-time))
+(defvar *emacs-load-prev-time* nil)
 
-(defun deh-current-load-time (msg)
-  (deh-log-info (format "[%ds] %s."
-                        (time-to-seconds (time-since *emacs-load-start-time*)) msg)))
+(defun deh-initialization-time (msg)
+  "输出 Emacs 启动时间"
+  (deh-log-info (format "[%.2f] %s."
+                        (time-to-seconds (time-since *emacs-load-start-time*))
+                        msg)))
 
+(defun deh-load-time (msg)
+  "输出加载当前扩展的时间"
+  (deh-log-info (format "[%.2f] %s."
+                        (time-to-seconds (time-since *emacs-load-prev-time*))
+                        msg)))
 
 ;; 强壮的加载 library 的 macro，即使 library 不存在也不会出错
 (defmacro robust-require (symbol &rest body)
   `(condition-case nil
        (progn
-         (deh-current-load-time (format "To load %s" ',symbol))
+         (setq *emacs-load-prev-time* (current-time))
          (require ',symbol)
-         ,@body)
+         ,@body
+         (deh-load-time (format "Loaded %s" ',symbol)))
      (error (deh-log-warn (format "[WARNING] Failed to require %s!" ',symbol))
             nil)))
 
@@ -52,18 +61,22 @@
   (declare (indent 1))
   `(if (locate-library ',library)
        (progn
-         (deh-current-load-time (format "To load %s" ',library))
-         ,@body)
+         (setq *emacs-load-prev-time* (current-time))
+         ,@body
+         (deh-load-time (format "Loaded %s" ',library)))
      (deh-log-warn (format "[WARNING] No library %s. Skipped." ',library))))
 
 (defmacro with-without-library (library with-body without-body)
   (declare (indent 1))
   `(if (locate-library ',library)
        (progn
-         ,@with-body)
+         (setq *emacs-load-prev-time* (current-time))
+         ,@with-body
+         (deh-load-time (format "Loaded %s" ',library)))
      (progn
-       (deh-log-warn (format "[WARNING] No library %s. Skipped." ',library))
-       ,@without-body)))
+       (setq *emacs-load-prev-time* (current-time))
+       ,@without-body
+       (deh-log-warn (format "[WARNING] No library %s. Skipped." ',library)))))
 
 ;; Lazy load 功能，可以用于一些耗时的 library
 
