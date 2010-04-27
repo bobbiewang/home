@@ -1754,14 +1754,19 @@ directory, select directory. Lastly the file is opened."
   ;; yas/load-directory 只支持 string 参数，借助 mapc 作用于 list
   (mapc 'yas/load-directory yas/root-directory))
 
-(robust-require auto-complete-config
-  ;; 使用 auto-complete 自带的 dict
-  (add-to-list 'ac-dictionary-directories
-               (concat (file-name-directory (locate-library "auto-complete-config"))
-                       "dict")
-  (ac-config-default)
-  ;; 缺省禁止，需要 M-x auto-complete-mode 激活
-  (global-auto-complete-mode nil)))
+(with-library "auto-complete-config"
+  (autoload 'auto-complete-mode "auto-complete-config" nil t)
+
+  (eval-after-load "auto-complete-config"
+    '(progn
+       ;; 使用 auto-complete 自带的 dict
+       (add-to-list 'ac-dictionary-directories
+                    (concat (file-name-directory (locate-library "auto-complete-config"))
+                            "dict"))
+       (ac-config-default)
+       ;; ac-config-default 会全局开启 auto-complete-config，这里禁止掉，用
+       ;; 户需要的话可以 M-x auto-complete-mode 激活
+       (global-auto-complete-mode nil))))
 
 ;; M-x company-mode 激活，M-n、M-p 在候选内容中选择，C-s、C-r、C-o 在候
 ;; 选内容中搜索
