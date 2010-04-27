@@ -1487,7 +1487,6 @@ do kill lines as `dd' in vim."
 (setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
 
 ;; 把常用文件加入 File Name Cache
-(lazy-require 'filecache)
 
 (eval-after-load "filecache"
   '(progn
@@ -1502,11 +1501,11 @@ do kill lines as `dd' in vim."
 First select a file, matched using ido-switch-buffer against the contents
 in `file-cache-alist'. If the file exist in more than one
 directory, select directory. Lastly the file is opened."
-  (interactive (list (file-cache-ido-read "File: "
-                                          (mapcar
-                                           (lambda (x)
-                                             (car x))
-                                           file-cache-alist))))
+  (interactive
+   (list (file-cache-ido-read
+          "File: "
+          (mapcar (lambda (x) (car x))
+                  (progn (require 'filecache) file-cache-alist)))))
   (let* ((record (assoc file file-cache-alist)))
     (find-file
      (expand-file-name
@@ -1741,18 +1740,20 @@ directory, select directory. Lastly the file is opened."
 
 (robust-require snippet)
 
-(robust-require yasnippet
-  (yas/initialize)
-  ;; yas/root-directory 既可以设置为一个目录，也可以设置为一个列表。如
-  ;; 果设置为列表，第一个目录用于开发个人的 snippet，相关命令（如
-  ;; yas/new-snippet）将在这个目录下创建新的 snippet
-  (setq yas/root-directory
-        (list "~/.emacs.d/elisp-personal/yasnippets" ; 自定义的 snippet
-              (concat                                ; 随 yasnippet 发布的 snippet
-               (file-name-directory (locate-library "yasnippet"))
-               "snippets")))
-  ;; yas/load-directory 只支持 string 参数，借助 mapc 作用于 list
-  (mapc 'yas/load-directory yas/root-directory))
+(lazy-require 'yasnippet)
+(eval-after-load "yasnippet"
+  '(progn
+     (yas/initialize)
+     ;; yas/root-directory 既可以设置为一个目录，也可以设置为一个列表。如
+     ;; 果设置为列表，第一个目录用于开发个人的 snippet，相关命令（如
+     ;; yas/new-snippet）将在这个目录下创建新的 snippet
+     (setq yas/root-directory
+           (list "~/.emacs.d/elisp-personal/yasnippets" ; 自定义的 snippet
+                 (concat                                ; 随 yasnippet 发布的 snippet
+                  (file-name-directory (locate-library "yasnippet"))
+                  "snippets")))
+     ;; yas/load-directory 只支持 string 参数，借助 mapc 作用于 list
+     (mapc 'yas/load-directory yas/root-directory)))
 
 (with-library "auto-complete-config"
   (autoload 'auto-complete-mode "auto-complete-config" nil t)
@@ -2387,7 +2388,8 @@ the length of the whitespace"
 (robust-require rinari
   (setq rinari-tags-file-name "TAGS"))
 
-(robust-require rhtml-mode
+(with-library "rhtml-mode"
+  (autoload 'rhtml-mode "rhtml-mode" "rhtml mode")
   (add-to-list 'auto-mode-alist '("\.rhtml$". rhtml-mode))
   (add-to-list 'auto-mode-alist '("\.html\.erb$". rhtml-mode))
   (add-hook 'rhtml-mode-hook
@@ -2876,17 +2878,21 @@ Returns nil if it is not visible in the current calendar window."
   ;;;;;;;;;;;;;;;
 
   ;; 集成 remember，并设置模板
-  (robust-require remember
-    (org-remember-insinuate)
-    (setq org-directory "~/.dropbox/GTD/")
-    (setq org-default-notes-file (concat org-directory "/gtd"))
-    (setq org-remember-templates
-          '(("Todo" ?t "* TODO %? %^g\n  %u" "gtd" "Inbox")
-            ("Note" ?n "* %?\n  %T" "notes" top)))
-    ;; 正向记录 note，新的在下面
-    (setq org-reverse-note-order nil)
+  (with-library "remember"
+    (autoload 'remember "remember" "Remember")
     ;; 设置一个全局键绑定快速调用 remember
-    (global-set-key (kbd "C-M-r") 'remember))
+    (global-set-key (kbd "C-M-r") 'remember)
+
+    (eval-after-load "remember"
+      '(progn
+         (org-remember-insinuate)
+         (setq org-directory "~/.dropbox/GTD/")
+         (setq org-default-notes-file (concat org-directory "/gtd"))
+         (setq org-remember-templates
+               '(("Todo" ?t "* TODO %? %^g\n  %u" "gtd" "Inbox")
+                 ("Note" ?n "* %?\n  %T" "notes" top)))
+         ;; 正向记录 note，新的在下面
+         (setq org-reverse-note-order nil))))
 
   ;; 微调 Refile 操作
   (setq org-refile-targets '((org-agenda-files . (:maxlevel . 2))))
@@ -3009,18 +3015,39 @@ Returns nil if it is not visible in the current calendar window."
                (org-agenda-skip-entry-if 'regexp "DONE"))))))))
 
 ;;; Anything
-(robust-require anything-config
-  (setq anything-sources
-        (list anything-c-source-buffers
-              anything-c-source-file-name-history
-              anything-c-source-file-cache
-              ;; anything-c-source-emacs-commands
-              ;; anything-c-source-info-pages
-              ;; anything-c-source-man-pages
-              ))
-  (setq anything-c-adaptive-history-file
-        "~/.emacs.d/.anything-c-adaptive-history")
-  (global-set-key (kbd "ESC ESC SPC") 'anything))
+;; (robust-require anything-config
+;;   (setq anything-sources
+;;         (list anything-c-source-buffers
+;;               anything-c-source-file-name-history
+;;               anything-c-source-file-cache
+;;               ;; anything-c-source-emacs-commands
+;;               ;; anything-c-source-info-pages
+;;               ;; anything-c-source-man-pages
+;;               ))
+;;   (setq anything-c-adaptive-history-file
+;;         "~/.emacs.d/.anything-c-adaptive-history")
+;;   (global-set-key (kbd "ESC ESC SPC") 'anything))
+
+(with-library "anything-config"
+  (autoload 'anything "anything-config" "Anything")
+  (global-set-key (kbd "ESC ESC SPC") 'anything)
+
+  (add-hook 'anything-before-initialize-hook
+            (lambda ()
+            (require 'filecache)))
+
+  (eval-after-load "anything-config"
+    '(progn
+       (setq anything-sources
+             (list anything-c-source-buffers
+                   anything-c-source-file-name-history
+                   anything-c-source-file-cache
+                   ;; anything-c-source-emacs-commands
+                   ;; anything-c-source-info-pages
+                   ;; anything-c-source-man-pages
+                   ))
+       (setq anything-c-adaptive-history-file
+             "~/.emacs.d/.anything-c-adaptive-history"))))
 
 ;;;; wb-tools.el
 
