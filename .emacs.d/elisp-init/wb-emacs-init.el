@@ -1029,17 +1029,16 @@ Argument ARG Key."
 ;; M-x color-theme-select 选择配色方案，在配色方案上按 I 可以改变当前
 ;; Frame 的配色，按 i 可以改变所有 Frame 的配色，按 p 可以把当前配色方
 ;; 案的 Lisp 代码打印出来，加入 .emacs 后就可以不用加载 color-theme
-(when (> (display-color-cells) 16)
-  (with-without-library "color-theme"
-    ((require 'color-theme)
-     (color-theme-initialize)
-     ;; (color-theme-calm-forest)
-     (color-theme-dark-laptop))
-    ((setq default-frame-alist
-           '((foreground-color . "Wheat")
-             (background-color . "DarkSlateGray")
-             (cursor-color . "Orchid")
-             (mouse-color . "slateblue"))))))
+(with-without-library "color-theme"
+  ((require 'color-theme)
+   (color-theme-initialize)
+   ;; (color-theme-calm-forest)
+   (color-theme-dark-laptop))
+  ((setq default-frame-alist
+         '((foreground-color . "Wheat")
+           (background-color . "DarkSlateGray")
+           (cursor-color . "Orchid")
+           (mouse-color . "slateblue")))))
 
 ;; 单独设置背景色
 ;; (set-background-color "darkblue")
