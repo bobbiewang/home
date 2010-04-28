@@ -2671,6 +2671,10 @@ Returns nil if it is not visible in the current calendar window."
   ;; 设置 mode hook
   (add-hook 'org-mode-hook
             (lambda ()
+              ;; 截断中文标点，方便 hippie-expand 补全
+              ;; 可以用 M-x describe-char 查看字符的 syntax type
+              (modify-syntax-entry ?。 "-")
+              (modify-syntax-entry ?， "-")
               ;; 激活 flyspell mode 进行拼写检查
               ;; (flyspell-mode 1)
               ;; 使用 yasnippet
