@@ -123,7 +123,15 @@ function get_git_modified {
 ## Screen
 ######################################################################
 
-alias sc='screen'
+# 根据 TERM 类型，确定 screen 使用的 TERM
+# （也可以通过 $(tput colors) 的值调整）
+if echo $TERM | grep -E -e "-[0-9]+color$" > /dev/null 2>&1
+then
+    alias sc="screen -T screen-${TERM##*-}"
+else
+    alias sc='screen'
+fi
+
 alias scl='screen -wipe'
 alias scr='screen -r'
 
