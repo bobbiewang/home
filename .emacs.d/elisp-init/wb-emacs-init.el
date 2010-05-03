@@ -964,7 +964,7 @@ Argument ARG Key."
 
 (when window-system
   ;; 支持滚轮鼠标
-  (mouse-wheel-mode t)
+  (mouse-wheel-mode 1)
 
   ;; 当鼠标移动的时候自动转换 frame，window 或者 minibuffer
   (setq mouse-autoselect-window t))
@@ -982,17 +982,17 @@ Argument ARG Key."
 
 ;;; Display
 
-(global-font-lock-mode t)
+(global-font-lock-mode 1)
 
 ;; 显示括号匹配
-(show-paren-mode t)
+(show-paren-mode 1)
 ;; 光标靠近鼠标时鼠标跳开
 (mouse-avoidance-mode 'animate)
 (blink-cursor-mode -1) ; 光标不要闪烁
 ;; 可以显示图片
-(auto-image-file-mode t)
+(auto-image-file-mode 1)
 ;; 高亮显示选中区域
-(transient-mark-mode t)
+(transient-mark-mode 1)
 ;; 提示末尾的空白行
 (setq-default indicate-empty-lines t)
 (setq truncate-partial-width-windows t)
@@ -1025,8 +1025,8 @@ Argument ARG Key."
 ;; (set-time-zone-rule "Asia/Shanghai")  ; 设置正确的时区（某些版本的 Emacs 不能自动设置准确时区）
 
 ;; Modeline 上显示行号、列号
-(line-number-mode t)
-(column-number-mode t)
+(line-number-mode 1)
+(column-number-mode 1)
 
 ;; M-x color-theme-select 选择配色方案，在配色方案上按 I 可以改变当前
 ;; Frame 的配色，按 i 可以改变所有 Frame 的配色，按 p 可以把当前配色方
@@ -1048,7 +1048,7 @@ Argument ARG Key."
 ;;; View, Navigation
 
 ;; 支持查看图片
-(auto-image-file-mode t)
+(auto-image-file-mode 1)
 
 ;; 读 man 文档时，使用当前 window
 (setq Man-notify-method 'pushy)
@@ -1234,7 +1234,7 @@ replace. Replace the text that you're presently isearching for."
 
 ;; 选中了一些文字时，如果再输入一个字符，这个字符把选中的文字替换掉，而
 ;; 不是直接在光标的位置插入。也可以按 DEL 将选中的文件删除
-(delete-selection-mode t)
+(delete-selection-mode 1)
 
 ;; 设定删除保存记录为 200，可以方便以后无限恢复
 (setq kill-ring-max 200)
@@ -1242,7 +1242,7 @@ replace. Replace the text that you're presently isearching for."
 ;; 70 是 Emacs 的缺省值
 (setq default-fill-column 70)
 
-(setq-default indent-tabs-mode nil)
+(setq-default indent-tabs-mode 0)
 (setq default-tab-width 4)
 
 ;; 在文档最后自动插入一个空行
@@ -1253,9 +1253,9 @@ replace. Replace the text that you're presently isearching for."
 (setq x-select-enable-clipboard t)
 
 ;; Minibuffer 交互功能的设置
-(icomplete-mode t)            ; 自动提示补全函数和变量
+(icomplete-mode 1)            ; 自动提示补全函数和变量
 (when (fboundp 'partial-completion-mode)
-  (partial-completion-mode t))   ; 首字母完成功能，比如 q-r-r 相当于 query-replace-regexp
+  (partial-completion-mode 1))   ; 首字母完成功能，比如 q-r-r 相当于 query-replace-regexp
 (fset 'yes-or-no-p 'y-or-n-p) ; 所有的问题用 y/n 确认，而不用 yes/no
 (setq resize-mini-windows 'grow-only) ; 允许 minibuffer 变化大小
 (setq enable-recursive-minibuffers t) ; 可以递归的使用 minibuffer
@@ -1528,7 +1528,7 @@ directory, select directory. Lastly the file is opened."
 (robust-require ido
   (setq ido-save-directory-list-file    ; 自定义 ido 文件的路径
         (expand-file-name "~/.emacs.d/.ido.last"))
-  (ido-mode t)                         ; 启用 ido mode
+  (ido-mode 1)                         ; 启用 ido mode
   (setq ido-enable-flex-matching t)    ; 可以用 wei 匹配文件名 wb-emacs-init.el
   (setq ido-create-new-buffer 'always) ; 没有名字匹配的 buffer 时，直接创建新 buffer
   ;; (setq ido-use-filename-at-point t)   ; 先查找光标处文件，可以用于替换 ffap
@@ -1768,7 +1768,7 @@ directory, select directory. Lastly the file is opened."
        (ac-config-default)
        ;; ac-config-default 会全局开启 auto-complete-config，这里禁止掉，用
        ;; 户需要的话可以 M-x auto-complete-mode 激活
-       (global-auto-complete-mode nil))))
+       (global-auto-complete-mode 0))))
 
 ;; M-x company-mode 激活，M-n、M-p 在候选内容中选择，C-s、C-r、C-o 在候
 ;; 选内容中搜索
@@ -2269,9 +2269,9 @@ directory, select directory. Lastly the file is opened."
   (setq gdb-show-main t)
   (setq gdb-many-windows t)
   ;; 一起启动的 Minor Modes
-  (setq hs-minor-mode t)
-  (setq abbrev-mode t)
-  (which-func-mode t)
+  (setq hs-minor-mode 1)
+  (setq abbrev-mode 1)
+  (which-func-mode 1)
   ;; 其他键绑定
   (local-set-key  (kbd "C-c o") 'ff-find-other-file))
 
@@ -2293,8 +2293,8 @@ directory, select directory. Lastly the file is opened."
   (c-set-offset 'inline-open 0)
   (c-set-offset 'friend '-)
   ;; gtags，优先使用 xgtags-mode
-  (cond ((fboundp 'xgtags-mode) (xgtags-mode t))
-        ((fboundp 'gtags-mode)  (gtags-mode t)))
+  (cond ((fboundp 'xgtags-mode) (xgtags-mode 1))
+        ((fboundp 'gtags-mode)  (gtags-mode 1)))
   ;; xref
   )
 (add-hook 'c++-mode-hook 'wb-c++-mode-hook)
@@ -2373,15 +2373,15 @@ the length of the whitespace"
   (add-hook 'ruby-mode-hook
             '(lambda ()
                ;; 启动 outline-minor-mode
-               (outline-minor-mode t)
+               (outline-minor-mode 1)
                (set (make-local-variable 'outline-regexp)
                     "^if[ \t]\\| *\\(module[ \t]+\\|class[ \t]+\\|def[ \t]+\\)")
                ;; 以行首的空格数目作为 outline level
                (set (make-local-variable 'outline-level) 'rb-outline-level)
                ;; (hide-body)             ; 开始的时候隐藏所有函数的 body
                (inf-ruby-keys)
-               (ruby-electric-mode t)
-               (setq abbrev-mode t)
+               (ruby-electric-mode 1)
+               (setq abbrev-mode 1)
                (local-set-key "\C-c\C-c" 'ruby-eval-buffer)
                (local-set-key "\C-[#"    'ruby-hash-header))))
 
@@ -2434,7 +2434,7 @@ the length of the whitespace"
               (set (make-variable-buffer-local 'beginning-of-defun-function)
                    'py-beginning-of-def-or-class)
               ;; 启动 outline-minor-mode
-              (outline-minor-mode t)
+              (outline-minor-mode 1)
               ;; 以 * 个空格引导的 def、class 语句作为 outline-regex
               ;; 下面是另外两个例子，还需要研究哪个更好
               ;; "[^ \t]\\|[ \t]*\\(def\\|class\\) "
@@ -3153,7 +3153,7 @@ Returns nil if it is not visible in the current calendar window."
   ;; 打开 ansi-color
   (ansi-color-for-comint-mode-on)
   ;; 启用 abbrev
-  (abbrev-mode t))
+  (abbrev-mode 1))
 
 (add-hook 'shell-mode-hook 'wb-shell-mode-hook)
 
@@ -3200,6 +3200,9 @@ Returns nil if it is not visible in the current calendar window."
   (defalias 'gs 'git-status)
   (autoload 'git-blame-mode "git-blame"
     "Minor mode for incremental blame for Git." t))
+
+(with-library "magit"
+  (autoload 'magit-status "magit" nil t))
 
 ;;; Dict
 (require 'sdcv-mode)
@@ -3305,7 +3308,7 @@ Returns nil if it is not visible in the current calendar window."
 ;; desktop 保存打开的文件列表
 (robust-require desktop
   ;; 启用 desktop save mode
-  (desktop-save-mode t)
+  (desktop-save-mode 1)
   ;; 设置 desktop 相关文件的路径
   (setq desktop-base-file-name "~/.emacs.d/.emacs.desktop")
   (setq desktop-base-lock-name "~/.emacs.d/.emacs.desktop.lock")
