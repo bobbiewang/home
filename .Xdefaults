@@ -1,4 +1,4 @@
-Emacs.font: Consolas-16
+Emacs.font: Consolas-14
 Emacs.FontBackend: xft
 Xft.dpi: 96
 Xft.hinting: None
