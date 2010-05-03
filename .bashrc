@@ -45,29 +45,30 @@ export LESS_TERMCAP_us=$'\E[04;38;5;146m' # begin underline
 ######################################################################
 
 if [ "$EMACS_SERVER_MODE" == "daemon" ]; then
-    alias e="emacsclient -c"
+    alias  e="emacsclient -c -n"
+    alias ec="emacsclient -c -n"
     alias et="emacsclient -t"
     export ALTERNATE_EDITOR=""
     export EDITOR="emacsclient -t"
     export VISUAL="emacsclient -t"
 elif [ "$EMACS_SERVER_MODE" == "dtach" ]; then
-    alias e="connect-emacs-dtach editor -d $DISPLAY -c"
+    alias  e="connect-emacs-dtach editor -d $DISPLAY -c"
     alias et="connect-emacs-dtach editor -t"
     export EDITOR="connect-emacs-dtach editor -t"
     ~/bin/preload-emacs-dtach editor
 elif [ "$EMACS_SERVER_MODE" == "screen" ]; then
-    alias e="connect-emacs-screen editor -d $DISPLAY -c"
+    alias  e="connect-emacs-screen editor -d $DISPLAY -c"
     alias et="connect-emacs-screen editor -t"
     export EDITOR="connect-emacs-screen editor -t"
     ~/bin/preload-emacs-screen editor
 else
-    alias e="emacs -nw"
+    alias  e="emacs"
+    alias ec="emacs"
     alias et="emacs -nw"
-    alias en="emacsclient -n"
     export EDITOR="emacs -nw -q"
 fi
-alias emn="emacs -nw --no-desktop"
-alias gemn="emacs --no-desktop"
+alias etn="emacs -nw --no-desktop"
+alias  en="emacs --no-desktop"
 
 ######################################################################
 ## Ruby
