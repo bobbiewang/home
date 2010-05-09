@@ -3535,10 +3535,11 @@ Returns nil if it is not visible in the current calendar window."
 
 ;;; Git
 
-(robust-require vc-git
-  (require 'git)
-  (when (featurep 'vc-git) (add-to-list 'vc-handled-backends 'git))
+(with-library "git"
+  (autoload 'git-status "git"
+    "Entry point into git-status mode." t)
   (defalias 'gs 'git-status)
+
   (autoload 'git-blame-mode "git-blame"
     "Minor mode for incremental blame for Git." t))
 
@@ -3546,6 +3547,7 @@ Returns nil if it is not visible in the current calendar window."
   (autoload 'magit-status "magit" nil t))
 
 ;;; Dict
+
 (with-library "sdcv-mode"
   (autoload 'sdcv-search "sdcv-mode" "Search word by sdcv" t)
   (global-set-key (kbd "C-c d") 'sdcv-search))
