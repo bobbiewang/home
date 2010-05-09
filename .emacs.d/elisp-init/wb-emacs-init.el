@@ -2665,9 +2665,9 @@ directory, select directory. Lastly the file is opened."
 ;;;; wb-rudyde.el
 
 ;; Ruby 开发环境
-(robust-require ruby-mode
+(with-library "ruby-mode"
   (autoload 'ruby-mode     "ruby-mode" "Mode for editing ruby source files" t)
-  (require 'ruby-electric)
+  (autoload 'ruby-electric-mode "ruby-electric" "Ruby Electric minor mode" t)
   (autoload 'run-ruby      "inf-ruby"  "Run an inferior Ruby process")
   (autoload 'inf-ruby-keys "inf-ruby"  "Set local key defs for inf-ruby in ruby-mode")
   (autoload 'rubydb        "rubydb3x"  "Ruby debugger" t)
@@ -2679,7 +2679,7 @@ directory, select directory. Lastly the file is opened."
 
   (setq ri-ruby-script
         (expand-file-name "~/.emacs.d/elisp-3rdparty/ruby/ri-emacs/ri-emacs.rb"))
-  (autoload 'ri "~/.emacs.d/elisp-3rdparty/ruby/ri-emacs/ri-ruby.el" nil t)
+  (autoload 'ri "ri-ruby" nil t)
 
   (fset 'ruby-hash-header
         "#!/usr/bin/env ruby\C-m\C-m")
@@ -2692,22 +2692,15 @@ directory, select directory. Lastly the file is opened."
     "Pipe the region through Ruby's xmp utility and replace
    the region with the result."
     (interactive "r")
-    (shell-command-on-region reg-start reg-end
-                             "ruby -r xmp -I/users/bowang/local/lin/lib/ruby/1.8/irb/ -n -e 'xmp($_, \"%l\t\t# %r\n\")'" t))
-
-  ;; 支持 Hide-show
-  (add-to-list 'hs-special-modes-alist
-               (list 'ruby-mode
-                     (concat "\\(^\\s-*"
-                             ruby-electric-simple-keywords-re
-                             "\\|{\\|\\[\\)")
-                     "end\\|\\]\\|}" "#"
-                     'ruby-forward-sexp nil))
+    (shell-command-on-region
+     reg-start reg-end
+     "ruby -r xmp -I/users/bowang/local/lin/lib/ruby/1.8/irb/ -n -e 'xmp($_, \"%l\t\t# %r\n\")'"
+     t))
 
   ;; 支持 outline-minor-mode
   (defun rb-outline-level ()
     "This gets called by outline to deteremine the level. Just use
-the length of the whitespace"
+     the length of the whitespace"
     (let (buffer-invisibility-spec)
       (save-excursion
         (skip-chars-forward "\t ")
@@ -2726,11 +2719,24 @@ the length of the whitespace"
                (ruby-electric-mode 1)
                (setq abbrev-mode 1)
                (local-set-key "\C-c\C-c" 'ruby-eval-buffer)
-               (local-set-key "\C-[#"    'ruby-hash-header))))
+               (local-set-key "\C-[#"    'ruby-hash-header)
+               ;; Rails 开发环境
+               (robust-require rinari
+                 (setq rinari-tags-file-name "TAGS"))))
 
-;; Rails 开发环境
-(robust-require rinari
-  (setq rinari-tags-file-name "TAGS"))
+  ;; ruby-electric-simple-keywords-re 要在加载 ruby-electric 后才有效
+  (eval-after-load "ruby-electric"
+    '(progn
+       ;; 支持 Hide-show
+       (add-to-list 'hs-special-modes-alist
+                    (list 'ruby-mode
+                          (concat "\\(^\\s-*"
+                                  ruby-electric-simple-keywords-re
+                                  "\\|{\\|\\[\\)")
+                          "end\\|\\]\\|}" "#"
+                          'ruby-forward-sexp nil)))))
+
+
 
 (with-library "rhtml-mode"
   (autoload 'rhtml-mode "rhtml-mode" "rhtml mode")
@@ -2852,6 +2858,9 @@ the length of the whitespace"
   "Function, that is executed at the end of sh check"
   (when (not (string-match "finished" msg))
     (next-error 1 t)))
+
+;; define-compilation-mode 需要 compile 的支持
+(robust-require compile)
 
 (define-compilation-mode sh-check-mode "SH"
   "Mode for check sh source code."
