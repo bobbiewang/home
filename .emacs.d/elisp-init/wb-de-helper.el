@@ -1,4 +1,9 @@
-;; 加载 .emacs 过程中的 log 函数
+;;; 加载 .emacs 过程中的 log 函数和变量
+
+(defvar *emacs-load-start-time* (current-time) ".emacs 加载时刻")
+(defvar *emacs-load-prev-time* nil "上一个扩展加载时刻")
+(defvar *emacs-load-ext-start-time* nil "扩展开始加载时刻")
+(defvar *emacs-load-time-alist* nil "各扩展加载的时间")
 
 (defun deh-log-info (msg)
   (save-excursion
@@ -26,59 +31,79 @@
     (insert msg)
     (insert "\n")))
 
-;; 输入 .emacs 加载时间
-
-(defvar *emacs-load-start-time* (current-time))
-(defvar *emacs-load-prev-time* nil)
+(defun deh-load-time (name)
+  "输出加载当前扩展的时间"
+  (let ((time (float-time (time-since *emacs-load-ext-start-time*))))
+	(add-to-list '*emacs-load-time-alist* (cons name time))
+	(deh-log-info (format "[%.2f] Loaded %s." time name))))
 
 (defun deh-initialization-time (msg)
   "输出 Emacs 启动时间"
   (deh-log-info (format "[%.2f] %s."
-                        (time-to-seconds (time-since *emacs-load-start-time*))
+                        (float-time (time-since *emacs-load-start-time*))
                         msg)))
 
-(defun deh-load-time (msg)
-  "输出加载当前扩展的时间"
-  (deh-log-info (format "[%.2f] %s."
-                        (time-to-seconds (time-since *emacs-load-prev-time*))
-                        msg)))
+(defun deh-initialization-stat ()
+  "输出 Emacs 启动过程的统计信息"
+  (interactive)
+  (let* ((load-time-alist				; 复制一份加载时间表，因为输出过程会被修改
+		  (mapcar (lambda (item)
+					(cons (car item)
+						  (cdr item)))
+				  *emacs-load-time-alist*))
+		 (load-times					; 提取加载时间用于排序
+		  (mapcar 'cdr load-time-alist))
+		 (sorted-load-times
+		  (sort load-times '>)))
+	(deh-log-info "\nTop 10 Time-consuming Extensions")
+	(mapc (lambda (time)
+			(let ((item (rassoc time load-time-alist)))
+				  (deh-log-info (format "  %.2f => %s" time (car item)))
+				  ;; 修改 cons 中的时间，表示已经被输出
+				  (setcdr item -1)))
+		  (butlast
+		   sorted-load-times
+		   (- (length sorted-load-times) 10)))))
 
-;; 强壮的加载 library 的 macro，即使 library 不存在也不会出错
+;;; 加载 library 的 macro
+
 (defmacro robust-require (symbol &rest body)
+  "强壮的加载 library 的 macro，即使 library 不存在也不会出错"
   `(condition-case nil
        (progn
-         (setq *emacs-load-prev-time* (current-time))
+         (setq *emacs-load-ext-start-time* (current-time))
          (require ',symbol)
          ,@body
-         (deh-load-time (format "Loaded %s" ',symbol)))
-     (error (deh-log-warn (format "[WARNING] Failed to require %s!" ',symbol))
-            nil)))
+         (deh-load-time (format "%s" ',symbol)))
+         (error (deh-log-warn (format "[WARNING] Failed to require %s!" ',symbol))
+                nil)))
 
 (put 'robust-require 'lisp-indent-function 1)
 
-;; 存在或者不存在 library 情况下采用不同方案的 macro
 (defmacro with-library (library &rest body)
+  "存在 library 的情况下的方案"
   (declare (indent 1))
   `(if (locate-library ',library)
        (progn
-         (setq *emacs-load-prev-time* (current-time))
+         (setq *emacs-load-ext-start-time* (current-time))
          ,@body
-         (deh-load-time (format "Loaded %s" ',library)))
+         (deh-load-time (format "%s" ',library)))
      (deh-log-warn (format "[WARNING] No library %s. Skipped." ',library))))
 
 (defmacro with-without-library (library with-body without-body)
+  "存在或者不存在 library 情况下采用不同方案"
   (declare (indent 1))
   `(if (locate-library ',library)
        (progn
-         (setq *emacs-load-prev-time* (current-time))
+         (setq *emacs-load-ext-start-time* (current-time))
          ,@with-body
-         (deh-load-time (format "Loaded %s" ',library)))
+         (deh-load-time (format "%s" ',library)))
      (progn
-       (setq *emacs-load-prev-time* (current-time))
+       (setq *emacs-load-ext-start-time* (current-time))
        ,@without-body
        (deh-log-warn (format "[WARNING] No library %s. Skipped." ',library)))))
 
-;; Lazy load 功能，可以用于一些耗时的 library
+;;; Lazy load 功能，可以用于一些耗时的 library
 
 (defvar deh-lazy-require-symbols nil
   "Symbols which need to be autoloaded when Emacs is idle.")
