@@ -22,7 +22,7 @@
   (if init-file-debug
       (load inner)
     (condition-case error
-        (load inner)
+        (load inner t t)
       (error
        (deh-display-dot-emacs-error error)))))
 
