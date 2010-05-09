@@ -27,3 +27,4 @@
        (deh-display-dot-emacs-error error)))))
 
 (deh-initialization-time "Emacs has been initialized")
+(deh-initialization-stat)
