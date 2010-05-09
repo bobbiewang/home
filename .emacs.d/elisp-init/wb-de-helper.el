@@ -34,8 +34,8 @@
 (defun deh-load-time (name)
   "输出加载当前扩展的时间"
   (let ((time (float-time (time-since *emacs-load-ext-start-time*))))
-	(add-to-list '*emacs-load-time-alist* (cons name time))
-	(deh-log-info (format "[%.2f] Loaded %s." time name))))
+    (add-to-list '*emacs-load-time-alist* (cons name time))
+    (deh-log-info (format "[%.2f] Loaded %s." time name))))
 
 (defun deh-initialization-time (msg)
   "输出 Emacs 启动时间"
@@ -46,24 +46,26 @@
 (defun deh-initialization-stat ()
   "输出 Emacs 启动过程的统计信息"
   (interactive)
-  (let* ((load-time-alist				; 复制一份加载时间表，因为输出过程会被修改
-		  (mapcar (lambda (item)
-					(cons (car item)
-						  (cdr item)))
-				  *emacs-load-time-alist*))
-		 (load-times					; 提取加载时间用于排序
-		  (mapcar 'cdr load-time-alist))
-		 (sorted-load-times
-		  (sort load-times '>)))
-	(deh-log-info "\nTop 10 Time-consuming Extensions")
-	(mapc (lambda (time)
-			(let ((item (rassoc time load-time-alist)))
-				  (deh-log-info (format "  %.2f => %s" time (car item)))
-				  ;; 修改 cons 中的时间，表示已经被输出
-				  (setcdr item -1)))
-		  (butlast
-		   sorted-load-times
-		   (- (length sorted-load-times) 10)))))
+  (let* ((load-time-alist               ; 复制一份加载时间的列表，因为输出过程会被修改
+          (mapcar (lambda (item)
+                    (cons (car item)
+                          (cdr item)))
+                  *emacs-load-time-alist*))
+         (load-times                    ; 提取加载时间用于排序
+          (mapcar 'cdr load-time-alist))
+         (sorted-load-times
+          (sort load-times '>)))
+    (deh-log-info "+----------------------------------+")
+    (deh-log-info "| Top 10 Time-consuming Extensions |")
+    (deh-log-info "+----------------------------------+")
+    (mapc (lambda (time)
+            (let ((item (rassoc time load-time-alist)))
+                  (deh-log-info (format "  %.2f => %s" time (car item)))
+                  ;; 标记 cons 中的时间，表示已经被输出，不要重复处理
+                  (setcdr item -1)))
+          (butlast
+           sorted-load-times
+           (- (length sorted-load-times) 10)))))
 
 ;;; 加载 library 的 macro
 
