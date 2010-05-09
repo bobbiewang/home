@@ -414,8 +414,9 @@ When called with a prefix argument, show the *trace-output* buffer."
 ;;; Window
 
 ;; 方便在 Windows 之间移动，但缺省的 Shift 加方向键似乎只能在 GUI 下用
-(robust-require windmove
-  (windmove-default-keybindings))
+(when window-system
+  (robust-require windmove
+    (windmove-default-keybindings)))
 
 (defun wb-resize-other-window ()
   (interactive)
@@ -1396,17 +1397,20 @@ Argument ARG Key."
 
 (setq outline-minor-mode-prefix [(control o)])
 
-(robust-require hideshow
+(with-library "hideshow"
+  (autoload 'hs-minor-mode "hideshow" "hideshow minor mode" t)
   ;; 在需要的 mode 中使用 hideshow
   ;; (dolist (hook '(c++-mode-hook c-mode-hook))
   ;;   (add-hook hook 'hs-minor-mode))
 
-  ;; 为 Hideshow Mode 设置和 Outline Mode 相似的键绑定
-  (define-key hs-minor-mode-map (kbd "C-o C-a") 'hs-show-all)
-  (define-key hs-minor-mode-map (kbd "C-o C-t") 'hs-hide-all)
-  (define-key hs-minor-mode-map (kbd "C-o C-s") 'hs-show-block)
-  (define-key hs-minor-mode-map (kbd "C-o C-c") 'hs-hide-block)
-  (define-key hs-minor-mode-map (kbd "C-o C-o") 'hs-toggle-hiding))
+  (eval-after-load "hideshow"
+    '(progn
+       ;; 为 Hideshow Mode 设置和 Outline Mode 相似的键绑定
+       (define-key hs-minor-mode-map (kbd "C-o C-a") 'hs-show-all)
+       (define-key hs-minor-mode-map (kbd "C-o C-t") 'hs-hide-all)
+       (define-key hs-minor-mode-map (kbd "C-o C-s") 'hs-show-block)
+       (define-key hs-minor-mode-map (kbd "C-o C-c") 'hs-hide-block)
+       (define-key hs-minor-mode-map (kbd "C-o C-o") 'hs-toggle-hiding))))
 
 ;; 起始移动点在行末的话，垂直移动时始终保持在行末
 (setq track-eol t)
@@ -1814,11 +1818,18 @@ do kill lines as `dd' in vim."
 ;; 参考命令
 
 ;; bm：支持当个文件内的 bookmark，高亮设置 bookmark 的行
-(robust-require bm
-  (global-set-key (kbd "<C-f2>")   'bm-toggle)
-  (global-set-key (kbd "<M-f2>")   'bm-show)
-  (global-set-key (kbd "<f2>")     'bm-next)
-  (global-set-key (kbd "<S-f2>")   'bm-previous))
+(with-library "bm"
+  (eval-after-load "bm"
+    '(progn
+       (autoload 'bm-toggle   "bm" "Toggle bookmark at point." t)
+       (autoload 'bm-show     "bm" "Show bookmarked lines." t)
+       (autoload 'bm-next     "bm" "Goto next bookmark." t)
+       (autoload 'bm-previous "bm" "Goto previous bookmark." t)
+
+       (global-set-key (kbd "<C-f2>")   'bm-toggle)
+       (global-set-key (kbd "<M-f2>")   'bm-show)
+       (global-set-key (kbd "<f2>")     'bm-next)
+       (global-set-key (kbd "<S-f2>")   'bm-previous))))
 
 ;;; Buffers, Files, Dired
 
@@ -2548,8 +2559,10 @@ directory, select directory. Lastly the file is opened."
 ;; CC Mode 配置  http://cc-mode.sourceforge.net/
 (robust-require cc-mode)
 
-(robust-require xcscope
-  (define-key cscope-list-entry-keymap "q" 'wb-quit-buffer))
+(with-library "xcscope"
+  (eval-after-load "xcscope"
+    '(progn
+       (define-key cscope-list-entry-keymap "q" 'wb-quit-buffer))))
 
 (with-library "gtags"
     (autoload 'gtags-mode "gtags" "" t))
@@ -2753,7 +2766,7 @@ directory, select directory. Lastly the file is opened."
               (rinari-launch))))
 
 ;; YAML 支持
-(robust-require yaml-mode
+(with-library "yaml-mode"
   (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
   (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
 
@@ -3537,7 +3550,8 @@ Returns nil if it is not visible in the current calendar window."
 ;;; w3m
 
 (with-library "w3m"
-  (require 'w3m-load)
+  (autoload 'w3m "w3m-load" "w3m web browser" t)
+
   ;; 使用 w3m 作为默认的浏览器
   (setq browse-url-browser-function 'w3m-browse-url)
   (global-set-key (kbd "C-c b") 'w3m-browse-url)
