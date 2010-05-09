@@ -280,14 +280,14 @@ when a region-mark is active."
   "Copy line, preserving cursor column, and increment any numbers found."
   (interactive)
   (let* ((col (current-column))
-	 (bol (progn (beginning-of-line) (point)))
-	 (eol (progn (end-of-line) (point)))
-	 (line (buffer-substring bol eol)))
+         (bol (progn (beginning-of-line) (point)))
+         (eol (progn (end-of-line) (point)))
+         (line (buffer-substring bol eol)))
     (beginning-of-line)
     (while (re-search-forward "[0-9]+" eol 1)
       (let ((num (string-to-int (buffer-substring
-				  (match-beginning 0) (match-end 0)))))
-	(replace-match (int-to-string (1+ num)))))
+                                 (match-beginning 0) (match-end 0)))))
+        (replace-match (int-to-string (1+ num)))))
     (beginning-of-line)
     (insert line "\n")
     (move-to-column col)))
@@ -939,9 +939,11 @@ Argument ARG Key."
    "eim-py" "euc-cn" 'eim-use-package
    "拼音" "汉字拼音输入法" "py.txt")
 
-  ;; 用 ; 暂时输入英文
-  (require 'eim-extra)
-  (global-set-key ";" 'eim-insert-ascii)
+  (eval-after-load "eim"
+    '(progn
+       (require 'eim-extra)
+       ;; 用 ; 暂时输入英文
+       (global-set-key ";" 'eim-insert-ascii)))
 
   (setq default-input-method "eim-py"))
 
@@ -1379,10 +1381,10 @@ Argument ARG Key."
        (zmacs-region ((t (:background "blue")))))))
   (my-color-theme))
   ((setq default-frame-alist            ; 设置 Frame 的缺省颜色
- 	  '((foreground-color . "Wheat")
- 		(background-color . "DarkSlateGray")
- 		(cursor-color . "Orchid")
- 		(mouse-color . "slateblue")))))
+      '((foreground-color . "Wheat")
+        (background-color . "DarkSlateGray")
+        (cursor-color . "Orchid")
+        (mouse-color . "slateblue")))))
 
 ;;; View, Navigation
 
