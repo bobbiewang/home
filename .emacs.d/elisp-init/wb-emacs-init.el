@@ -1972,6 +1972,14 @@ directory, select directory. Lastly the file is opened."
 ;; 复制和移动时把当前 emacs 中另一个窗口中的目录为对象。这通常是我们希望的方式。
 (setq dired-dwim-target t)
 
+(add-hook 'dired-load-hook
+          '(lambda ()
+             (load "dired-x")
+             ;; wdired 把 dired buffer 当作一般的文本处理，修改 buffer
+             ;; 后 C-c C-c 修改文件名（C-c ESC 取消修改）
+             (fboundp 'wdired-change-to-wdired-mode
+                      (define-key dired-mode-map "r" 'wdired-change-to-wdired-mode))))
+
 ;; 另外 dired-mode 下还有不常用但是比较有用的命令。比如
 ;; dired-compare-directories 可以用于比较文件夹。
 
@@ -1982,40 +1990,37 @@ directory, select directory. Lastly the file is opened."
 ;;    dired-guess-shell-alist-default 或 dired-guess-shell-alist-user，
 ;;    在文件上使用 ! 会调用相应的命令
 
-(robust-require dired-x
-  (add-hook 'dired-mode-hook
-            (lambda ()
-              (setq dired-omit-files-p t)))
-  ;; 忽略指定名字的目录和后缀文件
-  (setq dired-omit-extensions
-        '("CVS/" ".o" "~" ".bak" ".obj" ".map"))
-  ;; 隐藏 . 和 ..，以及以 . 引导的目录/文件，以# 引导的文件，以 ~ 引导
-  ;; 的文件等，可以使用 M-o 切换隐藏和显示
-  (setq dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$\\|^\\.\\|^~")
-  ;; 设置文件对应的命令
-  (setq dired-guess-shell-alist-user
-        (list
-         (list "\\.tar\\.bz2$" "tar jxvf * &")
-         '("\\.tar\\.gz$" "tar zxvf * &")
-         '("\\.chm$" "chmsee * &")
-         '("\\.tar$" "tar xvvf * &")
-         '("\\.ps$" "gv * &")
-         '("\\.html?$" "firefox * &" "urxvt -e w3m * &")
-         '("\\.pdf$" "acroread * &" "evince * &")
-         '("\\.\\(jpe?g\\|gif\\|png\\|bmp\\|xbm\\|xpm\\|fig\\|eps\\)$"
-           "gthumb * &" "gqview *  &" "display *   &" "xloadimage *   &" )
-         '("\\.\\([Ww][Mm][Vv]\\|[Vv][Oo][Bb]\\|[Mm][Pp][Ee]?[Gg]\\|asf\\|[Rr][Aa]?[Mm]\\)$"
-           "mplayer * &")
-         '("\\.rmvb$" "mplayer * &")
-         '("\\.RMVB$" "mplayer * &")))
-  (add-to-list 'dired-guess-shell-alist-default '("\\.dvi$" "dvipdfmx"))
-  (add-to-list 'dired-guess-shell-alist-default '("\\.pl$" "perltidy")))
+(with-library "dired-x"
+  (eval-after-load "dired-x"
+    '(progn
+       (add-hook 'dired-mode-hook
+                 (lambda ()
+                   (setq dired-omit-files-p t)))
 
-;; wdired 提供修改文件名的一种非常方便方法。它把 dired-mode 当作一般的
-;; 文本处理，这样无论是修改一个文件，还是批量修改文件都不是一般的爽。
-(robust-require wdired
-  (autoload 'wdired-change-to-wdired-mode "wdired")
-  (define-key dired-mode-map "r" 'wdired-change-to-wdired-mode))
+       ;; 忽略指定名字的目录和后缀文件
+       (setq dired-omit-extensions
+             '("CVS/" ".o" "~" ".bak" ".obj" ".map"))
+       ;; 隐藏 . 和 ..，以及以 . 引导的目录/文件，以# 引导的文件，以 ~ 引导
+       ;; 的文件等，可以使用 M-o 切换隐藏和显示
+       (setq dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$\\|^\\.\\|^~")
+       ;; 设置文件对应的命令
+       (setq dired-guess-shell-alist-user
+             (list
+              (list "\\.tar\\.bz2$" "tar jxvf * &")
+              '("\\.tar\\.gz$" "tar zxvf * &")
+              '("\\.chm$" "chmsee * &")
+              '("\\.tar$" "tar xvvf * &")
+              '("\\.ps$" "gv * &")
+              '("\\.html?$" "firefox * &" "urxvt -e w3m * &")
+              '("\\.pdf$" "acroread * &" "evince * &")
+              '("\\.\\(jpe?g\\|gif\\|png\\|bmp\\|xbm\\|xpm\\|fig\\|eps\\)$"
+                "gthumb * &" "gqview *  &" "display *   &" "xloadimage *   &" )
+              '("\\.\\([Ww][Mm][Vv]\\|[Vv][Oo][Bb]\\|[Mm][Pp][Ee]?[Gg]\\|asf\\|[Rr][Aa]?[Mm]\\)$"
+                "mplayer * &")
+              '("\\.rmvb$" "mplayer * &")
+              '("\\.RMVB$" "mplayer * &")))
+       (add-to-list 'dired-guess-shell-alist-default '("\\.dvi$" "dvipdfmx"))
+       (add-to-list 'dired-guess-shell-alist-default '("\\.pl$" "perltidy")))))
 
 ;; List directories first in dired mode
 (defun sof/dired-sort ()
@@ -2736,14 +2741,16 @@ directory, select directory. Lastly the file is opened."
                           "end\\|\\]\\|}" "#"
                           'ruby-forward-sexp nil)))))
 
-
-
 (with-library "rhtml-mode"
   (autoload 'rhtml-mode "rhtml-mode" "rhtml mode")
   (add-to-list 'auto-mode-alist '("\.rhtml$". rhtml-mode))
   (add-to-list 'auto-mode-alist '("\.html\.erb$". rhtml-mode))
   (add-hook 'rhtml-mode-hook
-            (lambda () (rinari-launch))))
+            (lambda ()
+              ;; Rails 开发环境
+               (robust-require rinari
+                 (setq rinari-tags-file-name "TAGS"))
+              (rinari-launch))))
 
 ;; YAML 支持
 (robust-require yaml-mode
