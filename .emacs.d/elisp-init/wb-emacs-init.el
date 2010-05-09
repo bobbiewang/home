@@ -2617,6 +2617,11 @@ directory, select directory. Lastly the file is opened."
   (set (make-local-variable 'tab-stop-list)
        (number-sequence tab-width 80 tab-width))
   (setq c-basic-offset tab-width)
+  ;; xcscope
+  (robust-require xcscope)
+  ;; gtags，优先使用 xgtags-mode
+  (cond ((fboundp 'xgtags-mode) (xgtags-mode 1))
+        ((fboundp 'gtags-mode)  (gtags-mode 1)))
   ;; 预处理设置
   (setq c-macro-shrink-window-flag t)
   (setq c-macro-preprocessor "cpp")
@@ -2652,12 +2657,7 @@ directory, select directory. Lastly the file is opened."
 (defun wb-c++-mode-hook()
   (c-set-style "stroustrup")
   (c-set-offset 'inline-open 0)
-  (c-set-offset 'friend '-)
-  ;; gtags，优先使用 xgtags-mode
-  (cond ((fboundp 'xgtags-mode) (xgtags-mode 1))
-        ((fboundp 'gtags-mode)  (gtags-mode 1)))
-  ;; xref
-  )
+  (c-set-offset 'friend '-))
 (add-hook 'c++-mode-hook 'wb-c++-mode-hook)
 
 ;; 设置编译命令和环境
