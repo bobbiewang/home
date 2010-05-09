@@ -1,7 +1,7 @@
 ;;; 加载 .emacs 过程中的 log 函数和变量
 
 (defvar *emacs-load-start-time* (current-time) ".emacs 加载时刻")
-(defvar *emacs-load-prev-time* nil "上一个扩展加载时刻")
+(defvar *emacs-load-prev-time* (current-time) "上一个扩展加载时刻")
 (defvar *emacs-load-ext-start-time* nil "扩展开始加载时刻")
 (defvar *emacs-load-time-alist* nil "各扩展加载的时间")
 
@@ -33,9 +33,11 @@
 
 (defun deh-load-time (name)
   "输出加载当前扩展的时间"
-  (let ((time (float-time (time-since *emacs-load-ext-start-time*))))
+  (let ((time (float-time (time-since *emacs-load-ext-start-time*)))
+        (time-x (float-time (time-since *emacs-load-prev-time*))))
     (add-to-list '*emacs-load-time-alist* (cons name time))
-    (deh-log-info (format "[%.2f] Loaded %s." time name))))
+    (deh-log-info (format "[%.2f +%.2f] Loaded %s." time time-x name))
+    (setq *emacs-load-prev-time* (current-time))))
 
 (defun deh-initialization-time (msg)
   "输出 Emacs 启动时间"
