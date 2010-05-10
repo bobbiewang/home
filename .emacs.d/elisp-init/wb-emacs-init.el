@@ -1988,7 +1988,7 @@ directory, select directory. Lastly the file is opened."
              (load "dired-x")
              ;; wdired 把 dired buffer 当作一般的文本处理，修改 buffer
              ;; 后 C-c C-c 修改文件名（C-c ESC 取消修改）
-             (fboundp 'wdired-change-to-wdired-mode
+             (if (fboundp 'wdired-change-to-wdired-mode)
                       (define-key dired-mode-map "r" 'wdired-change-to-wdired-mode))))
 
 ;; 另外 dired-mode 下还有不常用但是比较有用的命令。比如
