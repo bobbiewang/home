@@ -190,6 +190,12 @@ alias pgrep="ps awx | grep"
 alias tail="tail -32"
 alias ack="ack-grep"
 
+# 创建并转到新目录
+mkcd () {
+    mkdir -p "$*"
+    cd "$*"
+}
+
 # u N: 向上跳 N 级目录
 # u xx: 寻找当前路径中最后一个 xx，跳到其所在目录
 u () {
