@@ -2399,6 +2399,7 @@ directory, select directory. Lastly the file is opened."
         (set (make-local-variable 'outline-regexp)
              "   \\(\\<device\\|property\\|comp\\|signal\\>\\)")
         (outline-minor-mode 1)
+        (hs-minor-mode -1)
         (hide-body)))))
   "Major mode to support lsc ncl files.")
 
