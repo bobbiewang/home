@@ -1819,17 +1819,15 @@ do kill lines as `dd' in vim."
 
 ;; bm：支持当个文件内的 bookmark，高亮设置 bookmark 的行
 (with-library "bm"
-  (eval-after-load "bm"
-    '(progn
-       (autoload 'bm-toggle   "bm" "Toggle bookmark at point." t)
-       (autoload 'bm-show     "bm" "Show bookmarked lines." t)
-       (autoload 'bm-next     "bm" "Goto next bookmark." t)
-       (autoload 'bm-previous "bm" "Goto previous bookmark." t)
+  (autoload 'bm-toggle   "bm" "Toggle bookmark at point." t)
+  (autoload 'bm-show     "bm" "Show bookmarked lines." t)
+  (autoload 'bm-next     "bm" "Goto next bookmark." t)
+  (autoload 'bm-previous "bm" "Goto previous bookmark." t)
 
-       (global-set-key (kbd "<C-f2>")   'bm-toggle)
-       (global-set-key (kbd "<M-f2>")   'bm-show)
-       (global-set-key (kbd "<f2>")     'bm-next)
-       (global-set-key (kbd "<S-f2>")   'bm-previous))))
+  (global-set-key (kbd "<C-f2>")   'bm-toggle)
+  (global-set-key (kbd "<M-f2>")   'bm-show)
+  (global-set-key (kbd "<f2>")     'bm-next)
+  (global-set-key (kbd "<S-f2>")   'bm-previous))
 
 ;;; Buffers, Files, Dired
 
@@ -1910,7 +1908,7 @@ directory, select directory. Lastly the file is opened."
                  ("C/C++" (or
                            (mode . c-mode)
                            (mode . c++-mode)))
-                 ("Muse" (mode . muse-mode))
+                 ("Org" (mode . org-mode))
                  ("Emacs" (or
                            (name . "^\\*scratch\\*$")
                            (name . "^\\*Messages\\*$")
