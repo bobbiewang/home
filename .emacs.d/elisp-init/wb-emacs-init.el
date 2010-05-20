@@ -285,8 +285,8 @@ when a region-mark is active."
          (line (buffer-substring bol eol)))
     (beginning-of-line)
     (while (re-search-forward "[0-9]+" eol 1)
-      (let ((num (string-to-int (buffer-substring
-                                 (match-beginning 0) (match-end 0)))))
+      (let ((num (string-to-number (buffer-substring
+                                    (match-beginning 0) (match-end 0)))))
         (replace-match (int-to-string (1+ num)))))
     (beginning-of-line)
     (insert line "\n")
