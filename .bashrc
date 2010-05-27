@@ -186,9 +186,14 @@ alias m="more"
 alias k="kill -9"
 alias s="sdcv"
 alias grep="grep --color=auto"
-alias pgrep="ps awx | grep"
 alias tail="tail -32"
 alias ack="ack-grep"
+
+alias pgrep="ps awx | grep"
+alias pso='ps ax -o user,pid,ppid,%cpu,%mem,time,start,state,command'
+alias psa='ps ax -o user,pid,time,state,command'
+alias psl='ps ax -o user,pid,ppid,%cpu,%mem,nice,pri,etime,time,tt,state,ucomm'
+alias psm='ps -U $USER -o user,pid,time,state,command'
 
 # 创建并转到新目录
 mkcd () {
