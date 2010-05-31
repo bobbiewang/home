@@ -1,0 +1,236 @@
+#      .================================================.
+#      |                ____ _  _ _    _     | The best |
+#      |  Config for   (  __X \/ X \/\/ )\/\ `----------|
+#      |                ) _) \  / \    /    \           |
+#      |-------------. (__) * \/ * \/\(_/\/\_) - II     |
+#      |   Wang Bo   |                                  |
+#      `================================================'
+#
+######################################################################
+## 设置图片的路径
+######################################################################
+
+# 把系统中几个常见的图片路径加到 ImagePath
+# + 代表现有的 ImagePath 内容，: 用于分隔路径
+ImagePath +:/usr/share/pixmaps/fvwm/
+ImagePath +:/usr/share/icons
+
+
+######################################################################
+## 用于启动程序的函数
+######################################################################
+
+DestroyFunc FvwmViewManPage
+AddToFunc   FvwmViewManPage
++ I Exec exec rxvt -fg White -bg Black -g 80x40 -fn 7x14 -fb 7x14bold \
+ -n "Manual Page - $0" -T "Manual Page - $0" -e man "$0"
+
+
+######################################################################
+## 启动、重启和退出函数
+######################################################################
+
+# FVWM 提供了几个特殊的函数，在启动、重启和退出阶段执行
+# 1. 启动 FVWM，依次执行以下函数
+#    - InitFunction
+#    - StartFunction
+# 2. 重启 FVWM，依次执行以下函数
+#    - ExitFunction
+#    - StartFunction
+#    - RestartFunction
+# 3. 退出 FVWM，依次执行以下函数
+#    - ExitFunction
+
+# InitFunction：FVWM 首次启动时调用
+DestroyFunc InitFunction
+AddToFunc   InitFunction
+# + I Exec exec xscreensaver                                 # 启动屏保系统
+# + I Exec exec fvwm-root -r ~/.fvwm/wallpapers/x-xp-sky.jpg # 加载桌面壁纸
+# + I Exec exec xloadimage -onroot -fullscreen ~/.fvwm/bg.jpg
+
+# StartFunction：FVWM 启动和重启时调用
+DestroyFunc StartFunction
+AddToFunc   StartFunction
++ I Module FvwmTaskBar
++ I Module FvwmPager 0 2
+# + I Module FvwmButtons MyButtons
+# + I Module FvwmButtons MainPanel
+# + I Module FvwmAuto 500 Raise Nop
+# + I Module FvwmAnimate
+
+# RestartFunction：FVWM 重启时调用，这里不运行额外程序
+DestroyFunc RestartFunction
+AddToFunc   RestartFunction
++ I Nop
+
+# ExitFunction：FVWM 关闭和重启时调用
+DestroyFunc ExitFunction
+AddToFunc ExitFunction
++ I KillModule FvwmButtons      # 关闭 FvwmButtons
+
+
+######################################################################
+## 设置窗体的装饰
+######################################################################
+
+DestroyDecor MyDecor
+AddToDecor   MyDecor
++ TitleStyle LeftJustified Height 18
+# 定义三个矢量按钮，序号分别为 1、3、5
+# 矢量图的大小在 100x100 像素内，语法为
+#         Vector [number of points] [[point1] [point2] ...]
+# point 的格式为 XxY@Z，Z 值取 0~4，分别代表高亮、隐藏、背景、前景和不可见
+# Raised 指定按钮和标题栏为缺省的突出风格，也可以使用平坦（Flat）、凹陷（Sunk）等风格
++ ButtonStyle 1 ActiveUp Vector 4 30x30@3 60x60@3 60x30@4 30x60@3 -- Raised
++ ButtonStyle 1 ActiveDown Vector 4 30x30@3 60x60@3 60x30@4 30x60@3 -- Raised
++ ButtonStyle 1 Inactive Vector 4 30x30@3 60x60@3 60x30@4 30x60@3 -- Raised
++ ButtonStyle 3 ActiveUp Vector 5 30x60@3 60x60@3 60x50@3 30x50@3 30x60@3 -- Raised
++ ButtonStyle 3 ActiveDown Vector 5 30x60@3 60x60@3 60x50@3 30x50@3 30x60@3 -- Raised
++ ButtonStyle 3 Inactive Vector 5 30x60@3 60x60@3 60x50@3 30x50@3 30x60@3 -- Raised
++ ButtonStyle 5 ActiveUp Vector 7 30x30@3 30x60@3 60x60@3 60x30@3 30x30@3 30x35@3 60x35@3 -- Raised
++ ButtonStyle 5 ActiveDown Vector 7 30x30@3 30x60@3 60x60@3 60x30@3 30x30@3 30x35@3 60x35@3 -- Raised
++ ButtonStyle 5 Inactive Vector 7 30x30@3 30x60@3 60x60@3 60x30@3 30x30@3 30x35@3 60x35@3 -- Raised
++ TitleStyle -- Raised
++ BorderStyle Simple -- NoInset Raised
++ ButtonStyle All -- UseTitleStyle
+
+
+######################################################################
+## 定义窗体的样式
+######################################################################
+
+# 用 MyDecor 修饰所有窗体，并规范了字体、边框以及色彩结构
+Style * UseDecor MyDecor
+Style * Font "xft:Consolas:size=10:style=Bold:antialias=True"
+Style * BorderWidth 5, HandleWidth 5
+Style * MWMBorder, FirmBorder
+Style * Colorset 4
+Style * HilightColorset 3
+Style * BorderColorset 5n
+Style * HilightBorderColorset 4
+
+
+######################################################################
+## 定义菜单的样式
+######################################################################
+
+MenuStyle * MWM                                  # 使用预置的 MWM 风格
+MenuStyle * PopupDelayed, PopupDelay 160         # 弹出子菜单延时 160 ms
+MenuStyle * Animation
+MenuStyle * TitleWarp
+MenuStyle * ActiveFore White                     # 活动菜单项的前景色变为白色
+MenuStyle * Font "xft:Consolas:Bold:pixelsize=16:minspace=True:antialias=True"
+MenuStyle * Foreground gold, Background gray40   # 设置前景色和背景色
+MenuStyle * MenuFace VGradient 64 gray20 gray50  # 背景色从上到下 64 级渐变
+
+
+######################################################################
+## 创建菜单 FvwmRootMenu
+######################################################################
+
+# 创建菜单的方法
+# - 用 AddToMenu 命令创建一个菜单
+# - 逐一添加菜单项，菜单项基本语法为：+ "[菜单项目名称]%[图标]%" [动作]
+#   其中 %[图标]% 可以省略
+# - 加入分割线：Nop
+# - 弹出子菜单：Popup [菜单名]
+
+DestroyMenu FvwmRootMenu
+AddToMenu   FvwmRootMenu "Root Menu" Title
++ "rxvt%mini.term2.xpm%" \
+  Exec exec /usr/bin/rxvt -bg black -geometry 60x40
++ "Emacs%mini.edit.xpm%" Exec exec /usr/bin/emacsclient -c -n
++ "" Nop
++ "Programs" Popup FvwmProgramsMenu
++ "" Nop
++ "FVWM Help%mini.book1.xpm%"  Popup FvwmManPagesMenu
++ "FVWM Console%mini.term2.xpm%" Module FvwmConsole
++ "Restart FVWM" Restart
++ "Quit FVWM" Quit
+
+Mouse 3 R A Menu FvwmRootMenu
+
+
+######################################################################
+## 创建菜单 FvwmManPagesMenu
+######################################################################
+
+DestroyMenu FvwmManPagesMenu
+AddToMenu   FvwmManPagesMenu "FVWM Man Pages" Title
++ "%mini.book2.xpm%fvwm"                FvwmViewManPage fvwm
++ "%mini.book2.xpm%FvwmAnimate"         FvwmViewManPage FvwmAnimate
++ "%mini.book2.xpm%FvwmAuto"            FvwmViewManPage FvwmAuto
++ "%mini.book2.xpm%FvwmBacker"          FvwmViewManPage FvwmBacker
++ "%mini.book2.xpm%FvwmBanner"          FvwmViewManPage FvwmBanner
++ "%mini.book2.xpm%FvwmButtons"         FvwmViewManPage FvwmButtons
++ "%mini.book2.xpm%FvwmCommand"         FvwmViewManPage FvwmCommand
++ "%mini.book2.xpm%FvwmConsole"         FvwmViewManPage FvwmConsole
++ "%mini.book2.xpm%FvwmConsoleC.pl"     FvwmViewManPage FvwmConsoleC.pl
++ "%mini.book2.xpm%FvwmCpp"             FvwmViewManPage FvwmCpp
++ "%mini.book2.xpm%FvwmDebug"           FvwmViewManPage FvwmDebug
++ "%mini.book2.xpm%FvwmDragWell"        FvwmViewManPage FvwmDragWell
++ "%mini.book2.xpm%FvwmEvent"           FvwmViewManPage FvwmEvent
++ "%mini.book2.xpm%FvwmForm"            FvwmViewManPage FvwmForm
++ "%mini.book2.xpm%FvwmGtk"             FvwmViewManPage FvwmGtk
++ "%mini.book2.xpm%FvwmGtkDebug"        FvwmViewManPage FvwmGtkDebug
++ "%mini.book2.xpm%FvwmIconBox"         FvwmViewManPage FvwmIconBox
++ "%mini.book2.xpm%FvwmIconMan"         FvwmViewManPage FvwmIconMan
++ "%mini.book2.xpm%FvwmIdent"           FvwmViewManPage FvwmIdent
++ "%mini.book2.xpm%FvwmM4"              FvwmViewManPage FvwmM4
++ "%mini.book2.xpm%FvwmPager"           FvwmViewManPage FvwmPager
++ "%mini.book2.xpm%FvwmPerl"            FvwmViewManPage FvwmPerl
++ "%mini.book2.xpm%FvwmProxy"           FvwmViewManPage FvwmProxy
++ "%mini.book2.xpm%FvwmRearrange"       FvwmViewManPage FvwmRearrange
++ "%mini.book2.xpm%FvwmSave"            FvwmViewManPage FvwmSave
++ "%mini.book2.xpm%FvwmSaveDesk"        FvwmViewManPage FvwmSaveDesk
++ "%mini.book2.xpm%FvwmScript"          FvwmViewManPage FvwmScript
++ "%mini.book2.xpm%FvwmScroll"          FvwmViewManPage FvwmScroll
++ "%mini.book2.xpm%FvwmTaskBar"         FvwmViewManPage FvwmTaskBar
++ "%mini.book2.xpm%FvwmTheme"           FvwmViewManPage FvwmTheme
++ "%mini.book2.xpm%FvwmWharf"           FvwmViewManPage FvwmWharf
++ "%mini.book2.xpm%FvwmWinList"         FvwmViewManPage FvwmWinList
++ "%mini.book2.xpm%FvwmWindowMenu"      FvwmViewManPage FvwmWindowMenu
++ "" Nop
++ "%mini.book2.xpm%fvwm-config"         FvwmViewManPage fvwm-config
++ "%mini.book2.xpm%fvwm-perllib"        FvwmViewManPage fvwm-perllib
++ "%mini.book2.xpm%fvwm-root"           FvwmViewManPage fvwm-root
++ "%mini.book2.xpm%fvwm-bug"            FvwmViewManPage fvwm-bug
++ "%mini.book2.xpm%fvwm-convert-2.2"    FvwmViewManPage fvwm-convert-2.2
++ "%mini.book2.xpm%fvwm-convert-2.4"    FvwmViewManPage fvwm-convert-2.4
++ "" Nop
++ "%mini.book2.xpm%fvwm-menu-desktop"   FvwmViewManPage fvwm-menu-desktop
++ "%mini.book2.xpm%fvwm-menu-directory" FvwmViewManPage fvwm-menu-directory
++ "%mini.book2.xpm%fvwm-menu-headlines" FvwmViewManPage fvwm-menu-headlines
++ "%mini.book2.xpm%fvwm-menu-xlock"     FvwmViewManPage fvwm-menu-xlock
+
+
+######################################################################
+## FvwmPager
+######################################################################
+
+# 显示自定义的每个虚拟桌面、页以及在上面运行的窗体
+
+Style "FvwmPager" NoTitle, !Handles, !Borders, Sticky, WindowListSkip, \
+  CirculateSkip, StaysOnBottom, FixedPosition, FixedSize, !Iconifiable
+
+DestroyModuleConfig FvwmPager: *
+*FvwmPager: Geometry 96x96-0+0
+*FvwmPager: Colorset * 9
+*FvwmPager: HilightColorset * 10
+*FvwmPager: BalloonColorset * 9
+*FvwmPager: WindowColorsets 9 10
+*FvwmPager: Font "xft:Consolas:Bold:pixelsize=12:minspace=True:antialias=True"
+*FvwmPager: Balloons All
+*FvwmPager: BalloonFont "xft:Sans:Bold:pixelsize=12:minspace=True:antialias=True"
+*FvwmPager: BallonYOffset +2
+*FvwmPager: Window3dBorders
+*FvwmPager: MiniIcons
+*FvwmPager: UseSkipList
+*FvwmPager: Rows 3
+
+# Local Variables:
+# coding: utf-8-unix
+# mode: fvwm-generic
+# mode: outline-minor
+# outline-regexp: "^## "
+# End:
