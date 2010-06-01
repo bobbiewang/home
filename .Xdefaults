@@ -1,4 +1,9 @@
-Emacs.font: Consolas-14
-Emacs.FontBackend: xft
 Xft.dpi: 96
 Xft.hinting: None
+
+Emacs.font: Consolas-14
+Emacs.FontBackend: xft
+
+Rxvt.font: xft:Consolas:size=12,xft:Microsoft YaHei:size=12
+Rxvt.background: black
+Rxvt.foreground: gray80
