@@ -3576,6 +3576,7 @@ Returns nil if it is not visible in the current calendar window."
 
 (with-library "w3m"
   (autoload 'w3m "w3m-load" "w3m web browser" t)
+  (autoload 'w3m-find-file "w3m-load" "Open the file by w3m" t)
 
   ;; 使用 w3m 作为默认的浏览器
   (setq browse-url-browser-function 'w3m-browse-url)
