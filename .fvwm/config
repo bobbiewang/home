@@ -12,13 +12,75 @@
 
 # 把系统中几个常见的图片路径加到 ImagePath
 # + 代表现有的 ImagePath 内容，: 用于分隔路径
-ImagePath +:/usr/share/pixmaps/fvwm/
+ImagePath +:/usr/share/pixmaps/fvwm
 ImagePath +:/usr/share/icons
+ImagePath +:/usr/include/X11/pixmaps
 
+######################################################################
+## 虚拟桌面
+######################################################################
+
+# 定义 4 个虚拟桌面，每个桌面分 2x2 共 4 个工作区
+DeskTopSize 2x2                 # 列数 x 行数
+DesktopName 0 Main
+DesktopName 1 Work
+DesktopName 2 Fun
+DesktopName 3 Misc
+
+# 鼠标移动虚拟桌面的边缘时，自动滚动到下一个桌面
+### EdgeScroll 100 100
+### EdgeResistance 150  150
+### EdgeThickness 1
+### 
+### # M + F1：跳转到 Page0（左上角）
+### Key F1 A M GotoPage 0 0
+### # M + F2：跳转到 Page1（右上角）
+### Key F2 A M GotoPage 1 0
+### # M + F3：跳转到 Page2（左下角）
+### Key F3 A M GotoPage 0 1
+### # M + F4：跳转到 Page3（右下角）
+### Key F4 A M GotoPage 1 1
+
+# 各虚拟桌面和工作区的概括，可以通过 FvwmPager 显示
+
+######################################################################
+## 基本函数
+######################################################################
+
+DestroyFunc FvwmDeleteOrDestroy
+AddToFunc   FvwmDeleteOrDestroy
++ H Nop
++ M Nop
++ C Delete
++ D Destroy
+
+DestroyFunc FvwmIconifyOrShade
+AddToFunc   FvwmIconifyOrShade
++ C Iconify
++ D WindowShade
+
+DestroyFunc FvwmMaximize
+AddToFunc   FvwmMaximize
++ H Nop
++ M Nop
++ C Maximize $0 $1
+
+DestroyFunc FvwmMoveOrIconify
+AddToFunc   FvwmMoveOrIconify
++ M Move
++ D Iconify
+
+DestroyFunc FvwmWindowShade
+AddToFunc   FvwmWindowShade
++ D WindowShade $0
 
 ######################################################################
 ## 用于启动程序的函数
 ######################################################################
+
+DestroyFunc FvwmRxvt
+AddToFunc   FvwmRxvt
++ I Exec exec rxvt
 
 DestroyFunc FvwmViewManPage
 AddToFunc   FvwmViewManPage
@@ -44,17 +106,16 @@ AddToFunc   FvwmViewManPage
 # InitFunction：FVWM 首次启动时调用
 DestroyFunc InitFunction
 AddToFunc   InitFunction
-# + I Exec exec xscreensaver                                 # 启动屏保系统
-# + I Exec exec fvwm-root -r ~/.fvwm/wallpapers/x-xp-sky.jpg # 加载桌面壁纸
-# + I Exec exec xloadimage -onroot -fullscreen ~/.fvwm/bg.jpg
++ I Exec exec xscreensaver                                  # 启动屏保系统
++ I Exec exec xsetroot -solid ivory4                        # 设置背景色
+# + I Exec exec xloadimage -onroot -fullscreen ~/.fvwm/bg.jpg # 加载桌面壁纸
+# + I Exec exec fvwm-root -r ~/.fvwm/bg.jpg                   # 加载桌面壁纸
 
 # StartFunction：FVWM 启动和重启时调用
 DestroyFunc StartFunction
 AddToFunc   StartFunction
 + I Module FvwmTaskBar
-+ I Module FvwmPager 0 2
-# + I Module FvwmButtons MyButtons
-# + I Module FvwmButtons MainPanel
++ I Module FvwmButtons MainPanel
 # + I Module FvwmAuto 500 Raise Nop
 # + I Module FvwmAnimate
 
@@ -66,11 +127,66 @@ AddToFunc   RestartFunction
 # ExitFunction：FVWM 关闭和重启时调用
 DestroyFunc ExitFunction
 AddToFunc ExitFunction
-+ I KillModule FvwmButtons      # 关闭 FvwmButtons
++ I KillModule FvwmButtons
++ I KillModule FvwmTaskBar
 
 
 ######################################################################
-## 设置窗体的装饰
+## 鼠标、按键绑定
+######################################################################
+
+# M-F1 弹出 MenuFvwmRoot
+Key F1 A M Menu MenuFvwmRoot
+
+# 在桌面左击鼠标，弹出窗体列表供选择
+Mouse 1 R A WindowList
+# 在桌面右击鼠标，弹出自定义的 FvwmRootMenu
+Mouse 3 R A Menu FvwmRootMenu
+
+# 在窗体 1 号按钮位单击或双击，删除或清除该视窗
+Mouse 1 1 A FvwmDeleteOrDestroy
+# 在窗体 3 号按钮位单击或双击，图标化或隐藏该视窗
+Mouse 1 3 A FvwmIconifyOrShade
+# 在窗体 5 号按钮位左键单击，使得窗体水平及垂直两方面最大化
+Mouse 1 5 A FvwmMaximize 100 100
+# 在窗体 5 号按钮为右键单击，使得窗体垂直最大化，水平方向不变
+Mouse 2 5 A FvwmMaximize 0 100
+# 在窗体 5 号按钮位中键单击，使得窗体水平最大化，垂直方向不变
+Mouse 3 5 A FvwmMaximize 100 0
+# 在窗体任何位置时按 Alt 及单击左键移动窗体，双击使窗体图标化
+Mouse 1 W M FvwmMoveOrIconify
+# 在图标化窗体上按 Alt 及单击左键移动图标，双击使图标恢复为窗体
+Mouse 1 I A FvwmMoveOrIconify
+# 在窗体标题栏向上滚动鼠标滚轮两次隐藏窗体
+Mouse 4 T A FvwmWindowShade True
+# 在窗体标题栏向下滚动鼠标滚轮两次展开窗体
+Mouse 5 T A FvwmWindowShade False
+
+
+######################################################################
+## 鼠标的样式
+######################################################################
+
+### CursorStyle ROOT left_ptr
+### CursorStyle TITLE left_ptr
+### CursorStyle DEFAULT left_ptr
+### CursorStyle SYS left_ptr
+### CursorStyle MENU left_ptr
+### BusyCursor DynamicMenu True, Read True
+
+
+######################################################################
+## 定义窗体的 Colorset
+######################################################################
+
+# 定义三个色彩结构，分别用序号 3、4、5 表示
+Colorset 3 fg #101060, bg #e6e7d7
+Colorset 4 fg Black,   bg #a6a797
+Colorset 5 fg White,   bg Black
+
+
+######################################################################
+## 定义窗体的装饰
 ######################################################################
 
 DestroyDecor MyDecor
@@ -96,7 +212,7 @@ AddToDecor   MyDecor
 
 
 ######################################################################
-## 定义窗体的样式
+## 窗体的样式
 ######################################################################
 
 # 用 MyDecor 修饰所有窗体，并规范了字体、边框以及色彩结构
@@ -111,7 +227,15 @@ Style * HilightBorderColorset 4
 
 
 ######################################################################
-## 定义菜单的样式
+## 定义菜单的 Colorset
+######################################################################
+
+Colorset 7 fg Black,   bg #e6e7d7, sh Black, hi #202070
+Colorset 8 fg DarkRed, bg #e6e7d7, sh Black, hi #202070
+
+
+######################################################################
+## 菜单的样式
 ######################################################################
 
 MenuStyle * MWM                                  # 使用预置的 MWM 风格
@@ -205,32 +329,98 @@ AddToMenu   FvwmManPagesMenu "FVWM Man Pages" Title
 
 
 ######################################################################
+## 定义 Module 的 Colorset
+######################################################################
+
+Colorset 9  fg rgb:00/00/00, hi rgb:00/00/00, sh rgb:00/00/00, bg rgb:e9/e9/d9
+Colorset 10 fg OrangeRed,    bg GreenYellow
+Colorset 11 fg DarkRed,      bg LightGoldenrodYellow
+
+
+######################################################################
 ## FvwmPager
 ######################################################################
 
-# 显示自定义的每个虚拟桌面、页以及在上面运行的窗体
+# 显示自定义的每个虚拟桌面、工作区以及在上面运行的窗体
 
 Style "FvwmPager" NoTitle, !Handles, !Borders, Sticky, WindowListSkip, \
   CirculateSkip, StaysOnBottom, FixedPosition, FixedSize, !Iconifiable
 
 DestroyModuleConfig FvwmPager: *
-*FvwmPager: Geometry 96x96-0+0
+*FvwmPager: Geometry 96x96-0+0  # 设定 Pager 的宽度、高度、距右边界距离，距上边界距离
 *FvwmPager: Colorset * 9
 *FvwmPager: HilightColorset * 10
 *FvwmPager: BalloonColorset * 9
 *FvwmPager: WindowColorsets 9 10
-*FvwmPager: Font "xft:Consolas:Bold:pixelsize=12:minspace=True:antialias=True"
+*FvwmPager: Font "xft:Consolas:Bold:pixelsize=14:minspace=True:antialias=True"
 *FvwmPager: Balloons All
-*FvwmPager: BalloonFont "xft:Sans:Bold:pixelsize=12:minspace=True:antialias=True"
+*FvwmPager: BalloonFont "xft:Consolas:Thin:pixelsize=14:minspace=True:antialias=True"
 *FvwmPager: BallonYOffset +2
 *FvwmPager: Window3dBorders
 *FvwmPager: MiniIcons
 *FvwmPager: UseSkipList
 *FvwmPager: Rows 3
 
+
+######################################################################
+## FvwmButtons
+######################################################################
+
+Style "FvwmButtons" NoTitle, NoHandles, BorderWidth 0, Sticky,\
+  WindowListSkip,CirculateSkip, StaysOnBottom, FixedPosition, \
+  FixedSize, !Iconifiable
+
+DestroyModuleConfig MainPanel: *
+*MainPanel: Back LightGoldenrodYellow
+*MainPanel: Geometry 96x480-0+0
+*MainPanel: Rows 10             # 把整个 MainPanel 划分为
+*MainPanel: Columns 2           # 10 行 2 列
+*MainPanel: Frame 1
+# 显示时钟
+*MainPanel: (2x2, Swallow(UseOld, Respawn) \
+  XClock "Exec exec xclock -geometry 96x96+0+0 -bg LightGoldenrodYellow")
+# 显示系统负荷
+*MainPanel: (2x1, Swallow(UseOld, Respawn) \
+  XLoad "Exec xload -nolabel -geometry 96x48+0+0 -bg LightGoldenrodYellow -fg red")
+# 放几个常用的程序以便快速启动
+*MainPanel: (1x1, Icon folder.xpm, Action "Exec exec /usr/bin/emacs --no-desktop -f dired")
+*MainPanel: (1x1, Icon lemacs.xpm, Action "Exec exec /usr/bin/emacsclient -c -n")
+# 把 FvwmPager 加到 FvwmButtons
+*MainPanel: (2x4, Swallow "FvwmPager", "FvwmPager 0 2")
+
+
+######################################################################
+## FvwmTaskBar
+######################################################################
+
+# 包含启动菜单、快捷启动、运行窗体列表、当前时间等项目
+
+Style "FvwmTaskBar" NoTitle, !Handles, !Borders, Sticky, WindowListSkip, \
+  CirculateSkip, StaysOnBottom, FixedPosition, FixedSize, !Iconifiable
+
+DestroyModuleConfig FvwmTaskBar: *
+*FvwmTaskBar: Geometry +0-0
+*FvwmTaskBar: Rows 1
+*FvwmTaskBar: Font "xft:Consolas:Bold:pixelsize=12:minispace=True:antialias=True"
+*FvwmTaskBar: SelFont "xft:Consolas:Bold:pixelsize=12:minispace=True:antialias=True"
+*FvwmTaskBar: StatusFont "xft:Consolas:Bold:pixelsize=12:minispace=True:antialias=True"
+*FvwmTaskBar: Colorset 9
+*FvwmTaskBar: IconColorset 9
+*FvwmTaskBar: FocusColorset 9
+*FvwmTaskBar: TipsColorset 9
+*FvwmTaskBar: UseSkipList
+*FvwmTaskBar: UseIconNames
+*FvwmTaskBar: ShowTips
+*FvwmTaskBar: Action Click3 Menu FvwmWindowOpsMenu
+# 显示几个按键并绑定到菜单、函数
+*FvwmTaskBar: StartName Start
+*FvwmTaskBar: StartIcon mini.start.xpm
+*FvwmTaskBar: StartMenu FvwmRootMenu
+*FvwmTaskBar: Button Title rxvt, Icon mini.xterm.xpm, Action (Mouse 1) FvwmRxvt
+
+
 # Local Variables:
 # coding: utf-8-unix
 # mode: fvwm-generic
-# mode: outline-minor
 # outline-regexp: "^## "
 # End:
