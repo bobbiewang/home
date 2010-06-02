@@ -29,7 +29,7 @@ ImagePath +:/usr/share/icons
 ImagePath +:/usr/include/X11/pixmaps
 
 # 自己的图片路径加到 ImagePath 前面
-ImagePath $[fvwm_icons]:$[fvwm_images]:+
+ImagePath $[fvwm_icons]:+
 
 
 ######################################################################
@@ -95,7 +95,7 @@ Style * IconBox screen w 15 15 -165 -15, IconGrid 3 3, IconFill right top
 
 Style "*" Icon gnome.xpm
 Style "rxvt" Icon gnu.xpm, NoActiveIconOverride, MiniIcon gnu.xpm
-Style "emacs" Icon emacs.png, IconOverride, MiniIcon emacs.png, EWMHMiniIconOverride
+Style "emacs" Icon 16x16/emacs.png, IconOverride, MiniIcon 16x16/emacs.png, EWMHMiniIconOverride
 
 
 ######################################################################
@@ -165,7 +165,7 @@ AddToFunc   InitFunction
 + I Exec exec xscreensaver                                  # 启动屏保系统
 + I Exec exec xsetroot -solid ivory4                        # 设置背景色
 # 加载桌面壁纸，fvwm-root 只支持 XBM、XPM、PNG 和 SVG，xloadimage 支持 JPG
-+ I Exec exec fvwm-root -r $[fvwm_images]/bg.png
++ I Exec exec fvwm-root -r $[fvwm_wallpapers]/background.png
 # + I Exec exec xloadimage -onroot -fullscreen ~/bg.jpg
 
 # StartFunction：FVWM 启动和重启时调用
@@ -477,7 +477,7 @@ DestroyModuleConfig MainPanel: *
   XLoad "Exec xload -nolabel -geometry 96x48+0+0 -bg LightGoldenrodYellow -fg red")
 # 放几个常用的程序以便快速启动
 *MainPanel: (1x1, Icon folder.xpm, Action "Exec exec /usr/bin/emacs --no-desktop -f dired")
-*MainPanel: (1x1, Icon lemacs.xpm, Action "Exec exec /usr/bin/emacsclient -c -n")
+*MainPanel: (1x1, Icon 48x48/emacs.png, Action "Exec exec /usr/bin/emacsclient -c -n")
 # 把 FvwmPager 加到 FvwmButtons
 *MainPanel: (2x4, Swallow "FvwmPager", "FvwmPager 0 2")
 
