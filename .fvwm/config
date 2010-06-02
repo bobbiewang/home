@@ -422,12 +422,53 @@ AddToMenu   FvwmManPagesMenu "FVWM Man Pages" Title
 
 
 ######################################################################
+## 创建菜单 FvwmWindowOpsMenu（Operation 菜单）
+######################################################################
+
+DestroyMenu FvwmWindowOpsMenu
+AddToMenu   FvwmWindowOpsMenu "Window Operations" Title
++ "Move%menu/window-move.xpm%"  Move
++ "Resize%menu/window-resize.xpm%"  Resize
++ "(De)Iconify%menu/window-iconify.xpm%"  Iconify
++ "(Un)Maximize%menu/window-maximize.xpm%"  Maximize
++ "(Un)Shade%menu/window-shade.xpm%"  WindowShade
++ "(Un)Stick%menu/window-stick.xpm%"  Stick
++ "" Nop
++ "Close%menu/window-close.xpm%"  Close
++ "Delete%menu/window-delete.xpm%"  Delete
++ "Destroy%menu/window-destroy.xpm%"  Destroy
++ "" Nop
++ "StaysOnTop%menu/window-raise.xpm%"  Pick (CirculateHit) Layer 0 6
++ "Layer +1%menu/window-raise.xpm%"  Pick (CirculateHit) Layer +1
++ "StaysPut%menu/window.xpm%"  Pick (CirculateHit) Layer 0 4
++ "Layer -1%menu/window-lower.xpm%"  Pick (CirculateHit) Layer -1
++ "StaysOnBottom%menu/window-lower.xpm%"  Pick (CirculateHit) Layer 0 2
++ "" Nop
++ "%menu/window.xpm%Window Screenshot"  Pick (CirculateHit) FvwmWindowScreenshot
++ "%menu/display.xpm%Screenshot" FvwmDesktopScreenshot 5
++ "" Nop
++ "Identify%menu/window-identify.xpm%"  Module FvwmIdent
+
+
+######################################################################
 ## 定义 Module 的 Colorset
 ######################################################################
 
 Colorset 9  fg rgb:00/00/00, hi rgb:00/00/00, sh rgb:00/00/00, bg rgb:e9/e9/d9
 Colorset 10 fg OrangeRed,    bg GreenYellow
+# Colorset 10 fg rgb:00/00/00, hi rgb:dd/00/00, sh rgb:dd/00/00, bg rgb:fb/fc/ec
 Colorset 11 fg DarkRed,      bg LightGoldenrodYellow
+
+
+######################################################################
+## FvwmIdent
+######################################################################
+
+# 报告窗体信息的模块
+
+DestroyModuleConfig FvwmIdent: *
+*FvwmIdent: Colorset 9
+*FvwmIdent: Font "xft:Consolas:Bold:size=12:antialias=True"
 
 
 ######################################################################
@@ -501,7 +542,7 @@ DestroyModuleConfig FvwmTaskBar: *
 *FvwmTaskBar: IconColorset 9
 *FvwmTaskBar: FocusColorset 9
 *FvwmTaskBar: TipsColorset 9
-*FvwmTaskBar: UseSkipList
+*FvwmTaskBar: UseSkipList       # 忽略设置了 WindowListSkip 的窗口
 *FvwmTaskBar: UseIconNames
 *FvwmTaskBar: ShowTips
 *FvwmTaskBar: Action Click3 Menu FvwmWindowOpsMenu
