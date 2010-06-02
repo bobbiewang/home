@@ -7,41 +7,96 @@
 #      `================================================'
 #
 ######################################################################
+## 设置环境变量
+######################################################################
+
+# FVWM_USERDIR 缺省指向 ~/.fvwm
+SetEnv fvwm_wallpapers $[FVWM_USERDIR]/wallpapers
+SetEnv fvwm_images $[FVWM_USERDIR]/images
+SetEnv fvwm_icons $[FVWM_USERDIR]/icons
+
+
+######################################################################
 ## 设置图片的路径
 ######################################################################
 
-# 把系统中几个常见的图片路径加到 ImagePath
-# + 代表现有的 ImagePath 内容，: 用于分隔路径
+# ImagePath 用于设置图片的路径，多个路径用 : 分隔，现有的 ImagePath 内
+# 容用 + 代表
+
+# 把系统中几个常见的图片路径加到 ImagePath 后面
 ImagePath +:/usr/share/pixmaps/fvwm
 ImagePath +:/usr/share/icons
 ImagePath +:/usr/include/X11/pixmaps
+
+# 自己的图片路径加到 ImagePath 前面
+ImagePath $[fvwm_icons]:$[fvwm_images]:+
+
 
 ######################################################################
 ## 虚拟桌面
 ######################################################################
 
-# 定义 4 个虚拟桌面，每个桌面分 2x2 共 4 个工作区
-DeskTopSize 2x2                 # 列数 x 行数
-DesktopName 0 Main
-DesktopName 1 Work
-DesktopName 2 Fun
-DesktopName 3 Misc
+# 每个虚拟桌面分 2（列数）x 2（行数）个工作区
+DeskTopSize 2x2
 
-# 鼠标移动虚拟桌面的边缘时，自动滚动到下一个桌面
-### EdgeScroll 100 100
-### EdgeResistance 150  150
-### EdgeThickness 1
-### 
-### # M + F1：跳转到 Page0（左上角）
-### Key F1 A M GotoPage 0 0
-### # M + F2：跳转到 Page1（右上角）
-### Key F2 A M GotoPage 1 0
-### # M + F3：跳转到 Page2（左下角）
-### Key F3 A M GotoPage 0 1
-### # M + F4：跳转到 Page3（右下角）
-### Key F4 A M GotoPage 1 1
+# 定义 3 个虚拟桌面，依次编号为 0 1 2
+DesktopName 0 Work
+DesktopName 1 Fun
+DesktopName 2 Misc
+
+# 鼠标移动到工作区边缘时，自动滚动到下一个工作区
+EdgeResistance 500  500         # 鼠标在工作区边缘停留时间（毫秒）
+EdgeScroll     100 100          # 滚动整个工作区
+EdgeThickness  1                # 工作区边缘的宽度
 
 # 各虚拟桌面和工作区的概括，可以通过 FvwmPager 显示
+
+
+######################################################################
+## 鼠标和焦点的行为
+######################################################################
+
+# * 是通配符，表示所有窗体
+# SloppyFocus，表示当鼠标经过该窗体时窗体获得焦点
+# MouseFocusClickRaises，表示鼠标单击焦点窗体后该窗体升至桌面最前面
+Style * SloppyFocus, MouseFocusClickRaises
+
+
+######################################################################
+## 全局样式和选项
+######################################################################
+
+# 定义可以布局窗体的空间，在左、右、上、下部预留部分空间给按钮栏等
+EwmhBaseStruts 0 96 0 15
+
+# 窗体出现时尽量不挡住其它的窗体
+Style * TileCascadePlacement
+
+Style * GrabFocusOff
+Style * NoPPosition, ResizeOpaque
+OpaqueMoveSize -1
+Emulate MWM
+HideGeometryWindow Never
+SnapAttraction 5 SameType Screen
+SnapGrid 3 3
+XorValue 55555
+Style * DecorateTransient, DontRaiseTransient
+Style * DontLowerTransient, StackTransientParent
+Style * GrabFocusTransientOff
+Style * WindowShadeSteps 20, WindowShadeScrolls
+SetAnimation  10  -.01 0 .01 .03 .08 .18 .3 .45 .6 .75 .85 .90 .94 .97 .99 1.0
+Style * MwmDecor, SlipperyIcon
+Style * IconBox screen w 15 15 -165 -15, IconGrid 3 3, IconFill right top
+
+
+######################################################################
+# 程序的样式
+######################################################################
+
+Style "*" Icon gnome.xpm
+Style "rxvt" Icon gnu.xpm, NoActiveIconOverride, MiniIcon gnu.xpm
+Style "emacs" Icon emacs.png, IconOverride, MiniIcon emacs.png, EWMHMiniIconOverride
+
 
 ######################################################################
 ## 基本函数
@@ -74,6 +129,7 @@ DestroyFunc FvwmWindowShade
 AddToFunc   FvwmWindowShade
 + D WindowShade $0
 
+
 ######################################################################
 ## 用于启动程序的函数
 ######################################################################
@@ -84,7 +140,7 @@ AddToFunc   FvwmRxvt
 
 DestroyFunc FvwmViewManPage
 AddToFunc   FvwmViewManPage
-+ I Exec exec rxvt -fg White -bg Black -g 80x40 -fn 7x14 -fb 7x14bold \
++ I Exec exec rxvt -fg White -bg Black -g 80x24 \
  -n "Manual Page - $0" -T "Manual Page - $0" -e man "$0"
 
 
@@ -108,16 +164,17 @@ DestroyFunc InitFunction
 AddToFunc   InitFunction
 + I Exec exec xscreensaver                                  # 启动屏保系统
 + I Exec exec xsetroot -solid ivory4                        # 设置背景色
-# + I Exec exec xloadimage -onroot -fullscreen ~/.fvwm/bg.jpg # 加载桌面壁纸
-# + I Exec exec fvwm-root -r ~/.fvwm/bg.jpg                   # 加载桌面壁纸
+# 加载桌面壁纸，fvwm-root 只支持 XBM、XPM、PNG 和 SVG，xloadimage 支持 JPG
++ I Exec exec fvwm-root -r $[fvwm_images]/bg.png
+# + I Exec exec xloadimage -onroot -fullscreen ~/bg.jpg
 
 # StartFunction：FVWM 启动和重启时调用
 DestroyFunc StartFunction
 AddToFunc   StartFunction
 + I Module FvwmTaskBar
 + I Module FvwmButtons MainPanel
++ I Module FvwmAnimate          # 缩小为图标以及还原时的动画效果
 # + I Module FvwmAuto 500 Raise Nop
-# + I Module FvwmAnimate
 
 # RestartFunction：FVWM 重启时调用，这里不运行额外程序
 DestroyFunc RestartFunction
@@ -135,10 +192,46 @@ AddToFunc ExitFunction
 ## 鼠标、按键绑定
 ######################################################################
 
-# M-F1 弹出 MenuFvwmRoot
-Key F1 A M Menu MenuFvwmRoot
+# 键绑定由 5 部分组成：Key X Context Modifier Action
+# 1. 键类型
+#    - Key:   键盘
+#    - Mouse: 鼠标
+# 2. 按键
+#    - 键盘的 F1 等键
+#    - 鼠标左键（1）、右键（2）、中键（3）
+# 3. 位置
+#    - R:   root window
+#    - I:   icon
+#    - F:   frame corners
+#    - S:   frame sides
+#    - T:   title bar
+#    - W:   application window
+#    - 0-9: buttons
+#    - A:   anywhere
+# 4. 组合键
+#    - A: any
+#    - C: control
+#    - S: shift
+#    - M: meta
+#    - N: nothing
+# 5. 动作
 
-# 在桌面左击鼠标，弹出窗体列表供选择
+# M + Tab：弹出程序列表
+Key Tab A M WindowList Root c c NoDeskSort, SelectOnRelease Meta_L
+
+# 左侧 Windows 键：启动 rxvt
+Key Super_L A A FvwmRxvt
+
+# M + F1：跳转到 Page0（左上角）
+Key F1 A M GotoPage 0 0
+# M + F2：跳转到 Page1（右上角）
+Key F2 A M GotoPage 1 0
+# M + F3：跳转到 Page2（左下角）
+Key F3 A M GotoPage 0 1
+# M + F4：跳转到 Page3（右下角）
+Key F4 A M GotoPage 1 1
+
+# 在桌面左击鼠标，弹出窗体列表
 Mouse 1 R A WindowList
 # 在桌面右击鼠标，弹出自定义的 FvwmRootMenu
 Mouse 3 R A Menu FvwmRootMenu
@@ -268,7 +361,7 @@ AddToMenu   FvwmRootMenu "Root Menu" Title
 + "Programs" Popup FvwmProgramsMenu
 + "" Nop
 + "FVWM Help%mini.book1.xpm%"  Popup FvwmManPagesMenu
-+ "FVWM Console%mini.term2.xpm%" Module FvwmConsole
++ "FVWM Console%mini.term2.xpm%" Module FvwmConsole -terminal rxvt
 + "Restart FVWM" Restart
 + "Quit FVWM" Quit
 
