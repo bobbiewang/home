@@ -7,3 +7,6 @@ Emacs.FontBackend: xft
 Rxvt.font: xft:Consolas:size=12,xft:Microsoft YaHei:size=12
 Rxvt.background: black
 Rxvt.foreground: gray80
+Rxvt.colorBD:    yellow
+Rxvt.colorIT:    magenta
+Rxvt.colorUL:    green
