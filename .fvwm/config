@@ -366,9 +366,8 @@ MenuStyle * MenuFace VGradient 64 gray20 gray50  # 背景色从上到下 64 级�
 
 DestroyMenu FvwmRootMenu
 AddToMenu   FvwmRootMenu "Root Menu" Title
-+ "rxvt%mini.term2.xpm%" \
-  Exec exec /usr/bin/rxvt -bg black -geometry 60x40
-+ "Emacs%mini.edit.xpm%" Exec exec /usr/bin/emacsclient -c -n
++ "rxvt%16x16/terminal.png%" Exec exec rxvt -bg black -geometry 60x40
++ "Emacs%16x16/emacs.png%" Exec exec emacsclient -c -n
 + "" Nop
 + "Programs" Popup FvwmProgramsMenu
 + "" Nop
@@ -529,8 +528,8 @@ DestroyModuleConfig MainPanel: *
 *MainPanel: (2x1, Swallow(UseOld, Respawn) \
   XLoad "Exec xload -nolabel -geometry 96x48+0+0 -bg LightGoldenrodYellow -fg red")
 # 放几个常用的程序以便快速启动
-*MainPanel: (1x1, Icon 48x48/drivemount-applet.png, Action "Exec exec /usr/bin/emacs --no-desktop -f dired")
-*MainPanel: (1x1, Icon 48x48/emacs.png, Action "Exec exec /usr/bin/emacsclient -c -n")
+*MainPanel: (1x1, Icon 48x48/drivemount-applet.png, Action "Exec exec emacs --no-desktop -f dired")
+*MainPanel: (1x1, Icon 48x48/emacs.png, Action "Exec exec emacsclient -c -n")
 # 把 FvwmPager 加到 FvwmButtons
 *MainPanel: (2x4, Swallow "FvwmPager", "FvwmPager 0 2")
 
