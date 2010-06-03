@@ -56,7 +56,11 @@ EdgeThickness  1                # 工作区边缘的宽度
 ## 鼠标和焦点的行为
 ######################################################################
 
-# * 是通配符，表示所有窗体
+ClickTime 350                   # 350 毫秒内属于单击
+MoveThreshold 3                 # 移动 3 像素以上才算移动
+
+# * 表示所有窗体。也可以用字符串指定程序的名称、类型或者窗体的资源
+
 # SloppyFocus，表示当鼠标经过该窗体时窗体获得焦点
 # MouseFocusClickRaises，表示鼠标单击焦点窗体后该窗体升至桌面最前面
 Style * SloppyFocus, MouseFocusClickRaises
@@ -68,6 +72,9 @@ Style * SloppyFocus, MouseFocusClickRaises
 
 # 定义可以布局窗体的空间，在左、右、上、下部预留部分空间给按钮栏等
 EwmhBaseStruts 0 96 0 15
+
+# 忽略数组锁定键，不作为 Modifier 使用
+IgnoreModifiers L25
 
 # 窗体出现时尽量不挡住其它的窗体
 Style * TileCascadePlacement
@@ -93,9 +100,13 @@ Style * IconBox screen w 15 15 -165 -15, IconGrid 3 3, IconFill right top
 # 程序的样式
 ######################################################################
 
-Style "*" Icon gnome.xpm
-Style "rxvt" Icon gnu.xpm, NoActiveIconOverride, MiniIcon gnu.xpm
-Style "emacs" Icon 16x16/emacs.png, IconOverride, MiniIcon 16x16/emacs.png, EWMHMiniIconOverride
+# Icon：最小化为桌面上时显示的图标
+# MiniIcon：StatusBar、Pager 中显示的图标
+
+Style "*" Icon 48x48/unknown.png
+Style "emacs" Icon 48x48/emacs.png, IconOverride, MiniIcon 16x16/emacs.png, EWMHMiniIconOverride
+Style "rxvt" Icon 48x48/terminal.png, NoActiveIconOverride, MiniIcon 16x16/terminal.png
+Style "VNC config" Icon 48x48/configuration.png, IconOverride, MiniIcon, 16x16/configuration.png
 
 
 ######################################################################
@@ -104,10 +115,10 @@ Style "emacs" Icon 16x16/emacs.png, IconOverride, MiniIcon 16x16/emacs.png, EWMH
 
 DestroyFunc FvwmDeleteOrDestroy
 AddToFunc   FvwmDeleteOrDestroy
-+ H Nop
-+ M Nop
-+ C Delete
-+ D Destroy
++ H Nop                         # 点住时无作用
++ M Nop                         # 移动时无作用
++ C Delete                      # 点击时删除窗体
++ D Destroy                     # 双击时彻底销毁窗体
 
 DestroyFunc FvwmIconifyOrShade
 AddToFunc   FvwmIconifyOrShade
@@ -118,7 +129,7 @@ DestroyFunc FvwmMaximize
 AddToFunc   FvwmMaximize
 + H Nop
 + M Nop
-+ C Maximize $0 $1
++ C Maximize $0 $1              # 参数为水平、垂直方向最大化比率
 
 DestroyFunc FvwmMoveOrIconify
 AddToFunc   FvwmMoveOrIconify
@@ -162,18 +173,16 @@ AddToFunc   FvwmViewManPage
 # InitFunction：FVWM 首次启动时调用
 DestroyFunc InitFunction
 AddToFunc   InitFunction
-+ I Exec exec xscreensaver                                  # 启动屏保系统
-+ I Exec exec xsetroot -solid ivory4                        # 设置背景色
-# 加载桌面壁纸，fvwm-root 只支持 XBM、XPM、PNG 和 SVG，xloadimage 支持 JPG
-+ I Exec exec fvwm-root -r $[fvwm_wallpapers]/background.png
-# + I Exec exec xloadimage -onroot -fullscreen ~/bg.jpg
++ I Exec exec xscreensaver                                   # 启动屏保系统
++ I Exec exec xsetroot -solid ivory4                         # 设置背景色
++ I Exec exec fvwm-root -r $[fvwm_wallpapers]/background.png # 加载桌面壁纸
 
 # StartFunction：FVWM 启动和重启时调用
 DestroyFunc StartFunction
 AddToFunc   StartFunction
 + I Module FvwmTaskBar
 + I Module FvwmButtons MainPanel
-+ I Module FvwmAnimate          # 缩小为图标以及还原时的动画效果
++ I Module FvwmAnimate          # 最小化为图标以及还原时的动画效果
 # + I Module FvwmAuto 500 Raise Nop
 
 # RestartFunction：FVWM 重启时调用，这里不运行额外程序
@@ -272,6 +281,8 @@ Mouse 5 T A FvwmWindowShade False
 ## 定义窗体的 Colorset
 ######################################################################
 
+# Colorset 定义前景（fg）、背景（bg）、高亮（hi）和隐藏（sh）的颜色
+
 # 定义三个色彩结构，分别用序号 3、4、5 表示
 Colorset 3 fg #101060, bg #e6e7d7
 Colorset 4 fg Black,   bg #a6a797
@@ -282,14 +293,15 @@ Colorset 5 fg White,   bg Black
 ## 定义窗体的装饰
 ######################################################################
 
+# 定义三个矢量按钮，序号分别为 1、3、5
+# 矢量图的大小在 100x100 像素内，语法为
+#   Vector [number of points] [[point1] [point2] ...]
+# point 的格式为 XxY@Z，Z 值取 0~4，分别代表高亮、隐藏、背景、前景和不可见
+# Raised 指定按钮和标题栏为缺省的突出风格，也可以使用平坦（Flat）、凹陷（Sunk）等风格
+
 DestroyDecor MyDecor
 AddToDecor   MyDecor
 + TitleStyle LeftJustified Height 18
-# 定义三个矢量按钮，序号分别为 1、3、5
-# 矢量图的大小在 100x100 像素内，语法为
-#         Vector [number of points] [[point1] [point2] ...]
-# point 的格式为 XxY@Z，Z 值取 0~4，分别代表高亮、隐藏、背景、前景和不可见
-# Raised 指定按钮和标题栏为缺省的突出风格，也可以使用平坦（Flat）、凹陷（Sunk）等风格
 + ButtonStyle 1 ActiveUp Vector 4 30x30@3 60x60@3 60x30@4 30x60@3 -- Raised
 + ButtonStyle 1 ActiveDown Vector 4 30x30@3 60x60@3 60x30@4 30x60@3 -- Raised
 + ButtonStyle 1 Inactive Vector 4 30x30@3 60x60@3 60x30@4 30x60@3 -- Raised
@@ -481,7 +493,7 @@ Style "FvwmPager" NoTitle, !Handles, !Borders, Sticky, WindowListSkip, \
   CirculateSkip, StaysOnBottom, FixedPosition, FixedSize, !Iconifiable
 
 DestroyModuleConfig FvwmPager: *
-*FvwmPager: Geometry 96x96-0+0  # 设定 Pager 的宽度、高度、距右边界距离，距上边界距离
+*FvwmPager: Geometry 100x100-0+0  # 设定 Pager 的宽度、高度、距右边界距离，距上边界距离
 *FvwmPager: Colorset * 9
 *FvwmPager: HilightColorset * 10
 *FvwmPager: BalloonColorset * 9
@@ -506,10 +518,10 @@ Style "FvwmButtons" NoTitle, NoHandles, BorderWidth 0, Sticky,\
 
 DestroyModuleConfig MainPanel: *
 *MainPanel: Back LightGoldenrodYellow
-*MainPanel: Geometry 96x480-0+0
+*MainPanel: Geometry 100x500-0+0
 *MainPanel: Rows 10             # 把整个 MainPanel 划分为
 *MainPanel: Columns 2           # 10 行 2 列
-*MainPanel: Frame 1
+*MainPanel: Frame 0             # 0 表示不显示各个区域之间的分隔线
 # 显示时钟
 *MainPanel: (2x2, Swallow(UseOld, Respawn) \
   XClock "Exec exec xclock -geometry 96x96+0+0 -bg LightGoldenrodYellow")
@@ -517,7 +529,7 @@ DestroyModuleConfig MainPanel: *
 *MainPanel: (2x1, Swallow(UseOld, Respawn) \
   XLoad "Exec xload -nolabel -geometry 96x48+0+0 -bg LightGoldenrodYellow -fg red")
 # 放几个常用的程序以便快速启动
-*MainPanel: (1x1, Icon folder.xpm, Action "Exec exec /usr/bin/emacs --no-desktop -f dired")
+*MainPanel: (1x1, Icon 48x48/drivemount-applet.png, Action "Exec exec /usr/bin/emacs --no-desktop -f dired")
 *MainPanel: (1x1, Icon 48x48/emacs.png, Action "Exec exec /usr/bin/emacsclient -c -n")
 # 把 FvwmPager 加到 FvwmButtons
 *MainPanel: (2x4, Swallow "FvwmPager", "FvwmPager 0 2")
@@ -534,7 +546,7 @@ Style "FvwmTaskBar" NoTitle, !Handles, !Borders, Sticky, WindowListSkip, \
 
 DestroyModuleConfig FvwmTaskBar: *
 *FvwmTaskBar: Geometry +0-0
-*FvwmTaskBar: Rows 1
+*FvwmTaskBar: Rows 1            # 只显示一行程序。如果程序比较多，可以设置多行
 *FvwmTaskBar: Font "xft:Consolas:Bold:pixelsize=12:minispace=True:antialias=True"
 *FvwmTaskBar: SelFont "xft:Consolas:Bold:pixelsize=12:minispace=True:antialias=True"
 *FvwmTaskBar: StatusFont "xft:Consolas:Bold:pixelsize=12:minispace=True:antialias=True"
@@ -548,9 +560,9 @@ DestroyModuleConfig FvwmTaskBar: *
 *FvwmTaskBar: Action Click3 Menu FvwmWindowOpsMenu
 # 显示几个按键并绑定到菜单、函数
 *FvwmTaskBar: StartName Start
-*FvwmTaskBar: StartIcon mini.start.xpm
+*FvwmTaskBar: StartIcon 16x16/gnome.png
 *FvwmTaskBar: StartMenu FvwmRootMenu
-*FvwmTaskBar: Button Title rxvt, Icon mini.xterm.xpm, Action (Mouse 1) FvwmRxvt
+*FvwmTaskBar: Button Title rxvt, Icon 16x16/terminal-remote.png, Action (Mouse 1) FvwmRxvt
 
 
 # Local Variables:
