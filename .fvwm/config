@@ -71,7 +71,7 @@ Style * SloppyFocus, MouseFocusClickRaises
 ######################################################################
 
 # 定义可以布局窗体的空间，在左、右、上、下部预留部分空间给按钮栏等
-EwmhBaseStruts 0 96 0 15
+EwmhBaseStruts 0 100 0 15
 
 # 忽略数组锁定键，不作为 Modifier 使用
 IgnoreModifiers L25
@@ -140,6 +140,12 @@ DestroyFunc FvwmWindowShade
 AddToFunc   FvwmWindowShade
 + D WindowShade $0
 
+# 如果桌面上有没有最小化的窗口那么最小化所有的桌面上的窗口，
+# 如果所有的窗口都已最小化了那么还原所有的窗口
+DestroyFunc ShowDesk
+AddToFunc ShowDesk
++ I All (AcceptsFocus CurrentPage !Iconic !Shaded) Thumbnail
++ I TestRc (NoMatch) All (CurrentPage Iconic) Iconify
 
 ######################################################################
 ## 用于启动程序的函数
