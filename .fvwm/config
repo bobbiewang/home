@@ -386,6 +386,14 @@ Mouse 3 R A Menu FvwmRootMenu
 
 
 ######################################################################
+## 创建菜单 FvwmProgramsMenu
+######################################################################
+
+DestroyMenu FvwmProgramsMenu
+AddToMenu   FvwmProgramsMenu "Programs" Title
++ "rxvt%16x16/terminal.png%"  FvwmRxvt
+
+######################################################################
 ## 创建菜单 FvwmManPagesMenu
 ######################################################################
 
