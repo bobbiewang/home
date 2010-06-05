@@ -44,10 +44,10 @@ DesktopName 0 Work
 DesktopName 1 Fun
 DesktopName 2 Misc
 
-# 鼠标移动到工作区边缘时，自动滚动到下一个工作区
+# 鼠标移动到工作区边缘时，不自动滚动到下一个工作区
 EdgeResistance 500  500         # 鼠标在工作区边缘停留时间（毫秒）
 EdgeScroll     100 100          # 滚动整个工作区
-EdgeThickness  1                # 工作区边缘的宽度
+EdgeThickness  0                # 工作区边缘的宽度，0 为禁止
 
 # 各虚拟桌面和工作区的概括，可以通过 FvwmPager 显示
 
@@ -71,7 +71,7 @@ Style * SloppyFocus, MouseFocusClickRaises
 ######################################################################
 
 # 定义可以布局窗体的空间，在左、右、上、下部预留部分空间给按钮栏等
-EwmhBaseStruts 0 100 0 15
+EwmhBaseStruts 0 100 20 0
 
 # 忽略数组锁定键，不作为 Modifier 使用
 IgnoreModifiers L25
@@ -229,7 +229,7 @@ AddToFunc   StartFunction
 + I Function StartDocker
 + I Module FvwmTaskBar
 + I Module FvwmAnimate          # 最小化为图标以及还原时的动画效果
-# + I Module FvwmAuto 500 Raise Nop
+# + I Module FvwmAuto 500 Raise Nop # 鼠标悬停 500ms 后，自动提升窗口
 
 # RestartFunction：FVWM 重启时调用，这里不运行额外程序
 DestroyFunc RestartFunction
@@ -239,9 +239,8 @@ AddToFunc   RestartFunction
 # ExitFunction：FVWM 关闭和重启时调用
 DestroyFunc ExitFunction
 AddToFunc ExitFunction
-+ I KillModule FvwmButtons
 + I KillModule FvwmTaskBar
-+ I KillModule DockPanel
++ I KillModule FvwmButtons
 
 
 ######################################################################
@@ -637,8 +636,9 @@ DestroyModuleConfig FvwmTaskBar: *
 *FvwmTaskBar: ShowTips
 *FvwmTaskBar: Action Click3 Menu FvwmWindowOpsMenu
 # 显示几个按键并绑定到菜单、函数
-*FvwmTaskBar: StartName Start
-*FvwmTaskBar: StartIcon 16x16/gnome.png
+# 缺省为 Start，如果不需要显示，设为空
+*FvwmTaskBar: StartName
+*FvwmTaskBar: StartIcon 16x16/fvwm.png
 *FvwmTaskBar: StartMenu FvwmRootMenu
 *FvwmTaskBar: Button Title rxvt, Icon 16x16/terminal-remote.png, Action (Mouse 1) FvwmRxvt
 
