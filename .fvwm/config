@@ -144,8 +144,15 @@ AddToFunc   FvwmWindowShade
 # 如果所有的窗口都已最小化了那么还原所有的窗口
 DestroyFunc ShowDesk
 AddToFunc ShowDesk
-+ I All (AcceptsFocus CurrentPage !Iconic !Shaded) Thumbnail
-+ I TestRc (NoMatch) All (CurrentPage Iconic) Iconify
++ I All (CurrentPage, Iconic, State 1) RestoreDesktop
++ I TestRc (Match) Break
++ I All (CurrentPage, !Iconic, !State 1) ThisWindow State 1 True
++ I All (CurrentPage, !Iconic, State 1) Iconify
+
+DestroyFunc RestoreDesktop
+AddToFunc   RestoreDesktop
++ I All (CurrentPage, Iconic, State 1) Iconify off
++ I All (CurrentPage, State 1) ThisWindow State 1 False
 
 DestroyFunc AutoHide
 AddToFunc   AutoHide
@@ -589,8 +596,7 @@ DestroyModuleConfig MainPanel: *
 
 
 Style DockPanel NoTitle, Sticky, Handlewidth 0, Borderwidth 0, WindowListSkip, StaysOnTop
-Colorset 50 fg #ffffff, bg #4584b5, hi gray, sh gray, RootTransparent buffer, IconAlpha 75, Tint #4
-584b5 0
+Colorset 50 fg #ffffff, bg #4584b5, hi gray, sh gray, RootTransparent buffer, IconAlpha 75, Tint #4584b5 0
 Colorset 51 fg #ffffff, bg #7f7f7f, hi gray, sh gray, RootTransparent buffer, IconAlpha 100, Tint #4584b5 0
 
 DestroyModuleConfig DockPanel: *
@@ -607,9 +613,9 @@ DestroyModuleConfig DockPanel: *
              Action(Mouse 1) `FuncDockLaunch rxvt *rxvt $left $top`, \
              `Next (*rxvt) Popup MenuWindowOptions Rectangle +$left +$top 0 -100m`)
 *DockPanel: (1x1, ActionOnPress, \
-             Icon 48x48/exit.png, \
-             ActiveIcon 64x64/exit.png, \
-             Action(Mouse 1) `FuncDockLaunch rxvt *rxvt $left $top`, \
+             Icon 48x48/emacs.png, \
+             ActiveIcon 64x64/emacs.png, \
+             Action(Mouse 1) `FuncDockLaunch emacsclient -c -n *emacs $left $top`, \
              `Next (*rxvt) Popup MenuWindowOptions Rectangle +$left +$top 0 -100m`)
 
 ######################################################################
@@ -623,25 +629,35 @@ Style "FvwmTaskBar" NoTitle, !Handles, !Borders, Sticky, WindowListSkip, \
 
 DestroyModuleConfig FvwmTaskBar: *
 *FvwmTaskBar: Geometry +0+0
-*FvwmTaskBar: Rows 1            # 只显示一行程序。如果程序比较多，可以设置多行
-*FvwmTaskBar: Font "xft:Consolas:Bold:pixelsize=12:minispace=True:antialias=True"
+*FvwmTaskBar: Rows 1            # 只显示 1 行程序，最多可以设置 8 行
+*FvwmTaskBar: Font "xft:Consolas:Regular:pixelsize=12:minispace=True:antialias=True"
 *FvwmTaskBar: SelFont "xft:Consolas:Bold:pixelsize=12:minispace=True:antialias=True"
 *FvwmTaskBar: StatusFont "xft:Consolas:Bold:pixelsize=12:minispace=True:antialias=True"
 *FvwmTaskBar: Colorset 9
 *FvwmTaskBar: IconColorset 9
 *FvwmTaskBar: FocusColorset 9
 *FvwmTaskBar: TipsColorset 9
+*FvwmTaskBar: AutoStick         # 自动停靠到屏幕边缘
+# *FvwmTaskBar: AutoHide        # 自动隐藏，鼠标移过才显示
+*FvwmTaskBar: DeskOnly          # 只显示当前桌面的程序
+*FvwmTaskBar: PageOnly          # 只显示当前工作区的程序
 *FvwmTaskBar: UseSkipList       # 忽略设置了 WindowListSkip 的窗口
 *FvwmTaskBar: UseIconNames
 *FvwmTaskBar: ShowTips
-*FvwmTaskBar: Action Click3 Menu FvwmWindowOpsMenu
-# 显示几个按键并绑定到菜单、函数
-# 缺省为 Start，如果不需要显示，设为空
+# 设置 Start 按键
+# 文字缺省为 Start，如果不需要显示，设为空
 *FvwmTaskBar: StartName
 *FvwmTaskBar: StartIcon 16x16/fvwm.png
 *FvwmTaskBar: StartMenu FvwmRootMenu
-*FvwmTaskBar: Button Title rxvt, Icon 16x16/terminal-remote.png, Action (Mouse 1) FvwmRxvt
-
+# 在 Start 按键右方增加几个按键
+*FvwmTaskBar: Button Title, Icon 16x16/window.png, Action (Mouse 1) ShowDesk
+*FvwmTaskBar: Button Title, Icon 16x16/terminal-remote.png, Action (Mouse 1) FvwmRxvt
+# 任务栏上 Window Button 的间距
+*FvwmTaskBar: WindowButtonsLeftMargin 0
+*FvwmTaskBar: Pad 0
+*FvwmTaskBar: WindowButtonsRightMargin 0
+# 鼠标右击任务栏上的 Window Button，显示窗口操作菜单
+*FvwmTaskBar: Action Click3 Menu FvwmWindowOpsMenu
 
 # Local Variables:
 # coding: utf-8-unix
