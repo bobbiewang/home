@@ -75,10 +75,11 @@
   "强壮的加载 library 的 macro，即使 library 不存在也不会出错"
   `(condition-case nil
        (progn
-         (setq *emacs-load-ext-start-time* (current-time))
-         (require ',symbol)
-         ,@body
-         (deh-load-time (format "%s" ',symbol)))
+         (when (not (featurep ',symbol))
+           (setq *emacs-load-ext-start-time* (current-time))
+           (require ',symbol)
+           ,@body
+           (deh-load-time (format "%s" ',symbol))))
          (error (deh-log-warn (format "[WARNING] Failed to require %s!" ',symbol))
                 nil)))
 
