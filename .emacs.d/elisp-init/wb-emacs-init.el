@@ -2561,6 +2561,36 @@ directory, select directory. Lastly the file is opened."
           "%n.sh"))
   ())
 
+;;;; wb-cedet.el
+
+(defun init-cedet ()
+  (interactive)
+  (with-library "cedet"
+    (unless (featurep 'cedet)
+      ;; 设置相关目录、文件的路径
+      (setq semanticdb-default-save-directory "~/.emacs.d/.semanticdb")
+      (setq srecode-map-save-file "~/.emacs.d/.srecode/srecode-map")
+
+      ;; 加载并开启 EDE
+      (require 'cedet)
+      (global-ede-mode 1)
+
+      ;; 加载并设置 Semantic
+      (if (fboundp 'semantic-load-enable-minimum-features)
+          ;; 官方 CEDET
+          (progn
+            (message "Load official CEDET...")
+            (semantic-load-enable-excessive-code-helpers)
+            (semantic-load-enable-semantic-debugging-helpers))
+        ;; Emacs 集成的 CEDET
+        (message "Load Emacs built-in CEDET...")
+        (setq semantic-default-submodes '(global-semantic-idle-scheduler-mode
+                                          global-semanticdb-minor-mode
+                                          global-semantic-idle-summary-mode
+                                          global-semantic-highlight-func-mode
+                                          global-semantic-mru-bookmark-mode))
+        (semantic-mode 1)))))
+
 ;;;; wb-elispde.el
 
 (defun wb-emacs-lisp-mode-hook ()
