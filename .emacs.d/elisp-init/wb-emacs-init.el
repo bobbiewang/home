@@ -1769,13 +1769,14 @@ do kill lines as `dd' in vim."
 (setq delete-old-versions t) ; 删掉不属于以上12中版本的版本
 ;; 设置备份文件的路径
 (setq backup-directory-alist
-      '(("" . "~/.emacs.d/auto-backup")))
+      '(("" . "~/.emacs.d/.auto-backup")))
 ;; 备份设置方法，直接拷贝
 (setq backup-by-copying t)
 (setq make-backup-files t)
 
 ;; Auto Save 策略
 ;; auto-save-default 为 t（除了 batch mode），所以缺省打开 Auto Save
+(setq auto-save-list-file-prefix "~/.emacs.d/.auto-save-list/.saves-")
 (setq auto-save-interval 100)            ; 每输入 N 个字符后自动保存
 (setq auto-save-timeout 30)              ; 至少 N 秒后才自动保存
 (setq delete-auto-save-files t)
@@ -1806,7 +1807,6 @@ do kill lines as `dd' in vim."
 
 ;; 设置常用的文件和目录，可以用 "C-x r j R" 快速访问
 (set-register ?e '(file . "~/.emacs.d/elisp-init/wb-emacs-init.el"))
-(set-register ?g '(file . "~/.emacs.d/org/gtd"))
 
 ;; Emacs 内置的 bookmark
 ;; bookmark-set    C-x r m
@@ -2070,6 +2070,9 @@ directory, select directory. Lastly the file is opened."
   (set-buffer-modified-p nil))
 (add-hook 'dired-after-readin-hook 'sof/dired-sort)
 
+;; image-dired
+(setq image-dired-dir "~/.emacs.d/.image-dired/")
+
 ;;; Self Documentation
 
 ;; 增大 apropos 函数查找的范围
@@ -2089,6 +2092,10 @@ directory, select directory. Lastly the file is opened."
 ;;; Misc
 
 (setq default-directory "~/")
+
+(setq savehist-file "~/.emacs.d/.history")
+
+(setq recentf-save-file "~/.emacs.d/.recentf")
 
 ;; Shell Mode
 ;; Color support
@@ -2141,6 +2148,7 @@ directory, select directory. Lastly the file is opened."
 
 (with-library "auto-complete-config"
   (autoload 'auto-complete-mode "auto-complete-config" nil t)
+  (setq ac-comphist-file "~/.emacs.d/.ac-comphist.dat")
 
   (eval-after-load "auto-complete-config"
     '(progn
@@ -3121,7 +3129,9 @@ Returns nil if it is not visible in the current calendar window."
   (font-lock-add-keywords
    'org-mode
    '(("#\\+BEGIN_SRC.*$" (0 'org-embedded-code-face t))
-     ("#\\+END_SRC" (0 'org-embedded-code-face t)))
+     ("#\\+END_SRC" (0 'org-embedded-code-face t))
+     ("#\\+BEGIN_EXAMPLE" (0 'org-embedded-code-face t))
+     ("#\\+END_EXAMPLE" (0 'org-embedded-code-face t)))
    t)
 
   ;; 利用 iimage 在 Org 文档中显示图片
@@ -3134,7 +3144,8 @@ Returns nil if it is not visible in the current calendar window."
         (set-face-underline-p 'org-link t))
       (iimage-mode)))
 
-  ;; 微调 publish 时的行为
+  ;; 调整publish 时的行为
+  (setq org-publish-timestamp-directory "~/.emacs.d/.org-timestamps")
   (setq org-export-with-sub-superscripts nil) ; 缺省不把正文中的 ^、_ 作为上下标的标志
   (setq org-export-html-inline-images t)      ; 缺省图片都内嵌到文档中
   ;; org-export-htmlize-output-type
