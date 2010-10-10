@@ -2108,8 +2108,8 @@ directory, select directory. Lastly the file is opened."
 (setq abbrev-file-name "~/.emacs.d/.abbrev_defs")
 (setq save-abbrevs nil)
 
-(robust-require autoinsert
-  (auto-insert-mode))
+;; (robust-require autoinsert
+;;   (auto-insert-mode nil))
 
 ;; 设置 hippie-expand 的补全方式。这是一个优先列表，hippie-expand 会依
 ;; 次尝试列表中的函数来补全。当前使用的匹配方式会在 echo 区域显示
@@ -3198,64 +3198,31 @@ Returns nil if it is not visible in the current calendar window."
 
   ;; 定义 Org 文档项目
   (setq org-publish-project-alist
-        '(("index"
+        '(("org-website"
            :base-directory "~/muse/source"
            :publishing-directory "~/public_html/"
            :base-extension "org"
+           :recursive t
+           :auto-sitemap t
            :section-numbers nil
-           :table-of-contents nil
            :author-info nil
            :creator-info nil
-           :style-include-default nil
+           :style-include-default t
            :auto-preamble nil
            :auto-postamble nil
-           :style "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />"
-           :preamble "<div class=\"container\">
-                      <div class=\"gfx\"><span></span></div>
-                      <div class=\"top\">
-                        <div class=\"navigation\">
-                          <a href=\"index.html\" id=\"selected\">Home</a>
-                          <a href=\"spa/SPA.html\">S.P.A.</a>
-                          <a href=\"reading/Reading.html\">Reading</a>
-                          <a href=\"programming/Programming.html\">Programming</a>
-                          <a href=\"iccad/ICCAD.html\">ICCAD</a>
-                          <a href=\"computer/Computer.html\">Computer</a>
-                          <a href=\"emacs/Emacs.html\">Emacs</a>
-                        </div>
-                        <div class=\"pattern\"><span></span></div>
-                        <div class=\"header\">
-                          <h1>The Power of Mind</h1>
-                          <p>Observe, Think and Practise</p>
-                        </div>
-                        <div class=\"pattern\"><span></span></div>
-                      </div>
-                      <div class=\"content\">
-                      <div class=\"spacer\"></div>"
-           :postamble "  </div>
-                       <div class=\"footer\">&copy; 2009 Bo Wang</div>
-                     </div>"
-           :publishing-function org-publish-org-to-html)
-          ("emacs"
-           :base-directory "~/muse/source/emacs"
-           :publishing-directory "~/public_html/emacs"
-           :base-extension "org"
-           :author-info nil
-           :creator-info nil
-           :style-include-default nil
-           :auto-preamble nil
-           :auto-postamble nil
+           :publishing-function org-publish-org-to-html
            :style "<link rel=\"stylesheet\" type=\"text/css\" href=\"../style.css\" />"
            :preamble "<div class=\"container\">
                       <div class=\"gfx\"><span></span></div>
                       <div class=\"top\">
                         <div class=\"navigation\">
-                          <a href=\"../index.html\">Home</a>
-                          <a href=\"spa/SPA.html\">S.P.A.</a>
-                          <a href=\"reading/Reading.html\">Reading</a>
-                          <a href=\"programming/Programming.html\">Programming</a>
-                          <a href=\"iccad/ICCAD.html\">ICCAD</a>
-                          <a href=\"computer/Computer.html\">Computer</a>
-                          <a href=\"emacs/Emacs.html\" id=\"selected\">Emacs</a>
+                          <a href=\"../index.html\" id=\"selected\">Home</a>
+                          <a href=\"../spa/SPA.html\">S.P.A.</a>
+                          <a href=\"../reading/Reading.html\">Reading</a>
+                          <a href=\"../programming/Programming.html\">Programming</a>
+                          <a href=\"../iccad/ICCAD.html\">ICCAD</a>
+                          <a href=\"../computer/Computer.html\">Computer</a>
+                          <a href=\"../emacs/Emacs.html\">Emacs</a>
                         </div>
                         <div class=\"pattern\"><span></span></div>
                         <div class=\"header\">
@@ -3269,7 +3236,7 @@ Returns nil if it is not visible in the current calendar window."
            :postamble "  </div>
                        <div class=\"footer\">
                          <div class=\"left\">
-                           &copy; 2009
+                           &copy; 2010
                            <a href=\"index.html\">Website.com</a>.
                            Valid
                            <a href=\"http://jigsaw.w3.org/css-validator/check/referer\">CSS</a>
@@ -3282,35 +3249,36 @@ Returns nil if it is not visible in the current calendar window."
                            <a href=\"../index.html\">Bo Wang</a>
                          </div>
                        </div>
-                     </div>"
-           :publishing-function org-publish-org-to-html)
-          ("computer"
-           :base-directory "~/muse/source/computer"
-           :publishing-directory "~/public_html/computer"
+                     </div>")
+          ("org-website-static"
+           :base-directory "~/muse/source"
+           :base-extension "png\\|jpg\\|gif\\|pdf"
+           :publishing-directory "~/public_html/"
+           :recursive t
+           :publishing-function org-publish-attachment)
+          ("org-html"
+           :base-directory "~/muse/source"
+           :publishing-directory "~/muse/publish/html/"
            :base-extension "org"
-           :publishing-function org-publish-org-to-html)
-          ("iccad"
-           :base-directory "~/muse/source/iccad"
-           :publishing-directory "~/public_html/iccad"
-           :base-extension "org"
-           :publishing-function org-publish-org-to-html)
-          ("programming"
-           :base-directory "~/muse/source/programming"
-           :publishing-directory "~/public_html/programming"
-           :base-extension "org"
-           :publishing-function org-publish-org-to-html)
-          ("reading"
-           :base-directory "~/muse/source/reading"
-           :publishing-directory "~/public_html/reading"
-           :base-extension "org"
-           :publishing-function org-publish-org-to-html)
-          ("spa"
-           :base-directory "~/muse/source/spa"
-           :publishing-directory "~/public_html/spa"
-           :base-extension "org"
-           :publishing-function org-publish-org-to-html)
-          ("website" :components ("index" "emacs" "computer" "iccad"
-                                  "programming" "reading" "spa"))))
+           :recursive t
+           :auto-sitemap t
+           :section-numbers nil
+           :author-info nil
+           :creator-info nil
+           :style-include-default t
+           :auto-preamble nil
+           :auto-postamble nil
+           :publishing-function org-publish-org-to-html
+           :preamble nil
+           :postamble nil)
+          ("org-html-static"
+           :base-directory "~/muse/source"
+           :base-extension "png\\|jpg\\|gif\\|pdf"
+           :publishing-directory "~/muse/publish/html/"
+           :recursive t
+           :publishing-function org-publish-attachment)
+          ("org" :components ("org-website" "org-website-static" "org-html" "org-html-static"))
+          ))
 
   ;;;;;;;;;;;;;;;
   ;; TODO 设置 ;;
