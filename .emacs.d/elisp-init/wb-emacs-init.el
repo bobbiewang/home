@@ -2400,6 +2400,8 @@ directory, select directory. Lastly the file is opened."
 
 ;;;; wb-modes.el
 
+(setq generic-define-mswindows-modes t)
+(setq generic-define-unix-modes t)
 (robust-require generic-x)
 
 (defvar lsc-ncl-mode-syntax-table
