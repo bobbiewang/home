@@ -2595,8 +2595,35 @@ directory, select directory. Lastly the file is opened."
 
 ;;;; wb-elispde.el
 
+(with-library "paredit"
+  (autoload 'paredit-mode "paredit"
+    "Minor mode for pseudo-structurally editing Lisp code." t)
+
+  (defvar electrify-return-match "[\]}\)\"]"
+    "If this regexp matches the text after the cursor, do an \"electric\" return.")
+
+  (defun electrify-return-if-match (arg)
+    "If the text after the cursor matches `electrify-return-match' then
+open and indent an empty line between the cursor and the text.  Move the
+cursor to the new line."
+    (interactive "P")
+    (let ((case-fold-search nil))
+      (if (looking-at electrify-return-match)
+          (save-excursion (newline-and-indent)))
+      (newline arg)
+      (indent-according-to-mode)))
+  )
+
 (defun wb-emacs-lisp-mode-hook ()
+  (with-library "paredit"
+    (paredit-mode 1)
+    (local-set-key (kbd "RET") 'electrify-return-if-match))
   (local-set-key (kbd "C-c .") 'wb-jump-to-elisp-defun)
+  (turn-on-eldoc-mode)
+  (when (fboundp 'paredit)
+    (eldoc-add-command 'paredit-backward-delete
+                       'paredit-close-round
+                       'electrify-return-if-match))
   (if (eq major-mode 'emacs-lisp-mode)
       (setq mode-name "Elisp"))
   (when (boundp 'comment-auto-fill-only-comments)
