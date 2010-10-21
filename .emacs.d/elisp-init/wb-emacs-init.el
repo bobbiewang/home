@@ -1619,31 +1619,41 @@ replace. Replace the text that you're presently isearching for."
 ;; Preserve the owner and group of the file you’re editing (this is especially important if you edit files as root).
 ;; (setq backup-by-copying-when-mismatch t)
 
-;; C-/ 或 C-_ 或 C-x u：undo
-;; C-x C-/ 或 C-+：redo
-(robust-require redo
-  (defun undo-redo (arg)
-    "Undo or redo changes.  If ARG is present or negative, redo ARG
-    changes.  If ARG is positive, repeatedly undo ARG changes."
-    (interactive "P")
-    (if (null arg)
-        (undo)
-      (let ((n (prefix-numeric-value arg)))
+;; 如果有 undo-tree 扩展：
+;;     C-_, C-/        撤销
+;;     M-_, C-?        恢复
+;;     C-x, u          显示 Undo Tree，交互地撤销、恢复
+;; 否则，如果有 redo 扩展：
+;;     C-_, C-/, C-x u 撤销
+;;     M-_, C-?        恢复
+;; 否则，用 Emacs 缺省 undo：
+;;    C-_, C-/, C-x u  撤销
+(with-without-library "undo-tree"
+  ((setq undo-tree-mode-lighter " UTree")
+   (robust-require undo-tree
+       (global-undo-tree-mode)))
+  ((robust-require redo
+     (defun undo-redo (arg)
+       "Undo or redo changes.  If ARG is present or negative,
+     redo ARG changes.  If ARG is positive, repeatedly undo ARG
+     changes."
+       (interactive "P")
+       (if (null arg)
+           (undo)
+         (let ((n (prefix-numeric-value arg)))
         (cond ((= n 0) (redo))
               ((< n 0) (redo (- n)))
               ((> n 0) (undo n))))))
 
-  (global-set-key (kbd "C-+") 'redo)
-  (global-set-key (kbd "C-x C-/") 'redo)
-  (global-set-key (kbd "C-x C-_") 'redo)
-  (global-set-key (kbd "C-_") 'undo-redo))
+  (global-set-key (kbd "M-_") 'redo)
+  (global-set-key (kbd "C-?") 'redo))))
 
 ;; If the point is at the beginning of the line, move to the first noblank char. To enhance C-a
 (defun wb-beginning-of-line ()
   "If the point is not on beginning of current line, move point
-to beginning of current line, as 'beginning-of-line' does.
-If the point already is on the beginning of current line, then
-move the point to the first non-space character, if it exists."
+to beginning of current line, as 'beginning-of-line' does.  If
+the point already is on the beginning of current line, then move
+the point to the first non-space character, if it exists."
   (interactive)
   (if (not (eq (point) (line-beginning-position)))
       (beginning-of-line)
