@@ -1626,8 +1626,8 @@ replace. Replace the text that you're presently isearching for."
 ;; 否则，如果有 redo 扩展：
 ;;     C-_, C-/, C-x u 撤销
 ;;     M-_, C-?        恢复
-;; 否则，用 Emacs 缺省 undo：
-;;    C-_, C-/, C-x u  撤销
+;; 否则，用 Emacs 缺省 undo 机制：
+;;     C-_, C-/, C-x u 撤销
 (with-without-library "undo-tree"
   ((setq undo-tree-mode-lighter " UTree")
    (robust-require undo-tree
@@ -1648,7 +1648,8 @@ replace. Replace the text that you're presently isearching for."
   (global-set-key (kbd "M-_") 'redo)
   (global-set-key (kbd "C-?") 'redo))))
 
-;; If the point is at the beginning of the line, move to the first noblank char. To enhance C-a
+;; If the point is at the beginning of the line, move to the first
+;; noblank char. To enhance C-a
 (defun wb-beginning-of-line ()
   "If the point is not on beginning of current line, move point
 to beginning of current line, as 'beginning-of-line' does.  If
@@ -3461,18 +3462,6 @@ Returns nil if it is not visible in the current calendar window."
                (org-agenda-skip-entry-if 'regexp "DONE"))))))))
 
 ;;; Anything
-;; (robust-require anything-config
-;;   (setq anything-sources
-;;         (list anything-c-source-buffers
-;;               anything-c-source-file-name-history
-;;               anything-c-source-file-cache
-;;               ;; anything-c-source-emacs-commands
-;;               ;; anything-c-source-info-pages
-;;               ;; anything-c-source-man-pages
-;;               ))
-;;   (setq anything-c-adaptive-history-file
-;;         "~/.emacs.d/.anything-c-adaptive-history")
-;;   (global-set-key (kbd "ESC ESC SPC") 'anything))
 
 (with-library "anything-config"
   (autoload 'anything "anything-config" "Anything")
@@ -3485,13 +3474,10 @@ Returns nil if it is not visible in the current calendar window."
   (eval-after-load "anything-config"
     '(progn
        (setq anything-sources
-             (list anything-c-source-buffers
+             (list anything-c-source-imenu
+                   anything-c-source-buffers
                    anything-c-source-file-name-history
-                   anything-c-source-file-cache
-                   ;; anything-c-source-emacs-commands
-                   ;; anything-c-source-info-pages
-                   ;; anything-c-source-man-pages
-                   ))
+                   anything-c-source-file-cache))
        (setq anything-c-adaptive-history-file
              "~/.emacs.d/.anything-c-adaptive-history"))))
 
