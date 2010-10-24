@@ -787,7 +787,7 @@ Argument ARG Key."
 ;;; General
 
 ;; 设置 Emacs 启动后的缺省路径
-(setq default-directory "~/")
+;; (setq default-directory "~/")
 
 ;; 在 *Message* buffer 里保留消息的行数，缺省只保留 100 行
 (setq message-log-max 1024)
@@ -1630,8 +1630,8 @@ replace. Replace the text that you're presently isearching for."
 ;;     C-_, C-/, C-x u 撤销
 (with-without-library "undo-tree"
   ((setq undo-tree-mode-lighter " UTree")
-   (robust-require undo-tree
-       (global-undo-tree-mode)))
+   (require 'undo-tree)
+   (global-undo-tree-mode))
   ((robust-require redo
      (defun undo-redo (arg)
        "Undo or redo changes.  If ARG is present or negative,
@@ -2102,8 +2102,6 @@ directory, select directory. Lastly the file is opened."
 
 ;;; Misc
 
-(setq default-directory "~/")
-
 (setq savehist-file "~/.emacs.d/.history")
 
 (setq recentf-save-file "~/.emacs.d/.recentf")
@@ -2170,7 +2168,7 @@ directory, select directory. Lastly the file is opened."
        (ac-config-default)
        ;; ac-config-default 会全局开启 auto-complete-config，这里禁止掉，用
        ;; 户需要的话可以 M-x auto-complete-mode 激活
-       (global-auto-complete-mode 0))))
+       (global-auto-complete-mode -1))))
 
 ;; M-x company-mode 激活，M-n、M-p 在候选内容中选择，C-s、C-r、C-o 在候
 ;; 选内容中搜索
