@@ -2624,7 +2624,7 @@ cursor to the new line."
   )
 
 (defun wb-emacs-lisp-mode-hook ()
-  (with-library "paredit"
+  (when (fboundp 'paredit-mode)
     (paredit-mode 1)
     (local-set-key (kbd "RET") 'electrify-return-if-match))
   (local-set-key (kbd "C-c .") 'wb-jump-to-elisp-defun)
@@ -2763,11 +2763,13 @@ cursor to the new line."
 
 ;; 设置编译命令和环境
 
-(setq compilation-window-height 8)
+;; (setq compilation-window-height 8)      ; window 自动关闭，不用限制高度
+
 (setq compilation-finish-functions
       (lambda (buf str)
         ;; grep 结果不能自动关闭，这里也可以用 (equal major-mode 'c++-mode) 判断
         (when (not (or (string-match "*grep*" (buffer-name buf))
+                       (string-match "*ack*" (buffer-name buf))
                        (string-match "*search*" (buffer-name buf))))
           (if (string-match "exited abnormally" str)
               ;;there were errors
@@ -3486,11 +3488,11 @@ Returns nil if it is not visible in the current calendar window."
 (eval-after-load "tramp"
     '(progn
        (when *win32p*
-         (setq tramp-default-method "plink")
-         (setq max-lisp-eval-depth (* 9 9 9 9 9 9 9 9))
-         (setq max-specpdl-size (* 9 9 9 9 9 9 9 9))
-         (setq tramp-shell-prompt-pattern
-               "\\(?:^\\|\r\\)[^#$%>\n]*\n?[^#$%>\n]*#?[#$%>] *\\(\e\\[[0-9;]*[a-zA-Z] *\\)*"))
+         ;; (setq max-lisp-eval-depth (* 9 9 9 9 9 9 9 9))
+         ;; (setq max-specpdl-size (* 9 9 9 9 9 9 9 9))
+         ;; (setq tramp-shell-prompt-pattern
+         ;;       "\\(?:^\\|\r\\)[^#$%>\n]*\n?[^#$%>\n]*#?[#$%>] *\\(\e\\[[0-9;]*[a-zA-Z] *\\)*")
+         (setq tramp-default-method "plink"))
        (setq tramp-persistency-file-name "~/.emacs.d/.tramp")
        ;; 使用 Tramp 编辑文件时，也使用和 backup-directory 相同的备份目录
        (setq tramp-backup-directory-alist backup-directory-alist)))
