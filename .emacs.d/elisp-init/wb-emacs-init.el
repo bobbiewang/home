@@ -2624,20 +2624,24 @@ cursor to the new line."
   )
 
 (defun wb-emacs-lisp-mode-hook ()
+  (if (eq major-mode 'emacs-lisp-mode)
+      (setq mode-name "Elisp"))
+
+  (outline-minor-mode 1)
+  (turn-on-eldoc-mode)
   (when (fboundp 'paredit-mode)
     (paredit-mode 1)
-    (local-set-key (kbd "RET") 'electrify-return-if-match))
-  (local-set-key (kbd "C-c .") 'wb-jump-to-elisp-defun)
-  (turn-on-eldoc-mode)
-  (when (fboundp 'paredit)
+    (local-set-key (kbd "RET") 'electrify-return-if-match)
     (eldoc-add-command 'paredit-backward-delete
                        'paredit-close-round
                        'electrify-return-if-match))
-  (if (eq major-mode 'emacs-lisp-mode)
-      (setq mode-name "Elisp"))
+
   (when (boundp 'comment-auto-fill-only-comments)
     (setq comment-auto-fill-only-comments t)
-    (kill-local-variable 'normal-auto-fill-function)))
+    (kill-local-variable 'normal-auto-fill-function))
+
+  (local-set-key (kbd "C-c .") 'wb-jump-to-elisp-defun))
+
 (add-hook 'emacs-lisp-mode-hook 'wb-emacs-lisp-mode-hook)
 
 (defun my-lisp-interaction-mode-hook ()
