@@ -2733,9 +2733,14 @@ cursor to the new line."
   (setq c-macro-cppflags " ")
   (setq c-macro-prompt-flag t)
   ;; 编译命令
-  (when (featurep 'smart-compile+)
-    (define-key c-mode-map [(f5)] 'smart-run)
-    (define-key c-mode-map [(f7)] 'smart-compile))
+  (if (featurep 'smart-compile+)
+    (progn
+      (define-key c-mode-map (kbd "<f5>") 'smart-run)
+      (define-key c-mode-map (kbd "<f7>") 'smart-compile)
+      (define-key c++-mode-map (kbd "<f5>") 'smart-run)
+      (define-key c++-mode-map (kbd "<f7>") 'smart-compile))
+    (define-key c-mode-map (kbd "<f7>") 'compile)
+    (define-key c++-mode-map (kbd "<f7>") 'compile))
   ;; 调试环境
   (setq gdb-show-main t)
   (setq gdb-many-windows t)
@@ -3220,8 +3225,8 @@ Returns nil if it is not visible in the current calendar window."
 
   ;; 调整publish 时的行为
   (setq org-publish-timestamp-directory "~/.emacs.d/.org-timestamps")
-  (setq org-export-with-sub-superscripts nil) ; 缺省不把正文中的 ^、_ 作为上下标的标志
-  (setq org-export-html-inline-images t)      ; 缺省图片都内嵌到文档中
+  (setq org-use-sub-superscripts (quote {})) ; 缺省不把正文中的 ^、_ 作为上下标的标志，要显式 {}
+  (setq org-export-html-inline-images t)     ; 缺省图片都内嵌到文档中
   ;; org-export-htmlize-output-type
 
   (defun wb-org-remove-html-cjk-space ()
