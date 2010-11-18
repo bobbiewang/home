@@ -1,13 +1,13 @@
 ;; 把 elisp-3rdparty 及其下面的所有子目录加到 load-path
-;; 忽略 RCS、CVS 目录，以及包含 .nosearch 文件的目录
+;; 忽略 .git、.svn、RCS、CVS 等目录，以及包含 .nosearch 文件的目录
 (setq wb-3rd-lisp-dir "~/.emacs.d/elisp-3rdparty/")
 (if (and (fboundp 'normal-top-level-add-subdirs-to-load-path)
          (file-exists-p wb-3rd-lisp-dir))
     (let* ((default-directory wb-3rd-lisp-dir)
-           (org-load-path load-path))
+           (orig-load-path load-path))
       (setq load-path (list default-directory))
       (normal-top-level-add-subdirs-to-load-path)
-      (setq load-path (append load-path org-load-path))))
+      (setq load-path (append load-path orig-load-path))))
 
 ;; 将 elisp-init 和 elisp-personal 加到 load-path
 (setq load-path
