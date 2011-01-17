@@ -1998,7 +1998,7 @@ directory, select directory. Lastly the file is opened."
                  (make-directory (file-name-directory buffer-file-name) t))))
 
 ;; 删除文件、目录时移动到垃圾箱
-;; ~/.local/share/Trash 或 ~/.Trash
+;; ~/.local/share/Trash 或 ~/.Trash，可以通过变量 trash-directory 自定义
 ;; (setq delete-by-moving-to-trash t)   ; 和 Emacs Daemon 冲突，禁止
 
 ;; Dired Settings
@@ -3333,22 +3333,19 @@ Returns nil if it is not visible in the current calendar window."
   ;; TODO 设置 ;;
   ;;;;;;;;;;;;;;;
 
-  ;; 集成 remember，并设置模板
-  (with-library "remember"
-    (autoload 'remember "remember" "Remember")
-    ;; 设置一个全局键绑定快速调用 remember
-    (global-set-key (kbd "C-M-r") 'remember)
-
-    (eval-after-load "remember"
-      '(progn
-         (org-remember-insinuate)
-         (setq org-directory "~/.dropbox/GTD/")
-         (setq org-default-notes-file (concat org-directory "/gtd"))
-         (setq org-remember-templates
-               '(("Todo" ?t "* TODO %? %^g\n  %u" "gtd" "Inbox")
-                 ("Note" ?n "* %?\n  %T" "notes" top)))
-         ;; 正向记录 note，新的在下面
-         (setq org-reverse-note-order nil))))
+  ;; Capture 设置及模板
+  (global-set-key (kbd "C-M-r") 'org-capture)
+  (setq org-directory "~/.dropbox/GTD/")
+  (setq org-default-notes-file (concat org-directory "/gtd"))
+  (setq org-capture-templates
+        '(("t" "Todo" entry (file+headline "gtd" "Inbox") "* TODO %? %^g\n  %u")
+          ("n" "Note" entry (file "notes") "* %?\n  %T" :prepend t)
+          ("d" "Diary" entry (file "~/.dropbox/Notes/Diary.org.gpg")
+           "* %T %^{Title} %^g\n%?" :prepend t)
+          ("o" "DailyLog" entry (file "~/.dropbox/Notes/Diary.org.gpg")
+           "* %^T Daily Log %^g\n  - 工作 :: %?\n  - 人际 :: \n  - 健康 :: 杯水\n  - 学习 :: \n  - 心智 :: \n  - 理财 :: \n  - 坚持 :: 晨间日记第天\n  - 明日计划"
+           :prepend t
+           )))
 
   ;; 微调 Refile 操作
   (setq org-refile-targets '((org-agenda-files . (:maxlevel . 2))))
