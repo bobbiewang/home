@@ -3642,7 +3642,10 @@ Returns nil if it is not visible in the current calendar window."
     "Minor mode for incremental blame for Git." t))
 
 (with-library "magit"
-  (autoload 'magit-status "magit" nil t))
+  (autoload 'magit-status "magit" nil t)
+  (setq magit-repo-dirs
+        '("~" "~/muse/source"))
+  (defalias 'mgs 'magit-status))
 
 ;;; Dict
 
