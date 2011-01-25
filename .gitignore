@@ -58,6 +58,7 @@
 /.synaptic/*
 /.texmf-var/*
 /.tor/*
+/.Trash/*
 /.viminfo
 /.vnc/*
 /.w3m/*
