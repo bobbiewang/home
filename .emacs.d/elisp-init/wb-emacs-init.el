@@ -3341,10 +3341,10 @@ Returns nil if it is not visible in the current calendar window."
         '(("t" "Todo" entry (file+headline "gtd" "Inbox") "* TODO %? %^g\n  %u")
           ("n" "Note" entry (file "notes") "* %?\n  %T" :prepend t)
           ("d" "Diary" entry (file+datetree "journal.org.gpg")
-           "* %^{Title} %^g\n%T\n\n  %?" :kill-buffer t :empty-lines 1)
+           "* %^{Title} %^g\n%T\n\n  %?" :kill-buffer t)
           ("o" "DailyLog" entry (file+datetree+prompt "journal.org.gpg")
            "* Daily Log %^g\n%^T\n\n  %?\n  - 工作 :: \n  - 人际 :: \n  - 健康 :: 杯水\n  - 学习 :: \n  - 心智 :: \n  - 理财 :: \n  - 坚持 :: 晨间日记第天\n  - 明日计划\n    -"
-           :kill-buffer t :empty-lines 1)
+           :kill-buffer t)
           ))
 
   ;; 微调 Refile 操作
