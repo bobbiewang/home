@@ -3041,19 +3041,19 @@ the length of the whitespace"
 ;;; Calendar, Diary
 
 ;; Calendar
-(setq view-diary-entries-initially t
-      ;; 设置所在地的经度、纬度，这样在 Calendar 中按 S，就可以显示每天
+(setq ;; 设置所在地的经度、纬度，这样在 Calendar 中按 S，就可以显示每天
       ;; 的日出、日落时间
       calendar-longitude +121.26
       calendar-latitude +31.12
       calendar-location-name "上海 - 徐家汇"
       ;; 当退出日历的时候把 frame 删除
       calendar-remove-frame-by-deleting t
-      mark-diary-entries-in-calendar t      ; 标记有日记记录的日子
       calendar-week-start-day 1             ; 每周第一天是周一
       appt-issue-message nil
-      mark-holidays-in-calendar t           ; 标记节假日
-      view-calendar-holidays-initially nil  ; 不显示节日列表
+      calendar-mark-diary-entries-flag nil       ; 不标记有日记记录的日子
+      calendar-mark-holidays-flag nil            ; 不标记节假日
+      calendar-view-diary-initially-flag nil     ; 不显示当前日期的日记
+      calendar-view-holidays-initially-flag nil  ; 不显示节日列表
       ;; 在 calendar 中按 p C 看中文的天干地支
       chinese-calendar-celestial-stem
       ["甲" "乙" "丙" "丁" "戊" "己" "庚" "辛" "壬" "癸"]
