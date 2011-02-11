@@ -3651,7 +3651,8 @@ Returns nil if it is not visible in the current calendar window."
 
 (with-library "sdcv-mode"
   (autoload 'sdcv-search "sdcv-mode" "Search word by sdcv" t)
-  (global-set-key (kbd "C-c d") 'sdcv-search))
+  ;; (global-set-key (kbd "C-c d") 'sdcv-search)
+  )
 
 ;;;; wb-kbd.el
 
