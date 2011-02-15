@@ -2727,6 +2727,9 @@ cursor to the new line."
   ;; gtags，优先使用 xgtags-mode
   (cond ((fboundp 'xgtags-mode) (xgtags-mode 1))
         ((fboundp 'gtags-mode)  (gtags-mode 1)))
+  ;; doxymacs
+  (robust-require doxymacs-mode
+    (doxymacs-mode 1))
   ;; 预处理设置
   (setq c-macro-shrink-window-flag t)
   (setq c-macro-preprocessor "cpp")
