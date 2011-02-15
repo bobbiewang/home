@@ -2728,7 +2728,7 @@ cursor to the new line."
   (cond ((fboundp 'xgtags-mode) (xgtags-mode 1))
         ((fboundp 'gtags-mode)  (gtags-mode 1)))
   ;; doxymacs
-  (robust-require doxymacs-mode
+  (robust-require doxymacs
     (doxymacs-mode 1))
   ;; 预处理设置
   (setq c-macro-shrink-window-flag t)
