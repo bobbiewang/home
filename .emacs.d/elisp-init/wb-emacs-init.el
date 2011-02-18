@@ -3656,8 +3656,8 @@ Returns nil if it is not visible in the current calendar window."
         '("~" "~/muse/source"))
   (defalias 'mgs 'magit-status)
   (custom-set-faces
-   '(magit-diff-add ((t (:foreground "brightyellow"))))
-   '(magit-diff-del ((t (:foreground "brightcyan")))))
+   '(magit-diff-add ((t (:foreground "cyan"))))
+   '(magit-diff-del ((t (:foreground "black")))))
   )
 
 ;;; Dict
