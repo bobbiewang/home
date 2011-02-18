@@ -3655,13 +3655,9 @@ Returns nil if it is not visible in the current calendar window."
   (setq magit-repo-dirs
         '("~" "~/muse/source"))
   (defalias 'mgs 'magit-status)
-  (defface magit-diff-add
-      '((((class color) (background light))
-         :foreground "blue1")
-        (((class color) (background dark))
-         :foreground "brightyellow"))
-      "Face for lines in a diff that have been added."
-      :group 'magit)
+  (custom-set-faces
+   '(magit-diff-add ((t (:foreground "brightyellow"))))
+   '(magit-diff-del ((t (:foreground "brightcyan")))))
   )
 
 ;;; Dict
