@@ -3657,7 +3657,7 @@ Returns nil if it is not visible in the current calendar window."
   (defalias 'mgs 'magit-status)
   (custom-set-faces
    '(magit-diff-add ((t (:foreground "cyan"))))
-   '(magit-diff-del ((t (:foreground "black")))))
+   '(magit-diff-del ((t (:foreground "blue")))))
   )
 
 ;;; Dict
