@@ -226,8 +226,7 @@ Return values are suitable for use with `write-file-functions'."
         ;; Don't want to do this to mail messages, etc.
         ;; Would an exclude list be better?
         ;; Error was occurring in VM-mode for some reason.
-        (when (memq major-mode '(text-mode emacs-lisp-mode
-                                           org-mode c-mode))
+        (when (memq major-mode '(emacs-lisp-mode org-mode c-mode c++-mode))
           (message "Cleaning up whitespace...")
           (delete-trailing-whitespace)
           (message "Cleaning up whitespace...done")
@@ -1006,7 +1005,7 @@ Argument ARG Key."
 (setq truncate-partial-width-windows t)
 
 ;; 提示行尾的空格
-(setq-default show-trailing-whitespace t)
+;; (setq-default show-trailing-whitespace t)
 
 ;; 以像素为单位的文本间距，nil 表示没有额外的间距
 (setq-default line-spacing nil)
@@ -2761,6 +2760,8 @@ cursor to the new line."
   (setq hs-minor-mode 1)
   (setq abbrev-mode 1)
   (which-func-mode 1)
+  ;; 其他设置
+  (setq show-trailing-whitespace t)
   ;; 其他键绑定
   (local-set-key  (kbd "C-c o") 'ff-find-other-file))
 
@@ -3644,7 +3645,15 @@ Returns nil if it is not visible in the current calendar window."
           ("^http://localhost" "-no-proxy")
           ("^http://127\\.0\\.0\\.1" "-no-proxy"))))
 
-;;; Git
+;;; Git & Diff
+
+;; diff
+
+(custom-set-faces
+ '(diff-added ((t (:foreground "PaleGreen"))))
+ '(diff-removed ((t (:foreground "LightSkyBlue")))))
+
+;; git
 
 (with-library "git"
   (autoload 'git-status "git"
@@ -3653,6 +3662,8 @@ Returns nil if it is not visible in the current calendar window."
 
   (autoload 'git-blame-mode "git-blame"
     "Minor mode for incremental blame for Git." t))
+
+;; magit
 
 (with-library "magit"
   (autoload 'magit-status "magit" nil t)
