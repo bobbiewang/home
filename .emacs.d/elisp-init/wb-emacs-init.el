@@ -2704,6 +2704,10 @@ cursor to the new line."
                    (define-key xgtags-select-mode-map (kbd "o")
                      'xgtags-select-tag-near-point))))))
 
+(with-library "doxymacs"
+    (autoload 'doxymacs-mode "doxymacs"
+      "Minor mode for using/creating Doxygen documentation" t))
+
 ;; emacs21 好像没有 number-sequence 函数，那就用其它代替好了。比如
 ;; (require 'cl) 后用 loop 命令，或者这样
 (when (not (fboundp 'number-sequence))
@@ -2734,8 +2738,8 @@ cursor to the new line."
   (cond ((fboundp 'xgtags-mode) (xgtags-mode 1))
         ((fboundp 'gtags-mode)  (gtags-mode 1)))
   ;; doxymacs
-  (robust-require doxymacs
-    (doxymacs-mode 1))
+  (if (fboundp 'doxymacs-mode)
+      (doxymacs-mode 1))
   ;; 预处理设置
   (setq c-macro-shrink-window-flag t)
   (setq c-macro-preprocessor "cpp")
