@@ -3660,9 +3660,11 @@ Returns nil if it is not visible in the current calendar window."
         '("~" "~/muse/source"))
   (defalias 'mgs 'magit-status)
   (custom-set-faces
-   '(magit-diff-add ((t (:foreground "cyan"))))
-   '(magit-diff-del ((t (:foreground "blue")))))
-  )
+   '(magit-diff-add ((t (:foreground "PaleGreen"))))
+   '(magit-diff-del ((t (:foreground "LightSkyBlue"))))
+   '(magit-diff-hunk-header
+     ((t :slant italic :foreground "LightGoldenrod" :inherit magit-header)))
+   '(magit-log-graph ((t (:foreground "Pink"))))))
 
 ;;; Dict
 
