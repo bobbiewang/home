@@ -14,11 +14,13 @@
 /.emacs.d/auto-save-list/*
 /.emacs.d/elisp-3rdparty
 /.emacs.d/elisp-3rdparty/*
+/.emacs.d/elisp-personal/*
 /.emacs.d/memos/*
 /.emacs.d/gnus/*
 /.emacs.d/gtd/*
 /.emacs.d/info/*
 /.emacs.d/tramp
+/.emacs.d/tutorial/English.tut
 /.esd_auth
 /.eshell/*
 /.fastri-index
@@ -66,7 +68,8 @@
 /.xinput.d/*
 /.xdvirc
 /.xmms/*
-/devspace/*
+/bin
+/devspace
 /muse/*
 /public_html/*
 /rel/*
