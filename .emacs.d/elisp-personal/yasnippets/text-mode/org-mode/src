@@ -1,5 +1,0 @@
-#name : #+BEGIN_SRC
-# --
-#+BEGIN_SRC ${1:src}
-$0
-#+END_SRC

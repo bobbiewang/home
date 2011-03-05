@@ -1,5 +1,0 @@
-#name : for () { ... }
-# --
-for (${1:statement}) {
-    $0
-}
