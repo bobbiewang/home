@@ -381,6 +381,12 @@ when a region-mark is active."
   (insert (format "%d" (- (date-to-day (format-time-string "%a %h %d 00:00:00 %Y"))
                           (date-to-day "Sun Jan 9 00:00:00 2011")))))
 
+(defun wb-insert-date-since-eyecare ()
+  "Insert days since began to write daybreak diary."
+  (interactive)
+  (insert (format "%d" (- (date-to-day (format-time-string "%a %h %d 00:00:00 %Y"))
+                          (date-to-day "Tue Feb 22 00:00:00 2011")))))
+
 (defun wb-count-words (&optional begin end)
   "count words between BEGIN and END (region); if no region defined, count words in buffer"
   (interactive "r")
@@ -3357,7 +3363,7 @@ Returns nil if it is not visible in the current calendar window."
           ("d" "Diary" entry (file+datetree "journal.org.gpg")
            "* %^{Title} %^g\n%T\n\n  %?" :kill-buffer t)
           ("o" "DailyLog" entry (file+datetree+prompt "journal.org.gpg")
-           "* Daily Log %^g\n%^T\n\n  %?\n  - 工作 :: \n  - 人际 :: \n  - 健康 :: 杯水\n  - 学习 :: \n  - 心智 :: \n  - 理财 :: \n  - 坚持 :: 晨间日记第天\n  - 明日计划\n    -"
+           "* Daily Log %^g\n%^T\n\n  %?\n  - 工作 :: \n  - 人际 :: \n  - 健康 :: 杯水\n  - 学习 :: \n  - 心智 :: \n  - 理财 :: \n  - 坚持 :: 保护眼睛第天\n  - 明日计划\n    -"
            :kill-buffer t)
           ))
 
