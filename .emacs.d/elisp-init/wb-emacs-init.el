@@ -3656,7 +3656,7 @@ Returns nil if it is not visible in the current calendar window."
           ("^http://localhost" "-no-proxy")
           ("^http://127\\.0\\.0\\.1" "-no-proxy"))))
 
-;;; Git & Diff
+;;; Diff & Version Control
 
 ;; diff
 
@@ -3687,6 +3687,9 @@ Returns nil if it is not visible in the current calendar window."
    '(magit-diff-hunk-header
      ((t :slant italic :foreground "LightGoldenrod" :inherit magit-header)))
    '(magit-log-graph ((t (:foreground "Pink"))))))
+
+;; svn
+(robust-require psvn)
 
 ;;; Dict
 
