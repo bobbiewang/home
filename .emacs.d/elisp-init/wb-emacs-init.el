@@ -2164,7 +2164,12 @@ directory, select directory. Lastly the file is opened."
                   (file-name-directory (locate-library "yasnippet"))
                   "snippets")))
      ;; yas/load-directory 只支持 string 参数，借助 mapc 作用于 list
-     (mapc 'yas/load-directory yas/root-directory)))
+     (mapc 'yas/load-directory yas/root-directory)
+
+     ;; 设置 prompt 方式
+     (setq yas/prompt-functions '(yas/dropdown-prompt
+                                  yas/ido-prompt
+                                  yas/completing-prompt))))
 
 (with-library "auto-complete-config"
   (autoload 'auto-complete-mode "auto-complete-config" nil t)
