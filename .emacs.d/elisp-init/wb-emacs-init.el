@@ -1585,8 +1585,8 @@ replace. Replace the text that you're presently isearching for."
 ;; (add-hook 'text-mode-hook 'turn-on-auto-fill)
 
 ;; 保存某些文件时删除行尾的空白
-(add-hook (if (boundp 'write-file-functions) 'write-file-functions
-            'write-file-hooks) 'wb-delete-trailing-whitespace)
+;; (add-hook (if (boundp 'write-file-functions) 'write-file-functions
+;;             'write-file-hooks) 'wb-delete-trailing-whitespace)
 
 ;; 选中了一些文字时，如果再输入一个字符，这个字符把选中的文字替换掉，而
 ;; 不是直接在光标的位置插入。也可以按 DEL 将选中的文件删除
