@@ -1,4 +1,3 @@
-set go=mlb
 set hlsearch
 
 :map <silent> <C-y> :js util.copyToClipboard(content.document.title, true)<cr>
