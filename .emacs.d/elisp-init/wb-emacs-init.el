@@ -394,9 +394,9 @@ when a region-mark is active."
       (e (if mark-active end (point-max))))
     (message "Word count: %s" (how-many "\\w+" b e))))
 
-;; 自动换行显示
-(setq truncate-lines nil)
-(setq truncate-partial-width-windows nil)
+;; 关闭自动换行显示
+(setq-default truncate-lines t)
+(setq-default truncate-partial-width-windows t)
 
 ;;; Buffer
 
