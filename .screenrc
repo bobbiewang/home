@@ -12,6 +12,8 @@ vbell on
 # 断线的时候自动detach
 autodetach on
 
+altscreen on
+
 # 不要出来那个烦人的 greeting 信息
 startup_message off
 
