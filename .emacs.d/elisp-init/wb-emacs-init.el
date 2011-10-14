@@ -74,7 +74,7 @@
 
 (defconst *emacs>=23p*
   (and (not *xemacsp*)
-       (= emacs-major-version 23))
+       (>= emacs-major-version 23))
   "Are we running GNU Emacs 23 or above?")
 
 ;; (require 'cygwin-mount)
