@@ -378,13 +378,13 @@ when a region-mark is active."
 (defun wb-insert-date-since-daybreak ()
   "Insert days since began to write daybreak diary."
   (interactive)
-  (insert (format "%d" (- (date-to-day (format-time-string "%a %h %d 00:00:00 %Y"))
+  (insert (format "%d" (- (date-to-day (current-time-string))
                           (date-to-day "Sun Jan 9 00:00:00 2011")))))
 
 (defun wb-insert-date-since-eyecare ()
   "Insert days since began to write daybreak diary."
   (interactive)
-  (insert (format "%d" (- (date-to-day (format-time-string "%a %h %d 00:00:00 %Y"))
+  (insert (format "%d" (- (date-to-day (current-time-string))
                           (date-to-day "Tue Feb 22 00:00:00 2011")))))
 
 (defun wb-count-words (&optional begin end)
