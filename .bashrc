@@ -143,12 +143,11 @@ alias scr='screen -r'
 export LS_OPTIONS='--color=auto'
 eval `dircolors -b`
 alias ls='ls $LS_OPTIONS'
-alias l='ls $LS_OPTIONS -lA'
-alias ll='ls $LS_OPTIONS -lt'
-alias lm='ls $LS_OPTIONS -lt | more'
-alias ltr='ls $LS_OPTIONS -ltr' # 按照时间排序
-alias lsr='ls $LS_OPTIONS -lSr' # 按照大小排序
-alias lll='ls $LS_OPTIONS --sort=size -l'
+alias l='ls $LS_OPTIONS'
+alias la='ls $LS_OPTIONS -A'
+alias ll='ls $LS_OPTIONS -l | more'
+alias lt='ls $LS_OPTIONS -ltr | more'     # -t 按照时间排序
+alias lsr='ls $LS_OPTIONS -lSr| more'     # -S 按照大小排序
 alias lsd='ls -d */.'                     # 只显示目录
 alias lsl='\ls -l | fgrep -e "->" '       # 只显示链接
 alias ls-fullpath='ls | sed s#^#$(pwd)/#' # 显示全路径
