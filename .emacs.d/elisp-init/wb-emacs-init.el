@@ -1892,7 +1892,7 @@ do kill lines as `dd' in vim."
 (eval-after-load "filecache"
   '(progn
      (message "Loading file cache...")
-     (file-cache-add-directory-using-find "~/muse/source/")
+     (file-cache-add-directory-using-find "~/.emacs.d/muse/")
      (file-cache-add-directory-list (list "~/" "~/bin"))
      (file-cache-add-directory "~/.emacs.d/elisp-init")
      (file-cache-add-file-list (list "~/.bash_profile" "~/.bashrc"))))
@@ -2229,8 +2229,8 @@ directory, select directory. Lastly the file is opened."
        (setq muse-html-encoding-default 'utf-8)
 
        ;; Muse 项目的源文件和输出文件目录
-       (defvar wb-muse-sd "~/muse/source/"  "My muse source directory.")
-       (defvar wb-muse-pd "~/muse/publish/" "My muse publish directory.")
+       (defvar wb-muse-sd "~/.emacs.d/muse/"    "My muse source directory.")
+       (defvar wb-muse-pd "~/.emacs.d/publish/" "My muse publish directory.")
 
        ;; 自定义输出格式
        (muse-derive-style "wiki-xhtml" "xhtml"
@@ -3275,7 +3275,7 @@ Returns nil if it is not visible in the current calendar window."
   ;; 定义 Org 文档项目
   (setq org-publish-project-alist
         '(("org-website"
-           :base-directory "~/muse/source"
+           :base-directory "~/.emacs.d/muse"
            :publishing-directory "~/public_html/"
            :base-extension "org"
            :recursive t
@@ -3327,14 +3327,14 @@ Returns nil if it is not visible in the current calendar window."
                        </div>
                      </div>")
           ("org-website-static"
-           :base-directory "~/muse/source"
+           :base-directory "~/.emacs.d/muse"
            :base-extension "png\\|jpg\\|gif\\|pdf"
            :publishing-directory "~/public_html/"
            :recursive t
            :publishing-function org-publish-attachment)
           ("org-html"
-           :base-directory "~/muse/source"
-           :publishing-directory "~/muse/publish/html/"
+           :base-directory "~/.emacs.d/muse"
+           :publishing-directory "~/.emacs.d/publish/html/"
            :base-extension "org"
            :recursive t
            :auto-sitemap t
@@ -3348,9 +3348,9 @@ Returns nil if it is not visible in the current calendar window."
            :preamble nil
            :postamble nil)
           ("org-html-static"
-           :base-directory "~/muse/source"
+           :base-directory "~/.emacs.d/muse"
            :base-extension "png\\|jpg\\|gif\\|pdf"
-           :publishing-directory "~/muse/publish/html/"
+           :publishing-directory "~/.emacs.d/publish/html/"
            :recursive t
            :publishing-function org-publish-attachment)
           ("org" :components ("org-website" "org-website-static" "org-html" "org-html-static"))
@@ -3681,7 +3681,7 @@ Returns nil if it is not visible in the current calendar window."
 (with-library "magit"
   (autoload 'magit-status "magit" nil t)
   (setq magit-repo-dirs
-        '("~" "~/muse/source"))
+        '("~" "~/.emacs.d/muse"))
   (defalias 'mgs 'magit-status)
   (custom-set-faces
    '(magit-diff-add ((t (:foreground "PaleGreen"))))
