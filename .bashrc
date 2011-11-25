@@ -140,8 +140,13 @@ alias scr='screen -r'
 ## ls 的色彩和别名
 ######################################################################
 
+if [ -f ~/.dircolors ]; then
+    eval `dircolors -b ~/.dircolors`
+else
+    eval `dircolors -b`
+fi
+
 export LS_OPTIONS='--color=auto'
-eval `dircolors -b`
 alias ls='ls $LS_OPTIONS'
 alias l='ls $LS_OPTIONS'
 alias la='ls $LS_OPTIONS -A'
