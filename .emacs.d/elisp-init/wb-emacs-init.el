@@ -2731,8 +2731,8 @@ cursor to the new line."
 ;; 所有基于 C 的语言的通用设置
 (defun wb-c-mode-common-hook()
   (c-toggle-electric-state 1)
-  (c-toggle-auto-newline 1)
-  (c-toggle-hungry-state 1)
+  ; (c-toggle-auto-newline 1)
+  ; (c-toggle-hungry-state 1)
   ;; clean up 方式
   (setq c-cleanup-list
         '(scope-operator
