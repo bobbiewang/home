@@ -3,6 +3,9 @@
 # screen 的初始化文件
 # 系统的全局初始化文件在 /etc/screenrc
 
+# 设置 term                                                                                                                                                                                
+term "xterm-256color"
+
 # 编码转换
 encoding GBK UTF-8
 
