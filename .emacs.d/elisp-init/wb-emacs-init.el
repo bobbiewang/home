@@ -3386,6 +3386,7 @@ Returns nil if it is not visible in the current calendar window."
                     "    + [ ] 背单词了吗\n"
                     "    + [ ] 锻炼英语听力了吗\n"
                     "    + [ ] 每次护眼提示都执行了吗\n"
+                    "    + [ ] 只在工作时段末上网吗\n"
                     "    + [ ] 对工作进展满意吗\n"
                     "  - 明日计划\n    -")
            :kill-buffer t)
