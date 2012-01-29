@@ -3365,12 +3365,29 @@ Returns nil if it is not visible in the current calendar window."
   (setq org-directory "~/.dropbox/GTD/")
   (setq org-default-notes-file (concat org-directory "/gtd"))
   (setq org-capture-templates
-        '(("t" "Todo" entry (file+headline "gtd" "Inbox") "* TODO %? %^g\n  %u")
+        `(("t" "Todo" entry (file+headline "gtd" "Inbox") "* TODO %? %^g\n  %u")
           ("n" "Note" entry (file "notes") "* %?\n  %T" :prepend t)
           ("d" "Diary" entry (file+datetree "journal.org.gpg")
            "* %^{Title} %^g\n%T\n\n  %?" :kill-buffer t)
           ("o" "DailyLog" entry (file+datetree+prompt "journal.org.gpg")
-           "* Daily Log %^g\n%^T\n\n  %?\n  - 工作 :: \n  - 人际 :: \n  - 健康 :: 杯水\n  - 学习 :: \n  - 心智 :: \n  - 理财 :: \n  - 坚持 :: 保护眼睛第天\n  - 明日计划\n    -"
+           ,(concat "* Daily Log                                                     :DailyLog:\n"
+                    "<%<%Y-%m-%d %a 23:00>>\n"
+                    "\n"
+                    "  %?\n"
+                    "  - 工作 :: \n"
+                    "  - 人际 :: \n"
+                    "  - 健康 :: 杯水\n"
+                    "  - 学习 :: \n"
+                    "  - 心智 :: \n"
+                    "  - 理财 :: \n"
+                    "  - 今日日志\n"
+                    "    + \n"
+                    "  - 今日打分 %u [%]\n"
+                    "    + [ ] 背单词了吗\n"
+                    "    + [ ] 锻炼英语听力了吗\n"
+                    "    + [ ] 每次护眼提示都执行了吗\n"
+                    "    + [ ] 对工作进展满意吗\n"
+                    "  - 明日计划\n    -")
            :kill-buffer t)
           ))
 
