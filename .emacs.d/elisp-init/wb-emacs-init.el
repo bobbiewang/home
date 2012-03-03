@@ -3709,7 +3709,8 @@ Returns nil if it is not visible in the current calendar window."
    '(magit-log-graph ((t (:foreground "Pink"))))))
 
 ;; svn
-(robust-require psvn)
+(with-library "psvn"
+  (autoload 'svn-status "psvn" nil t))
 
 ;;; Dict
 
