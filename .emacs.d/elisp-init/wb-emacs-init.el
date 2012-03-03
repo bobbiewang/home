@@ -2591,7 +2591,19 @@ directory, select directory. Lastly the file is opened."
 
 ;;;; wb-cedet.el
 
-(defun init-cedet ()
+(when (fboundp 'semantic-mode)
+  ;; 设置相关目录、文件的路径
+  (setq semanticdb-default-save-directory "~/.emacs.d/.semanticdb")
+
+  ;; 设置要开启的 minor mode
+  (setq semantic-default-submodes '(global-semantic-idle-scheduler-mode
+                                    global-semanticdb-minor-mode
+                                    global-semantic-idle-summary-mode
+                                    global-semantic-highlight-func-mode
+                                    global-semantic-stickyfunc-mode)))
+    
+;; 下面是官方版 CEDET 的配置
+(defun init-3rdparty-cedet ()
   (interactive)
   (with-library "cedet"
     (unless (featurep 'cedet)
@@ -2732,8 +2744,8 @@ cursor to the new line."
 ;; 所有基于 C 的语言的通用设置
 (defun wb-c-mode-common-hook()
   (c-toggle-electric-state 1)
-  ; (c-toggle-auto-newline 1)
-  ; (c-toggle-hungry-state 1)
+  ;; (c-toggle-auto-newline 1)
+  ;; (c-toggle-hungry-state 1)
   ;; clean up 方式
   (setq c-cleanup-list
         '(scope-operator
@@ -2748,6 +2760,9 @@ cursor to the new line."
   ;; gtags，优先使用 xgtags-mode
   (cond ((fboundp 'xgtags-mode) (xgtags-mode 1))
         ((fboundp 'gtags-mode)  (gtags-mode 1)))
+  ;; CEDET
+  (if (fboundp 'semantic-mode)
+      (semantic-mode 1))
   ;; doxymacs
   (if (fboundp 'doxymacs-mode)
       (doxymacs-mode 1))
