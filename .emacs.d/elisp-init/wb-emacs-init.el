@@ -1609,12 +1609,13 @@ replace. Replace the text that you're presently isearching for."
 (setq x-select-enable-clipboard t)
 
 ;; Minibuffer 交互功能的设置
-(icomplete-mode 1)            ; 自动提示补全函数和变量
+(icomplete-mode -1)                     ; 自动提示补全函数和变量，有时
+                                        ; 显示混乱，就禁用了
 (when (fboundp 'partial-completion-mode)
-  (partial-completion-mode 1))   ; 首字母完成功能，比如 q-r-r 相当于 query-replace-regexp
-(fset 'yes-or-no-p 'y-or-n-p) ; 所有的问题用 y/n 确认，而不用 yes/no
-(setq resize-mini-windows 'grow-only) ; 允许 minibuffer 变化大小
-(setq enable-recursive-minibuffers t) ; 可以递归的使用 minibuffer
+  (partial-completion-mode 1)) ; 首字母完成功能，比如 q-r-r 相当于 query-replace-regexp
+(fset 'yes-or-no-p 'y-or-n-p)  ; 所有的问题用 y/n 确认，而不用 yes/no
+(setq resize-mini-windows 'grow-only)   ; 允许 minibuffer 变化大小
+(setq enable-recursive-minibuffers t)   ; 可以递归的使用 minibuffer
 
 ;; M-@ 选择当前整个单词，原来的功能可以用 C-@ M-f 代替
 (defun wb-mark-word (&optional arg allow-extend)
