@@ -2158,20 +2158,22 @@ directory, select directory. Lastly the file is opened."
 
 (robust-require snippet)
 
-(lazy-require 'yasnippet)
+(with-library "yasnippet"
+  (lazy-require 'yasnippet))
+
 (eval-after-load "yasnippet"
   '(progn
-     (yas/initialize)
-     ;; yas/root-directory 既可以设置为一个目录，也可以设置为一个列表。如
+     ;; yas/snippets-dirs 既可以设置为一个目录，也可以设置为一个列表。如
      ;; 果设置为列表，第一个目录用于开发个人的 snippet，相关命令（如
      ;; yas/new-snippet）将在这个目录下创建新的 snippet
-     (setq yas/root-directory
+     (setq yas/snippet-dirs
            (list "~/.emacs.d/elisp-personal/yasnippets" ; 自定义的 snippet
                  (concat                                ; 随 yasnippet 发布的 snippet
                   (file-name-directory (locate-library "yasnippet"))
                   "snippets")))
-     ;; yas/load-directory 只支持 string 参数，借助 mapc 作用于 list
-     (mapc 'yas/load-directory yas/root-directory)
+
+     ;; 全局启用 yasnippet
+     (yas/global-mode 1)
 
      ;; 设置 prompt 方式
      (setq yas/prompt-functions '(yas/dropdown-prompt
