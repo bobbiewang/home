@@ -2608,9 +2608,10 @@ directory, select directory. Lastly the file is opened."
   (setq semanticdb-default-save-directory "~/.emacs.d/.semanticdb")
 
   ;; 设置要开启的 minor mode
-  (setq semantic-default-submodes '(global-semantic-idle-scheduler-mode
-                                    global-semanticdb-minor-mode
+  (setq semantic-default-submodes '(global-semanticdb-minor-mode
+                                    global-semantic-idle-scheduler-mode
                                     global-semantic-idle-summary-mode
+                                    global-semantic-decoration-mode
                                     global-semantic-highlight-func-mode
                                     global-semantic-stickyfunc-mode)))
     
