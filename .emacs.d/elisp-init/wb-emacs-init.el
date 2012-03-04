@@ -2613,7 +2613,14 @@ directory, select directory. Lastly the file is opened."
                                     global-semantic-idle-summary-mode
                                     global-semantic-decoration-mode
                                     global-semantic-highlight-func-mode
-                                    global-semantic-stickyfunc-mode)))
+                                    global-semantic-stickyfunc-mode))
+
+  (eval-after-load "semantic"
+    '(progn
+       ;; 其他 minor mode
+       (global-semantic-highlight-edits-mode (if window-system 1 -1))
+       (global-semantic-show-unmatched-syntax-mode 1)
+       (global-semantic-show-parser-state-mode 1))))
     
 ;; 下面是官方版 CEDET 的配置
 (defun init-3rdparty-cedet ()
