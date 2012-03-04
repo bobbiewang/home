@@ -394,6 +394,12 @@ when a region-mark is active."
       (e (if mark-active end (point-max))))
     (message "Word count: %s" (how-many "\\w+" b e))))
 
+;; 按 TAB 键首先缩进当前行，如果当前行已经缩进好了的话，尝试补全。对每
+;; 个编程语言而言，可能会有自己的变量来达到上述的功能，比如 c-mode 里面
+;; 就是用变量 `c-tab-always-indent'来控制的。这时候，对 c-mode 而言，
+;; tab-always-indent 变量就不起作用了
+(setq tab-always-indent 'complete)
+
 ;; 关闭自动换行显示
 (setq-default truncate-lines t)
 (setq-default truncate-partial-width-windows t)
