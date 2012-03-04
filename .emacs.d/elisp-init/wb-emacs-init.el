@@ -2180,6 +2180,9 @@ directory, select directory. Lastly the file is opened."
                                   yas/ido-prompt
                                   yas/completing-prompt))))
 
+;; M-x auto-complete-mode 激活，缺省在 self-insert-command 命令时提示补
+;; 全，这时可以按 TAB、M-n、M-p 循环选择，按 TAB 或 RET 补全。如果选项
+;; 有动作（如 abbrev），应该按 RET 补全并执行动作
 (with-library "auto-complete-config"
   (autoload 'auto-complete-mode "auto-complete-config" nil t)
   (setq ac-comphist-file "~/.emacs.d/.ac-comphist.dat")
@@ -2191,9 +2194,10 @@ directory, select directory. Lastly the file is opened."
                     (concat (file-name-directory (locate-library "auto-complete-config"))
                             "dict"))
        (ac-config-default)
-       ;; ac-config-default 会全局开启 auto-complete-config，这里禁止掉，用
-       ;; 户需要的话可以 M-x auto-complete-mode 激活
-       (global-auto-complete-mode -1))))
+       ;; ac-config-default 会全局开启 auto-complete-config，可以在这里
+       ;; 禁掉，用户需要的话再用 M-x auto-complete-mode 激活
+       ;; (global-auto-complete-mode -1)
+       )))
 
 ;; M-x company-mode 激活，M-n、M-p 在候选内容中选择，C-s、C-r、C-o 在候
 ;; 选内容中搜索
