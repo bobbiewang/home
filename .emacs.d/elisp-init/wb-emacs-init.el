@@ -2796,8 +2796,8 @@ cursor to the new line."
   (setq gdb-show-main t)
   (setq gdb-many-windows t)
   ;; 一起启动的 Minor Modes
-  (setq hs-minor-mode 1)
-  (setq abbrev-mode 1)
+  (hs-minor-mode 1)
+  (abbrev-mode 1)
   (which-func-mode 1)
   ;; 其他设置
   (setq show-trailing-whitespace t)
