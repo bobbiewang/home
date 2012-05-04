@@ -2622,7 +2622,25 @@ directory, select directory. Lastly the file is opened."
        ;; 其他 minor mode
        (global-semantic-highlight-edits-mode (if window-system 1 -1))
        (global-semantic-show-unmatched-syntax-mode 1)
-       (global-semantic-show-parser-state-mode 1))))
+       (global-semantic-show-parser-state-mode 1)
+
+       ;; 先加载 semantic-c，防止加载 semantic-c 后重设
+       ;; semantic-dependency-system-include-path
+       (require 'semantic-c nil 'noerror)
+
+       ;; Include 目录
+       (setq cedet-user-include-dirs
+             (list "../i" "../../../.."))
+
+       (if (getenv "ENV")
+           (add-to-list 'cedet-user-include-dirs
+                        (getenv "ENV")))
+
+       (let ((include-dirs cedet-user-include-dirs))
+         (mapc (lambda (dir)
+                 (semantic-add-system-include dir 'c++-mode)
+                 (semantic-add-system-include dir 'c-mode))
+               include-dirs)))))
     
 ;; 下面是官方版 CEDET 的配置
 (defun init-3rdparty-cedet ()
