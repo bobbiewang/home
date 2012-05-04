@@ -3439,12 +3439,20 @@ Returns nil if it is not visible in the current calendar window."
                     "  - 今日日志\n"
                     "    + \n"
                     "  - 今日打分 %u [%]\n"
-                    "    + [ ] 背单词了吗\n"
-                    "    + [ ] 锻炼英语听力了吗\n"
-                    "    + [ ] 每次护眼提示都执行了吗\n"
-                    "    + [ ] 只在工作时段末上网吗\n"
-                    "    + [ ] 对工作进展满意吗\n"
-                    "  - 明日计划\n    -")
+                    "    + [ ] 复习完云词的单词\n"
+                    "    + [ ] 学习至少 10 个新单词\n"
+                    "    + [ ] 锻炼英语听力\n"
+                    "    + [ ] 执行每次护眼提示\n"
+                    "    + [ ] 只在工作时段末上网\n"
+                    "    + [ ] 对工作进展满意\n"
+                    "  - 明日计划\n"
+                    "    +")
+           :kill-buffer t)
+          ("w" "WeeklyReview" entry (file+datetree+prompt "journal.org.gpg")
+           ,(concat "* Weekly Review %<%Y>-W%<%V>                                    :WeeklyReview:\n"
+                    "<%<%Y-%m-%d %a 12:00>>\n"
+                    "\n"
+                    "  %?")
            :kill-buffer t)
           ))
 
