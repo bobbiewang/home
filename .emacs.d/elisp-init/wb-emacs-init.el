@@ -2801,8 +2801,8 @@ cursor to the new line."
   (cond ((fboundp 'xgtags-mode) (xgtags-mode 1))
         ((fboundp 'gtags-mode)  (gtags-mode 1)))
   ;; CEDET
-  (if (fboundp 'semantic-mode)
-      (semantic-mode 1))
+  ;; (if (fboundp 'semantic-mode)
+  ;;     (semantic-mode 1))
   ;; doxymacs
   (if (fboundp 'doxymacs-mode)
       (doxymacs-mode 1))
