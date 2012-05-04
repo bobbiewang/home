@@ -2197,7 +2197,9 @@ directory, select directory. Lastly the file is opened."
        ;; ac-config-default 会全局开启 auto-complete-config，可以在这里
        ;; 禁掉，用户需要的话再用 M-x auto-complete-mode 激活
        ;; (global-auto-complete-mode -1)
-       )))
+       ))
+  (require 'auto-complete-config)       ; 直接开启
+  )
 
 ;; M-x company-mode 激活，M-n、M-p 在候选内容中选择，C-s、C-r、C-o 在候
 ;; 选内容中搜索
