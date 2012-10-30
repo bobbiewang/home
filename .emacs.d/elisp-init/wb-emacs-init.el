@@ -2848,7 +2848,8 @@ cursor to the new line."
 (defun wb-c++-mode-hook()
   (c-set-style "stroustrup")
   (c-set-offset 'inline-open 0)
-  (c-set-offset 'friend '-))
+  ;; (c-set-offset 'friend '-)
+  )
 (add-hook 'c++-mode-hook 'wb-c++-mode-hook)
 
 ;; 设置编译命令和环境
