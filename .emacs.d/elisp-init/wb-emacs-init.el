@@ -3427,7 +3427,7 @@ Returns nil if it is not visible in the current calendar window."
            "* %^{Title} %^g\n%T\n\n  %?" :kill-buffer t)
           ("o" "DailyLog" entry (file+datetree+prompt "journal.org.gpg")
            ,(concat "* Daily Log                                                     :DailyLog:\n"
-                    "<%<%Y-%m-%d %a 23:00>>\n"
+                    "<%<%Y-%m-%d %a 23:59>>\n"
                     "\n"
                     "  %?\n"
                     "  - 工作 :: \n"
