@@ -3446,6 +3446,7 @@ Returns nil if it is not visible in the current calendar window."
                     "    + [ ] 执行每次护眼提示\n"
                     "    + [ ] 只在工作时段末上网\n"
                     "    + [ ] 对工作进展满意\n"
+                    "    + [ ] 半夜 12 点前睡觉\n"
                     "  - 明日计划\n"
                     "    +")
            :kill-buffer t)
