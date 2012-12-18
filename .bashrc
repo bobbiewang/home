@@ -202,6 +202,13 @@ alias psa='ps ax -o user,pid,time,state,command'
 alias psl='ps ax -o user,pid,ppid,%cpu,%mem,nice,pri,etime,time,tt,state,ucomm'
 alias psm='ps -U $USER -o user,pid,time,state,command'
 
+alias dstat='dstat -cdlmnpsy'
+
+# 输出最常用的 10 条命令
+top10 () {
+    history|awk '{print $2}' | awk 'BEGIN {FS="|"} {print $1}' | sort | uniq -c | sort -rn | head -10
+}
+
 # 创建并转到新目录
 mkcd () {
     mkdir -p "$*"
