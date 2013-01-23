@@ -74,7 +74,6 @@ alias  en="emacs --no-desktop"
 ## Ruby
 ######################################################################
 
-export RI="-f ANSI --width 70 -T"
 PATH=$PATH:/var/lib/gems/1.8/bin/
 
 # gems
