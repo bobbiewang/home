@@ -2477,6 +2477,15 @@ directory, select directory. Lastly the file is opened."
         (hide-body)))))
   "Major mode to support lsc ncl files.")
 
+(define-generic-mode 'lsc-cml-mode
+  '("#")                                ; 注释
+  '("library" "primitive" "is" "pin" "property"
+    "cellmodel" "instance" "mode" "comppin")
+  nil
+  '(".cml\\'")
+  nil
+  "Major mode to support lsc cml files.")
+
 (define-generic-mode 'lsc-acd-mode
   '("#")
   nil
