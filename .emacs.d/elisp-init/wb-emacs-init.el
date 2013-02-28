@@ -3250,6 +3250,8 @@ Returns nil if it is not visible in the current calendar window."
   ;; 设置 mode hook
   (add-hook 'org-mode-hook
             (lambda ()
+              ;; 激活 auto fill
+              (auto-fill-mode 1)
               ;; 激活 flyspell mode 进行拼写检查
               ;; (flyspell-mode 1)
               ;; 使用 yasnippet
@@ -3316,10 +3318,17 @@ Returns nil if it is not visible in the current calendar window."
         (set-face-underline-p 'org-link t))
       (iimage-mode)))
 
-  ;; 调整publish 时的行为
+  ;;;;;;;;;;;;;;;;;
+  ;; EXPORT 设置 ;;
+  ;;;;;;;;;;;;;;;;;
+
+  ;; 调整 publish 时的行为
   (setq org-publish-timestamp-directory "~/.emacs.d/.org-timestamps")
   (setq org-use-sub-superscripts (quote {})) ; 缺省不把正文中的 ^、_ 作为上下标的标志，要显式 {}
-  (setq org-export-html-inline-images t)     ; 缺省图片都内嵌到文档中
+
+  ;; HTML 支持 ;;
+
+  (setq org-export-html-inline-images t) ; 缺省图片都内嵌到文档中
   ;; org-export-htmlize-output-type
 
   (defun wb-org-remove-html-cjk-space ()
@@ -3338,7 +3347,52 @@ Returns nil if it is not visible in the current calendar window."
   (add-hook 'org-export-preprocess-final-hook
             'wb-org-remove-html-cjk-space)
 
-  ;; 定义 Org 文档项目
+  ;; LaTeX 支持 ;;
+
+  (require 'org-latex)
+
+  ;; 增加自己输出类。使用方法：#+LaTeX_CLASS: wb-org-articel
+  (add-to-list 'org-export-latex-classes
+               `("wb-org-article"
+                 ,(concat "\\documentclass[a4paper,12pt]{scrartcl}\n"
+                          "\\usepackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}\n"
+                          "\\usepackage[utf8]{inputenc}\n"
+                          "\\usepackage[T1]{fontenc}\n"
+                          "\\usepackage{fontspec}\n"
+                          "\\defaultfontfeatures{Mapping=tex-text}\n"
+                          "\\setmainfont{Times New Roman}\n"
+                          "\\setsansfont{Tahoma}\n"
+                          "\\setmonofont{Courier New}\n"
+                          "\\usepackage{indentfirst}"
+                          "\\usepackage{setspace}"
+                          "\\onehalfspacing"
+                          "\\usepackage[colorlinks=true,linkcolor=black,bookmarks]{hyperref}\n"
+                          "\\usepackage{xcolor}\n"
+                          "\\usepackage{listings}\n"
+                          "\\lstdefinelanguage{lsc-acd}{morecomment=[l]{\\#},morestring=[b]''}\n"
+                          "[NO-DEFAULT-PACKAGES]\n"
+                          "[NO-PACKAGES]")
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+  ;; 用 listings 输出代码块
+  (add-to-list 'org-export-latex-packages-alist '("" "xcolor"))
+  (add-to-list 'org-export-latex-packages-alist '("" "listings"))
+  (setq org-export-latex-listings t)
+  (setq org-export-latex-listings-options
+        '(("frame"            "shadowbox")
+          ("showstringspaces" "false")
+          ("basicstyle"       "\\small\\ttfamily")
+          ("rulesepcolor"     "\\color{lightgray}")
+          ("columns"          "fullflexible")
+          ("aboveskip"        "1em")
+          ("breaklines"       "true")))
+
+  ;; 定义 Org 文档项目 ;;
+
   (setq org-publish-project-alist
         '(("org-website"
            :base-directory "~/.emacs.d/muse"
