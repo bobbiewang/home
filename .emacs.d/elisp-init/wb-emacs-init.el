@@ -1591,8 +1591,8 @@ replace. Replace the text that you're presently isearching for."
 ;; (add-hook 'text-mode-hook 'turn-on-auto-fill)
 
 ;; 保存某些文件时删除行尾的空白
-;; (add-hook (if (boundp 'write-file-functions) 'write-file-functions
-;;             'write-file-hooks) 'wb-delete-trailing-whitespace)
+(add-hook (if (boundp 'write-file-functions) 'write-file-functions
+            'write-file-hooks) 'wb-delete-trailing-whitespace)
 
 ;; 选中了一些文字时，如果再输入一个字符，这个字符把选中的文字替换掉，而
 ;; 不是直接在光标的位置插入。也可以按 DEL 将选中的文件删除
@@ -1602,7 +1602,7 @@ replace. Replace the text that you're presently isearching for."
 (setq kill-ring-max 200)
 
 ;; 70 是 Emacs 的缺省值
-(setq default-fill-column 70)
+;; (setq default-fill-column 70)
 
 (setq-default indent-tabs-mode nil)
 (setq default-tab-width 4)
@@ -2554,7 +2554,7 @@ directory, select directory. Lastly the file is opened."
       (flyspell-mode 1)))
    (function
     (lambda ()
-      (auto-fill-mode))))
+      (auto-fill-mode 1))))
   "Major mode to support eml files.")
 
 ;;;; wb-de.el
@@ -2650,7 +2650,7 @@ directory, select directory. Lastly the file is opened."
                  (semantic-add-system-include dir 'c++-mode)
                  (semantic-add-system-include dir 'c-mode))
                include-dirs)))))
-    
+
 ;; 下面是官方版 CEDET 的配置
 (defun init-3rdparty-cedet ()
   (interactive)
@@ -2971,7 +2971,7 @@ cursor to the new line."
 ;; YAML 支持
 (with-library "yaml-mode"
   (autoload 'yaml-mode "yaml-mode" "yaml mode")
-  
+
   (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
   (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
 
