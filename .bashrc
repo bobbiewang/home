@@ -193,7 +193,6 @@ alias k="kill -9"
 alias s="sdcv"
 alias grep="grep --color=auto"
 alias tail="tail -32"
-alias ack="ack-grep"
 
 alias pgrep="ps awx | grep"
 alias pso='ps ax -o user,pid,ppid,%cpu,%mem,time,start,state,command'
