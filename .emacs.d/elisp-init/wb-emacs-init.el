@@ -1022,6 +1022,9 @@ Argument ARG Key."
 ;; 以像素为单位的文本间距，nil 表示没有额外的间距
 (setq-default line-spacing nil)
 
+;; 全局高亮当前行
+(global-hl-line-mode 1)
+
 ;; Ways to highlight the current column
 (with-library "vline"
   (autoload 'vline-mode "vline"
