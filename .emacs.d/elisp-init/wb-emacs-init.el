@@ -3495,6 +3495,8 @@ Returns nil if it is not visible in the current calendar window."
                     "<%<%Y-%m-%d %a 23:59>>\n"
                     "\n"
                     "  %?\n"
+                    "  - 今日计划\n"
+                    "    + \n"
                     "  - 今日一览\n"
                     "    + 工作 :: \n"
                     "    + 亲友 :: \n"
@@ -3511,9 +3513,7 @@ Returns nil if it is not visible in the current calendar window."
                     "    + [ ] 只在工作时段末上网\n"
                     "    + [ ] 对工作进展满意\n"
                     "    + [ ] 半夜 12 点前睡觉\n"
-                    "    + [ ] 专心上厕所\n"
-                    "  - 明日计划\n"
-                    "    +")
+                    "    + [ ] 专心上厕所")
            :kill-buffer t)
           ("w" "WeeklyReview" entry (file+datetree+prompt "journal.org.gpg")
            ,(concat "* Weekly Review %<%Y>-W%<%V>                                    :WeeklyReview:\n"
