@@ -14,6 +14,16 @@
   (cons "~/.emacs.d/elisp-init"
     (cons "~/.emacs.d/elisp-personal" load-path)))
 
+;; 加载包管理系统
+(require 'package)
+(setq package-archives '(("gnu"       . "http://elpa.gnu.org/packages/")
+                         ("melpa"     . "http://melpa.milkbox.net/packages/")
+                         ("marmalade" . "http://marmalade-repo.org/packages/")))
+(setq package-user-dir (locate-user-emacs-file ".elpa"))
+
+(setq package-enable-at-startup nil)
+(package-initialize)
+
 ;; 加载 dotemacs 辅助文件
 (load "wb-de-helper.el")
 
@@ -25,16 +35,6 @@
         (load inner t t)
       (error
        (deh-display-dot-emacs-error error)))))
-
-;; 加载包管理系统
-(require 'package)
-(setq package-archives '(("gnu"       . "http://elpa.gnu.org/packages/")
-                         ("melpa"     . "http://melpa.milkbox.net/packages/")
-                         ("marmalade" . "http://marmalade-repo.org/packages/")))
-(setq package-user-dir (locate-user-emacs-file ".elpa"))
-
-(setq package-enable-at-startup nil)
-(package-initialize)
 
 (deh-initialization-time "Emacs has been initialized")
 (deh-initialization-stat)
