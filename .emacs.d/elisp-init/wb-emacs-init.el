@@ -2780,8 +2780,9 @@ cursor to the new line."
                      'xgtags-select-tag-near-point))))))
 
 (with-library "doxymacs"
-    (autoload 'doxymacs-mode "doxymacs"
-      "Minor mode for using/creating Doxygen documentation" t))
+  (setq doxymacs-doxygen-style "C++")
+  (autoload 'doxymacs-mode "doxymacs"
+    "Minor mode for using/creating Doxygen documentation" t))
 
 ;; emacs21 好像没有 number-sequence 函数，那就用其它代替好了。比如
 ;; (require 'cl) 后用 loop 命令，或者这样
@@ -2815,6 +2816,7 @@ cursor to the new line."
   ;; CEDET
   ;; (if (fboundp 'semantic-mode)
   ;;     (semantic-mode 1))
+  ;;
   ;; doxymacs
   (if (fboundp 'doxymacs-mode)
       (doxymacs-mode 1))
