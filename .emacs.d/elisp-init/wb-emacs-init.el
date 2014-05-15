@@ -1951,6 +1951,9 @@ directory, select directory. Lastly the file is opened."
               (define-key ido-completion-map "\C-n" 'ido-next-match)
               (define-key ido-completion-map "\C-p" 'ido-prev-match))))
 
+;; 垂直方式显示 ido 候选列表
+(robust-require ido-vertical-mode
+  (ido-vertical-mode))
 
 ;; saveplace，打开文件的时候，光标自动跳转到上次退出的地方
 (robust-require saveplace
