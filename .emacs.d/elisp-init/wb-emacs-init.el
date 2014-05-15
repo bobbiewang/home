@@ -2108,6 +2108,23 @@ directory, select directory. Lastly the file is opened."
 ;; image-dired
 (setq image-dired-dir "~/.emacs.d/.image-dired/")
 
+;;; Command
+
+(with-library "smex"
+  (autoload 'smex "smex" "M-x enhancement for Emacs." t)
+  (autoload 'smex-major-mode-commands "smex"
+    "Limited to commands that are relevant to the active major mode." t)
+
+  ;; 绑定 M-x
+  (global-set-key (kbd "M-x") 'smex)
+  (global-set-key (kbd "S-M-X") 'smex-major-mode-commands)
+  ;; 提供执行原 M-x 命令的方法
+  (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+
+  (setq smex-save-file (expand-file-name ".smex-items" user-emacs-directory))
+  (eval-after-load "smex"
+    (smex-initialize)))
+
 ;;; Self Documentation
 
 ;; 增大 apropos 函数查找的范围
@@ -2819,7 +2836,6 @@ cursor to the new line."
   ;; CEDET
   ;; (if (fboundp 'semantic-mode)
   ;;     (semantic-mode 1))
-  ;;
   ;; doxymacs
   (if (fboundp 'doxymacs-mode)
       (doxymacs-mode 1))
