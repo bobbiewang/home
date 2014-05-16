@@ -39,4 +39,5 @@
 ;;        (deh-display-dot-emacs-error error)))))
 
 ;; 通过 Org Babel 加载初始化文件
+(require 'ob-tangle)
 (org-babel-load-file (expand-file-name "~/.emacs.d/initialize.org"))
