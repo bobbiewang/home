@@ -4120,25 +4120,35 @@
    '(diff-added ((t (:foreground "PaleGreen"))))
    '(diff-removed ((t (:foreground "LightSkyBlue")))))
 
-  ;; magit
-
-  (with-library "magit"
-    (autoload 'magit-status "magit" nil t)
-    (setq magit-repo-dirs
-          '("~" "~/.emacs.d/muse"))
-    (defalias 'mgs 'magit-status)
-    (custom-set-faces
-     '(magit-diff-add ((t (:foreground "PaleGreen"))))
-     '(magit-diff-del ((t (:foreground "LightSkyBlue"))))
-     '(magit-diff-hunk-header
-       ((t :slant italic :foreground "LightGoldenrod" :inherit magit-header)))
-     '(magit-log-graph ((t (:foreground "Pink"))))))
-
   ;; svn
   (with-library "psvn"
     (autoload 'svn-status "psvn" nil t))
 #+END_SRC
 
+** magit
+
+  magit 是通过 ELPA 管理的，不需要 autoload。
+
+  magit 的 diff、log 等界面显示的内容都可以自定义颜色，下面是一些例子。
+
+#+BEGIN_EXAMPLE
+  (custom-set-faces
+       '(magit-diff-add ((t (:foreground "PaleGreen"))))
+       '(magit-diff-del ((t (:foreground "LightSkyBlue"))))
+       '(magit-diff-hunk-header
+         ((t :slant italic :foreground "LightGoldenrod" :inherit magit-header)))
+       '(magit-log-graph ((t (:foreground "Pink")))))
+#+END_EXAMPLE
+
+#+BEGIN_SRC emacs-lisp
+  (with-library "magit"
+    ;; (autoload 'magit-status "magit" nil t)
+
+    (defalias 'mgs 'magit-status)
+
+    (setq magit-repo-dirs
+          '("~" "~/.emacs.d/muse")) )
+#+END_SRC
 ** Dict
 
 #+BEGIN_SRC emacs-lisp
