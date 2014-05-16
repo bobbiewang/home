@@ -1,293 +1,303 @@
-* Emacs 配置加载管理
+#+TITLE:     Emacs 配置文件
+#+AUTHOR:    Bo Wang
+#+EMAIL:     Bobbie.Wang@gmail.com
+
+* 关于本文件
+
+  以 Org 整理中，参考以下链接：
+  - http://orgmode.org/worg/org-contrib/babel/intro.html
+  - http://pages.sachachua.com/.emacs.d/Sacha.html
+  - http://pavpanchekha.com/misc/emacs.html
+  - http://mescal.imag.fr/membres/arnaud.legrand/misc/init.php
+
+* 个人信息
 
 #+BEGIN_SRC emacs-lisp
-;;; 加载 .emacs 过程中的 log 函数和变量
-
-(defvar *emacs-load-start-time* (current-time) ".emacs 加载时刻")
-(defvar *emacs-load-prev-time* (current-time) "上一个扩展加载时刻")
-(defvar *emacs-load-ext-start-time* nil "扩展开始加载时刻")
-(defvar *emacs-load-time-alist* nil "各扩展加载的时间")
-
-(defun deh-log-info (msg)
-  (save-excursion
-    (set-buffer (get-buffer-create "*Messages*"))
-    ;; 输出信息到 minibuffer，这个函数同时将信息输出到 *Messages*
-    (message msg)
-    ;; 删除 *Messages* 中的信息
-    (previous-line)
-    (kill-whole-line 1)
-    ;; 在 *Messages* 中输出彩色信息
-    (put-text-property 0 (length msg) 'face 'font-lock-builtin-face msg)
-    (insert msg)
-    (insert "\n")))
-
-(defun deh-log-warn (msg)
-  (save-excursion
-    (set-buffer (get-buffer-create "*Messages*"))
-    ;; 输出信息到 minibuffer，这个函数同时将信息输出到 *Messages*
-    (message msg)
-    ;; 删除 *Messages* 中的信息
-    (previous-line)
-    (kill-whole-line 1)
-    ;; 在 *Messages* 中输出彩色信息
-    (put-text-property 0 (length msg) 'face 'font-lock-warning-face msg)
-    (insert msg)
-    (insert "\n")))
-
-(defun deh-load-time (name)
-  "输出加载当前扩展的时间"
-  (let ((time (float-time (time-since *emacs-load-ext-start-time*)))
-        (time-x (float-time (time-since *emacs-load-prev-time*))))
-    (add-to-list '*emacs-load-time-alist* (cons name time))
-    (deh-log-info (format "[%.2f +%.2f] Loaded %s." time time-x name))
-    (setq *emacs-load-prev-time* (current-time))))
-
-(defun deh-initialization-time (msg)
-  "输出 Emacs 启动时间"
-  (deh-log-info (format "[%.2f] %s."
-                        (float-time (time-since *emacs-load-start-time*))
-                        msg)))
-
-(defun deh-initialization-stat ()
-  "输出 Emacs 启动过程的统计信息"
-  (interactive)
-  (let* ((load-time-alist               ; 复制一份加载时间的列表，因为输出过程会被修改
-          (mapcar (lambda (item)
-                    (cons (car item)
-                          (cdr item)))
-                  *emacs-load-time-alist*))
-         (load-times                    ; 提取加载时间用于排序
-          (mapcar 'cdr load-time-alist))
-         (sorted-load-times
-          (sort load-times '>)))
-    (deh-log-info "+----------------------------------+")
-    (deh-log-info "| Top 10 Time-consuming Extensions |")
-    (deh-log-info "+----------------------------------+")
-    (mapc (lambda (time)
-            (let ((item (rassoc time load-time-alist)))
-                  (deh-log-info (format "  %.2f => %s" time (car item)))
-                  ;; 标记 cons 中的时间，表示已经被输出，不要重复处理
-                  (setcdr item -1)))
-          (butlast
-           sorted-load-times
-           (- (length sorted-load-times) 10)))))
-
-;;; 加载 library 的 macro
-
-(defmacro robust-require (symbol &rest body)
-  "强壮的加载 library 的 macro，即使 library 不存在也不会出错"
-  `(condition-case nil
-       (progn
-         (when (not (featurep ',symbol))
-           (setq *emacs-load-ext-start-time* (current-time))
-           (require ',symbol)
-           ,@body
-           (deh-load-time (format "%s" ',symbol))))
-         (error (deh-log-warn (format "[WARNING] Failed to require %s!" ',symbol))
-                nil)))
-
-(put 'robust-require 'lisp-indent-function 1)
-
-(defmacro with-library (library &rest body)
-  "存在 library 的情况下的方案"
-  (declare (indent 1))
-  `(if (locate-library ',library)
-       (progn
-         (setq *emacs-load-ext-start-time* (current-time))
-         ,@body
-         (deh-load-time (format "%s" ',library)))
-     (deh-log-warn (format "[WARNING] No library %s. Skipped." ',library))))
-
-(defmacro with-without-library (library with-body without-body)
-  "存在或者不存在 library 情况下采用不同方案"
-  (declare (indent 1))
-  `(if (locate-library ',library)
-       (progn
-         (setq *emacs-load-ext-start-time* (current-time))
-         ,@with-body
-         (deh-load-time (format "%s" ',library)))
-     (progn
-       (setq *emacs-load-ext-start-time* (current-time))
-       ,@without-body
-       (deh-log-warn (format "[WARNING] No library %s. Skipped." ',library)))))
-
-;;; Lazy load 功能，可以用于一些耗时的 library
-
-(defvar deh-lazy-require-symbols nil
-  "Symbols which need to be autoloaded when Emacs is idle.")
-
-(defun lazy-require (symbol)
-  "Add SYMBOL to `deh-lazy-require-symbols'."
-  (push symbol deh-lazy-require-symbols))
-
-(defun deh-lazy-require-load-next ()
-  "Load symbols from `deh-lazy-require-symbols.' until input occurs."
-  (let (symbol)
-    (message "Beginning lazy-require")
-    (while (and deh-lazy-require-symbols
-                (not (input-pending-p)))
-      (setq symbol (pop deh-lazy-require-symbols))
-      (message "lazy-require %s..." symbol)
-      (require symbol)
-      (sit-for 1)))
-  (when (null deh-lazy-require-symbols)
-    (cancel-timer deh-lazy-require-timer)
-    (setq deh-lazy-require-timer nil)
-    (message "lazy-require finished")))
-
-(setq deh-lazy-require-timer
-      (run-with-idle-timer 45 t 'deh-lazy-require-load-next))
-
-;; 捕获启动 Emacs 过程中的过错
-;; 参考：http://ourcomments.org/Emacs/DL/elisp/dot-emacs/
-
-(defun deh-emacs--debug-init() (interactive)
-  (call-process (concat exec-directory "emacs") nil 0 nil "--debug-init")
-  (message "Started 'emacs --debug-init' - it will be ready soon ..."))
-
-(defun deh-display-dot-emacs-error(the-error)
-  (let ((message-log-max nil))
-    (save-excursion
-      (set-buffer (get-buffer-create "*Messages*"))
-      (let ((s
-             (concat
-              "\n\n"
-              (format "An error has occurred while loading `%s':\n\n"
-                      user-init-file)
-              (format "%s%s%s"
-                      (get (car the-error) 'error-message)
-                      (if (cdr the-error) ": " "")
-                      (mapconcat (lambda (s) (prin1-to-string s t)) (cdr the-error) ", "))
-              "\n\n"
-              "To ensure normal operation, you should investigate and remove the\n"
-              "cause of the error in your initialization file.  Start Emacs with\n"
-              "the `--debug-init' option to view a complete error backtrace.\n\n"
-              "Click here to do that: ")))
-        (put-text-property
-         0 (length s)
-         'face 'font-lock-warning-face
-         s)
-        (insert s)
-        (insert-text-button "emacs --debug-init"
-                            'action (lambda(btn) (deh-emacs--debug-init))
-                            'follow-link 'mouse-face)
-        (insert "\n") ;; Needed to get normal face again.
-        (message "Error in init file: %s%s%s"
-                 (get (car the-error) 'error-message)
-                 (if (cdr the-error) ": " "")
-                 (mapconcat 'prin1-to-string (cdr the-error) ", "))
-        (display-buffer "*Messages*") ;; display-buffer does the job.
-        (redisplay t)
-        (setq init-file-had-error t)))))
+  (setq user-full-name "Bo Wang"
+    user-mail-address "Bobbie.Wang@gmail.com")
 #+END_SRC
 
+* 配置辅助函数、变量、常量
+** 加载管理
+
 #+BEGIN_SRC emacs-lisp
-;;;; wb-custom.el
-(setq custom-file (expand-file-name "~/.emacs.d/.custom.el"))
-(load custom-file 'noerror)
+  ;;; 加载 .emacs 过程中的 log 函数和变量
 
-;;;; wb-platforms.el
+  (defvar *emacs-load-start-time* (current-time) ".emacs 加载时刻")
+  (defvar *emacs-load-prev-time* (current-time) "上一个扩展加载时刻")
+  (defvar *emacs-load-ext-start-time* nil "扩展开始加载时刻")
+  (defvar *emacs-load-time-alist* nil "各扩展加载的时间")
 
-;; Environment predication constants
+  (defun deh-log-info (msg)
+    (save-excursion
+      (set-buffer (get-buffer-create "*Messages*"))
+      ;; 输出信息到 minibuffer，这个函数同时将信息输出到 *Messages*
+      (message msg)
+      ;; 删除 *Messages* 中的信息
+      (previous-line)
+      (kill-whole-line 1)
+      ;; 在 *Messages* 中输出彩色信息
+      (put-text-property 0 (length msg) 'face 'font-lock-builtin-face msg)
+      (insert msg)
+      (insert "\n")))
 
-(defconst *win32p*
-    (eq system-type 'windows-nt)
-  "Are we running on a WinTel system?")
+  (defun deh-log-warn (msg)
+    (save-excursion
+      (set-buffer (get-buffer-create "*Messages*"))
+      ;; 输出信息到 minibuffer，这个函数同时将信息输出到 *Messages*
+      (message msg)
+      ;; 删除 *Messages* 中的信息
+      (previous-line)
+      (kill-whole-line 1)
+      ;; 在 *Messages* 中输出彩色信息
+      (put-text-property 0 (length msg) 'face 'font-lock-warning-face msg)
+      (insert msg)
+      (insert "\n")))
 
-(defconst *cygwinp*
-    (eq system-type 'cygwin)
-  "Are we running on a WinTel cygwin system?")
+  (defun deh-load-time (name)
+    "输出加载当前扩展的时间"
+    (let ((time (float-time (time-since *emacs-load-ext-start-time*)))
+          (time-x (float-time (time-since *emacs-load-prev-time*))))
+      (add-to-list '*emacs-load-time-alist* (cons name time))
+      (deh-log-info (format "[%.2f +%.2f] Loaded %s." time time-x name))
+      (setq *emacs-load-prev-time* (current-time))))
 
-(defconst *linuxp*
-    (or (eq system-type 'gnu/linux)
-        (eq system-type 'linux))
-  "Are we running on a GNU/Linux system?")
+  (defun deh-initialization-time (msg)
+    "输出 Emacs 启动时间"
+    (deh-log-info (format "[%.2f] %s."
+                          (float-time (time-since *emacs-load-start-time*))
+                          msg)))
 
-(defconst *unixp*
-  (or (eq system-type 'usg-unix-v)
-      (eq system-type 'berkeley-unix))
-  "Are we running unix")
+  (defun deh-initialization-stat ()
+    "输出 Emacs 启动过程的统计信息"
+    (interactive)
+    (let* ((load-time-alist               ; 复制一份加载时间的列表，因为输出过程会被修改
+            (mapcar (lambda (item)
+                      (cons (car item)
+                            (cdr item)))
+                    ,*emacs-load-time-alist*))
+           (load-times                    ; 提取加载时间用于排序
+            (mapcar 'cdr load-time-alist))
+           (sorted-load-times
+            (sort load-times '>)))
+      (deh-log-info "+----------------------------------+")
+      (deh-log-info "| Top 10 Time-consuming Extensions |")
+      (deh-log-info "+----------------------------------+")
+      (mapc (lambda (time)
+              (let ((item (rassoc time load-time-alist)))
+                    (deh-log-info (format "  %.2f => %s" time (car item)))
+                    ;; 标记 cons 中的时间，表示已经被输出，不要重复处理
+                    (setcdr item -1)))
+            (butlast
+             sorted-load-times
+             (- (length sorted-load-times) 10)))))
 
-(defconst *linux-x-p*
-    (and window-system *linuxp*)
-  "Are we running under X on a GNU/Linux system?")
+  ;;; 加载 library 的 macro
 
-(defconst *officep*
-  (or (string-match system-name "phoenix")
-      (string-match system-name "APOLLO")
-      (string-match system-name "linux6")
-      (string-match system-name "linux11"))
-  "Are we running in office?")
+  (defmacro robust-require (symbol &rest body)
+    "强壮的加载 library 的 macro，即使 library 不存在也不会出错"
+    `(condition-case nil
+         (progn
+           (when (not (featurep ',symbol))
+             (setq *emacs-load-ext-start-time* (current-time))
+             (require ',symbol)
+             ,@body
+             (deh-load-time (format "%s" ',symbol))))
+           (error (deh-log-warn (format "[WARNING] Failed to require %s!" ',symbol))
+                  nil)))
 
-(defconst *homep*
-  (or (string-match system-name "andlinux")
-      (string-match system-name "SUNLAND"))
-  "Are we running at home?")
+  (put 'robust-require 'lisp-indent-function 1)
 
-(defconst *office-win32-p*
-  (and *officep* *win32p*)
-  "Are we running in office on a WinTel system?")
+  (defmacro with-library (library &rest body)
+    "存在 library 的情况下的方案"
+    (declare (indent 1))
+    `(if (locate-library ',library)
+         (progn
+           (setq *emacs-load-ext-start-time* (current-time))
+           ,@body
+           (deh-load-time (format "%s" ',library)))
+       (deh-log-warn (format "[WARNING] No library %s. Skipped." ',library))))
 
-(defconst *office-linux-p*
-  (and *officep* *linuxp*)
-  "Are we running in office on a GNU/Linux system?")
+  (defmacro with-without-library (library with-body without-body)
+    "存在或者不存在 library 情况下采用不同方案"
+    (declare (indent 1))
+    `(if (locate-library ',library)
+         (progn
+           (setq *emacs-load-ext-start-time* (current-time))
+           ,@with-body
+           (deh-load-time (format "%s" ',library)))
+       (progn
+         (setq *emacs-load-ext-start-time* (current-time))
+         ,@without-body
+         (deh-log-warn (format "[WARNING] No library %s. Skipped." ',library)))))
 
-(defconst *home-win32-p*
-  (and *homep* *win32p*)
-  "Are we running at home on a WinTel system?")
+  ;;; Lazy load 功能，可以用于一些耗时的 library
 
-(defconst *home-linux-p*
-  (and *homep* *linuxp*)
-  "Are we running at home on a GNU/Linux system?")
+  (defvar deh-lazy-require-symbols nil
+    "Symbols which need to be autoloaded when Emacs is idle.")
 
-(defconst *xemacsp* (featurep 'xemacs)
-  "Are we running XEmacs?")
+  (defun lazy-require (symbol)
+    "Add SYMBOL to `deh-lazy-require-symbols'."
+    (push symbol deh-lazy-require-symbols))
 
-(defconst *emacs>=21p*
-  (and (not *xemacsp*)
-       (or (= emacs-major-version 21)
-           (= emacs-major-version 22)
-           (= emacs-major-version 23)))
-  "Are we running GNU Emacs 21 or above?")
+  (defun deh-lazy-require-load-next ()
+    "Load symbols from `deh-lazy-require-symbols.' until input occurs."
+    (let (symbol)
+      (message "Beginning lazy-require")
+      (while (and deh-lazy-require-symbols
+                  (not (input-pending-p)))
+        (setq symbol (pop deh-lazy-require-symbols))
+        (message "lazy-require %s..." symbol)
+        (require symbol)
+        (sit-for 1)))
+    (when (null deh-lazy-require-symbols)
+      (cancel-timer deh-lazy-require-timer)
+      (setq deh-lazy-require-timer nil)
+      (message "lazy-require finished")))
 
-(defconst *emacs<=22p*
-  (and (not *xemacsp*)
-       (or (= emacs-major-version 21)
-           (= emacs-major-version 22)))
-  "Are we running GNU Emacs 22 or older?")
+  (setq deh-lazy-require-timer
+        (run-with-idle-timer 45 t 'deh-lazy-require-load-next))
 
-(defconst *emacs>=23p*
-  (and (not *xemacsp*)
-       (>= emacs-major-version 23))
-  "Are we running GNU Emacs 23 or above?")
+  ;; 捕获启动 Emacs 过程中的过错
+  ;; 参考：http://ourcomments.org/Emacs/DL/elisp/dot-emacs/
 
-;; (require 'cygwin-mount)
-;; (cygwin-mount-activate)
+  (defun deh-emacs--debug-init() (interactive)
+    (call-process (concat exec-directory "emacs") nil 0 nil "--debug-init")
+    (message "Started 'emacs --debug-init' - it will be ready soon ..."))
 
-;; NT-emacs assumes a Windows command shell, which you change
-;; here.
-;; (defun cygwin-shell()
-;;   (interactive)
-;;   (setq old-process-coding-system-alist process-coding-system-alist)
-;;   (setq old-shell-file-name shell-file-name)
-;;   (setq process-coding-system-alist '(("bash" . undecided-unix)))
-;;   (setq shell-file-name "bash")
-;;   (setenv "SHELL" shell-file-name)
-;;   (setq explicit-shell-file-name shell-file-name)
-;;   (switch-to-buffer (shell "*cygwin-shell*"))
-;;   (delete-other-windows)
-;;   (setq process-coding-system-alist old-process-coding-system-alist)
-;;   (setq shell-file-name old-shell-file-name)
-;;   (setenv "SHELL" shell-file-name)
-;;   (setq explicit-shell-file-name shell-file-name))
+  (defun deh-display-dot-emacs-error(the-error)
+    (let ((message-log-max nil))
+      (save-excursion
+        (set-buffer (get-buffer-create "*Messages*"))
+        (let ((s
+               (concat
+                "\n\n"
+                (format "An error has occurred while loading `%s':\n\n"
+                        user-init-file)
+                (format "%s%s%s"
+                        (get (car the-error) 'error-message)
+                        (if (cdr the-error) ": " "")
+                        (mapconcat (lambda (s) (prin1-to-string s t)) (cdr the-error) ", "))
+                "\n\n"
+                "To ensure normal operation, you should investigate and remove the\n"
+                "cause of the error in your initialization file.  Start Emacs with\n"
+                "the `--debug-init' option to view a complete error backtrace.\n\n"
+                "Click here to do that: ")))
+          (put-text-property
+           0 (length s)
+           'face 'font-lock-warning-face
+           s)
+          (insert s)
+          (insert-text-button "emacs --debug-init"
+                              'action (lambda(btn) (deh-emacs--debug-init))
+                              'follow-link 'mouse-face)
+          (insert "\n") ;; Needed to get normal face again.
+          (message "Error in init file: %s%s%s"
+                   (get (car the-error) 'error-message)
+                   (if (cdr the-error) ": " "")
+                   (mapconcat 'prin1-to-string (cdr the-error) ", "))
+          (display-buffer "*Messages*") ;; display-buffer does the job.
+          (redisplay t)
+          (setq init-file-had-error t)))))
+#+END_SRC
 
-;; (if (eq window-system 'w32)
-;;     (defun insert-x-style-font()
-;;       "Insert a string in the X format which describes a font the
-;; user can select from the Windows font selector."
-;;       (interactive)
-;;       (insert (prin1-to-string (w32-select-font)))))
+** 判断环境
 
+#+BEGIN_SRC emacs-lisp
+  (defconst *win32p*
+      (eq system-type 'windows-nt)
+    "Are we running on a WinTel system?")
+
+  (defconst *cygwinp*
+      (eq system-type 'cygwin)
+    "Are we running on a WinTel cygwin system?")
+
+  (defconst *linuxp*
+      (or (eq system-type 'gnu/linux)
+          (eq system-type 'linux))
+    "Are we running on a GNU/Linux system?")
+
+  (defconst *unixp*
+    (or (eq system-type 'usg-unix-v)
+        (eq system-type 'berkeley-unix))
+    "Are we running unix")
+
+  (defconst *linux-x-p*
+      (and window-system *linuxp*)
+    "Are we running under X on a GNU/Linux system?")
+
+  (defconst *officep*
+    (or (string-match system-name "phoenix")
+        (string-match system-name "APOLLO")
+        (string-match system-name "linux6")
+        (string-match system-name "linux11"))
+    "Are we running in office?")
+
+  (defconst *homep*
+    (or (string-match system-name "andlinux")
+        (string-match system-name "SUNLAND"))
+    "Are we running at home?")
+
+  (defconst *office-win32-p*
+    (and *officep* *win32p*)
+    "Are we running in office on a WinTel system?")
+
+  (defconst *office-linux-p*
+    (and *officep* *linuxp*)
+    "Are we running in office on a GNU/Linux system?")
+
+  (defconst *home-win32-p*
+    (and *homep* *win32p*)
+    "Are we running at home on a WinTel system?")
+
+  (defconst *home-linux-p*
+    (and *homep* *linuxp*)
+    "Are we running at home on a GNU/Linux system?")
+
+  (defconst *xemacsp* (featurep 'xemacs)
+    "Are we running XEmacs?")
+
+  (defconst *emacs>=21p*
+    (and (not *xemacsp*)
+         (or (= emacs-major-version 21)
+             (= emacs-major-version 22)
+             (= emacs-major-version 23)))
+    "Are we running GNU Emacs 21 or above?")
+
+  (defconst *emacs<=22p*
+    (and (not *xemacsp*)
+         (or (= emacs-major-version 21)
+             (= emacs-major-version 22)))
+    "Are we running GNU Emacs 22 or older?")
+
+  (defconst *emacs>=23p*
+    (and (not *xemacsp*)
+         (>= emacs-major-version 23))
+    "Are we running GNU Emacs 23 or above?")
+#+END_SRC
+
+* 加载 Custom 文件
+
+#+BEGIN_SRC emacs-lisp
+  (setq custom-file (expand-file-name "~/.emacs.d/.custom.el"))
+  (load custom-file 'noerror)
+#+END_SRC
+
+* 通用配置
+* 开发环境
+** C/C++ 开发环境
+** Emacs Lisp 开发环境
+** Ruby 开发环境
+** Python 开发环境
+** Perl 开发环境
+** Bash 开发环境
+** VHDL 开发环境
+** Verilog 开发环境
+** Lisp 开发环境
+** Scheme 开发环境
+* 大堆配置，待整理
+
+#+BEGIN_SRC emacs-lisp
 ;;;; wb-functions.el
 
 ;;; Infrastructure
@@ -3447,7 +3457,7 @@ Returns nil if it is not visible in the current calendar window."
 
 ;;; Org Mode
 
-(robust-require org-install ; 下载 Org 后用 make 命令生成 org-install 文件
+(robust-require org ; 下载 Org 后用 make 命令生成 org-install 文件
   ;;;;;;;;;;;;;;
   ;; 基本设置 ;;
   ;;;;;;;;;;;;;;
@@ -4192,6 +4202,8 @@ Returns nil if it is not visible in the current calendar window."
   (add-hook 'after-init-hook 'session-initialize))
 #+END_SRC
 
+* GNUS 配置，暂时禁止
+
 #+BEGIN_EXAMPLE
 (setq gnus-startup-file "~/.emacs.d/gnus/newsrc")
 (setq gnus-save-newsrc-file nil)
@@ -4212,9 +4224,6 @@ Returns nil if it is not visible in the current calendar window."
 ;;          ...other.servers... ))
 
 (require 'gnus)
-
-(setq user-full-name "Bo Wang")
-(setq user-mail-address "firbir@gmail-SPAM.no")
 
 (setq gnus-novice-user nil)
 (setq gnus-expert-user nil)
@@ -4351,7 +4360,7 @@ Returns nil if it is not visible in the current calendar window."
     (nnimap-request-group "cpug" "gmail" t)))
 #+END_EXAMPLE
 
-* 输出 Emacs 初始化过程中的统计数据
+* 加载完毕，输出 Emacs 统计数据
 
 #+BEGIN_SRC emacs-lisp
   (deh-initialization-time "Emacs has been initialized")
