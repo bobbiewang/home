@@ -183,7 +183,7 @@
 
 #+BEGIN_SRC emacs-lisp
 ;;;; wb-custom.el
-(setq custom-file "~/.emacs.d/elisp-init/wb-custom.el")
+(setq custom-file (expand-file-name "~/.emacs.d/.custom.el"))
 (load custom-file 'noerror)
 
 ;;;; wb-platforms.el
