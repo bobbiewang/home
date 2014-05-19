@@ -2141,8 +2141,6 @@
              (setq ido-temp-list choices))))
       (ido-read-buffer prompt)))
 
-  (global-set-key (kbd "ESC ESC f") 'file-cache-ido-find-file)
-
   ;; ido
   (robust-require ido
     (setq ido-save-directory-list-file    ; 自定义 ido 文件的路径
@@ -3961,6 +3959,27 @@
                "~/.emacs.d/.anything-c-adaptive-history"))))
 #+END_SRC
 
+** Helm
+
+  Helm 是 Anything 的后继者，要逐渐将 Anything 的功能转过来。
+
+#+BEGIN_SRC emacs-lisp
+  (with-library "helm"
+    ;; helm-for-files 支持 Cache，覆盖了 file-cache-ido-find-file 的功能
+    (global-set-key (kbd "ESC ESC f") 'helm-for-files)
+
+    ;; 先绑定到 helm-mini 试用
+    (global-set-key (kbd "C-c h") 'helm-mini)
+
+    (eval-after-load "anything-config"
+        '(progn
+           (require 'helm-config)
+           ;; 全局打开 Helm 功能
+           (helm-mode 1)
+           ;; find file 时开启目录自动补全模式，也可以 C-backspace 切换
+           (setq helm-ff-auto-update-initial-value t))))
+#+END_SRC
+
 * Tools
 ** Tramp
 
@@ -4147,7 +4166,7 @@
     (defalias 'mgs 'magit-status)
 
     (setq magit-repo-dirs
-          '("~" "~/.emacs.d/muse")) )
+          '("~" "~/.emacs.d/muse")))
 #+END_SRC
 ** Dict
 
