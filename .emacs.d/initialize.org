@@ -4019,11 +4019,19 @@ yas-dropdown-prompt 需要 Dropdown List 的支持。
     ;; 先绑定到 helm-mini 试用
     (global-set-key (kbd "C-c h") 'helm-mini)
 
-    (eval-after-load "anything-config"
+    (eval-after-load "helm"
         '(progn
            (require 'helm-config)
+
            ;; 全局打开 Helm 功能
            (helm-mode 1)
+
+           ;; 设置 helm-mini 包括的内容
+           (setq helm-mini-default-sources '(helm-source-buffers-list
+                                             helm-source-recentf
+                                             helm-source-file-cache
+                                             helm-source-buffer-not-found))
+
            ;; find file 时开启目录自动补全模式，也可以 C-backspace 切换
            (setq helm-ff-auto-update-initial-value t))))
 #+END_SRC
