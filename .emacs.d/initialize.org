@@ -2411,28 +2411,6 @@
 
   (robust-require snippet)
 
-  (with-library "yasnippet"
-    (lazy-require 'yasnippet))
-
-  (eval-after-load "yasnippet"
-    '(progn
-       ;; yas/snippets-dirs 既可以设置为一个目录，也可以设置为一个列表。如
-       ;; 果设置为列表，第一个目录用于开发个人的 snippet，相关命令（如
-       ;; yas/new-snippet）将在这个目录下创建新的 snippet
-       (setq yas/snippet-dirs
-             (list "~/.emacs.d/elisp-personal/yasnippets" ; 自定义的 snippet
-                   (concat                                ; 随 yasnippet 发布的 snippet
-                    (file-name-directory (locate-library "yasnippet"))
-                    "snippets")))
-
-       ;; 全局启用 yasnippet
-       (yas/global-mode 1)
-
-       ;; 设置 prompt 方式
-       (setq yas/prompt-functions '(yas/dropdown-prompt
-                                    yas/ido-prompt
-                                    yas/completing-prompt))))
-
   ;; M-x auto-complete-mode 激活，缺省在 self-insert-command 命令时提示补
   ;; 全，这时可以按 TAB、M-n、M-p 循环选择，按 TAB 或 RET 补全。如果选项
   ;; 有动作（如 abbrev），应该按 RET 补全并执行动作
@@ -2478,6 +2456,56 @@
             company-dabbrev))
     (setq company-idle-delay t)
     (setq company-begin-commands '(self-insert-command)))
+#+END_SRC
+
+* Yasnippet
+
+#+BEGIN_SRC emacs-lisp
+  (with-library "yasnippet"
+    (yas-global-mode 1)
+    (setq yas-prompt-functions '(yas-dropdown-prompt
+                                 yas-ido-prompt
+                                 yas-completing-prompt)))
+#+END_SRC
+
+  yas-snippet-dirs 既可以设置为一个目录，也可以设置为一个列表。如果设置
+为列表，第一个目录用于开发个人的 snippet，相关命令（如 yas-new-snippet）
+将在这个目录下创建新的 snippet。
+
+  yas-snippet-dirs 的缺省设置是：
+  - ~/.emacs.d/snippets
+  - yasnippet_dir/snippets
+
+  下面是自定义 yas-snippet-dirs 的代码。
+
+#+BEGIN_SRC emacs-lisp-example
+  (setq yas-snippet-dirs
+        (list "~/.emacs.d/elisp-personal/yasnippets" ; 自定义的 snippet
+              (concat                                ; 随 yasnippet 发布的 snippet
+               (file-name-directory (locate-library "yasnippet"))
+               "snippets")))
+#+END_SRC
+
+  yas-prompt-functions 可以自定义 Yasnippet 提示列表的风格。其中
+yas-dropdown-prompt 需要 Dropdown List 的支持。
+
+#+BEGIN_SRC emacs-lisp-example
+  (setq yas-prompt-functions '(yas-dropdown-prompt
+                               yas-ido-prompt
+                               yas-completing-prompt))
+#+END_SRC
+
+  如果 snippets 很多，觉得拖累了 Emacs 启动速度，可以使用 lazy require。
+但是 Yasnippet 的新版本改进了加载速度，不是一次性加载所有 Snippet，而
+是按需加载，所以基本上不需要了。
+
+#+BEGIN_SRC emacs-lisp-example
+  (with-library "yasnippet"
+    (lazy-require 'yasnippet))
+
+  (eval-after-load "yasnippet"
+    '(progn
+       (yas-global-mode 1)))
 #+END_SRC
 
 * muse
