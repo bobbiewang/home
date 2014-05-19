@@ -3985,28 +3985,6 @@ yas-dropdown-prompt 需要 Dropdown List 的支持。
                (org-agenda-skip-entry-if 'regexp "DONE")))))))
 #+END_SRC
 
-** Anything
-
-#+BEGIN_SRC emacs-lisp
-  (with-library "anything-config"
-    (autoload 'anything "anything-config" "Anything")
-    (global-set-key (kbd "ESC ESC SPC") 'anything)
-
-    (add-hook 'anything-before-initialize-hook
-              (lambda ()
-              (require 'filecache)))
-
-    (eval-after-load "anything-config"
-      '(progn
-         (setq anything-sources
-               (list anything-c-source-imenu
-                     anything-c-source-buffers
-                     anything-c-source-file-name-history
-                     anything-c-source-file-cache))
-         (setq anything-c-adaptive-history-file
-               "~/.emacs.d/.anything-c-adaptive-history"))))
-#+END_SRC
-
 ** Helm
 
   Helm 是 Anything 的后继者，要逐渐将 Anything 的功能转过来。
@@ -4019,6 +3997,8 @@ yas-dropdown-prompt 需要 Dropdown List 的支持。
     ;; 先绑定到 helm-mini 试用
     (global-set-key (kbd "C-c h") 'helm-mini)
 
+    (autoload 'helm-mini "helm-imenu" "helm mini use imenu source." t)
+
     (eval-after-load "helm"
         '(progn
            (require 'helm-config)
@@ -4030,6 +4010,7 @@ yas-dropdown-prompt 需要 Dropdown List 的支持。
            (setq helm-mini-default-sources '(helm-source-buffers-list
                                              helm-source-recentf
                                              helm-source-file-cache
+                                             helm-source-imenu
                                              helm-source-buffer-not-found))
 
            ;; find file 时开启目录自动补全模式，也可以 C-backspace 切换
