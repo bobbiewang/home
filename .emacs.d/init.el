@@ -32,4 +32,4 @@
 
 ;; 通过 Org Babel 加载初始化文件
 (require 'ob-tangle)
-(org-babel-load-file (expand-file-name "~/.emacs.d/initialize.org"))
+(org-babel-load-file (locate-user-emacs-file "initialize.org"))
