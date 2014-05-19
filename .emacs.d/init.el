@@ -2,9 +2,10 @@
 
 ;; ELPA 包：设置 ELPA 并加载所有的包
 (require 'package)
-(setq package-archives '(("gnu"       . "http://elpa.gnu.org/packages/")
-                         ("melpa"     . "http://melpa.milkbox.net/packages/")
-                         ("marmalade" . "http://marmalade-repo.org/packages/")))
+(setq package-archives '(("gnu"          . "http://elpa.gnu.org/packages/")
+                         ("melpa"        . "http://melpa.milkbox.net/packages/")
+                         ("melpa-stable" . "http://melpa-stable.milkbox.net/packages/")
+                         ("marmalade"    . "http://marmalade-repo.org/packages/")))
 (setq package-user-dir (locate-user-emacs-file ".elpa"))
 
 (setq package-enable-at-startup nil)
