@@ -10,14 +10,6 @@
 (setq package-enable-at-startup nil)
 (package-initialize)
 
-;; 需要通过 ELPA 安装的包
-(mapc
- (lambda (package)
-   (unless (package-installed-p package)
-     (package-install package)))
- '(anything auctex auto-complete color-theme ido-vertical-mode magit markdown-mode
-            org projectile smex undo-tree yasnippet))
-
 ;; 本地包：把 elisp-3rdparty 及其下面的所有子目录加到 load-path
 ;; 忽略 .git、.svn、RCS、CVS 等目录，以及包含 .nosearch 文件的目录
 (setq wb-3rd-lisp-dir "~/.emacs.d/elisp-3rdparty/")

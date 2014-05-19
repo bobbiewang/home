@@ -991,6 +991,21 @@
               (untrace-function function)))))
 #+END_SRC
 
+** 包管理
+
+#+BEGIN_SRC emacs-lisp
+  (defvar bw/elpa-packages
+    '(auctex auto-complete color-theme helm ido-vertical-mode magit markdown-mode
+             org projectile smex undo-tree yasnippet)
+    "A list of packages those are managed by ELPA.")
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp-example
+  (dolist (package bw/elpa-packages)
+    (when (not (package-installed-p package))
+      (package-install package)))
+#+END_SRC
+
 * std
 ** General
 
