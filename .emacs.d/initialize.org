@@ -3151,7 +3151,7 @@
            (1 'font-lock-warning-face t)))))
 
   ;; emacs-lisp-example-mode 用于 initialize.org，相应的代码不会用于初始化 Emacs
-  (defalias 'emacs-lisp-mode 'emacs-lisp-example-mode)
+  (defalias 'emacs-lisp-example-mode 'emacs-lisp-mode)
 #+END_SRC
 
 ** Ruby 开发环境
@@ -3534,425 +3534,427 @@
 
 ** Org
 
+  本文件就是通过 Org Mode 处理的，所以 Org Mode 已经被加载了。这里只能
+按照常规方法进行设置。
+
 #+BEGIN_SRC emacs-lisp
-  (robust-require org ; 下载 Org 后用 make 命令生成 org-install 文件
-    ;;;;;;;;;;;;;;
-    ;; 基本设置 ;;
-    ;;;;;;;;;;;;;;
+  ;;;;;;;;;;;;;;
+  ;; 基本设置 ;;
+  ;;;;;;;;;;;;;;
 
-    ;; 设置使用 Org Mode 的文件后缀
-    (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+  ;; 设置使用 Org Mode 的文件后缀
+  (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
-    ;; 设置 mode hook
-    (add-hook 'org-mode-hook
-              (lambda ()
-                ;; 激活 auto fill
-                (auto-fill-mode 1)
-                ;; 激活 flyspell mode 进行拼写检查
-                ;; (flyspell-mode 1)
-                ;; 使用 yasnippet
-                (when (featurep 'yasnippet)
-                  (make-variable-buffer-local 'yas/trigger-key)
-                  (setq yas/trigger-key [tab])
-                  (defun yas/org-very-safe-expand ()
-                    (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
-                  (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
-                  (define-key yas/keymap [tab] 'yas/next-field))))
+  ;; 设置 mode hook
+  (add-hook 'org-mode-hook
+            (lambda ()
+              ;; 激活 auto fill
+              (auto-fill-mode 1)
+              ;; 激活 flyspell mode 进行拼写检查
+              ;; (flyspell-mode 1)
+              ;; 使用 yasnippet
+              (when (featurep 'yasnippet)
+                (make-variable-buffer-local 'yas/trigger-key)
+                (setq yas/trigger-key [tab])
+                (defun yas/org-very-safe-expand ()
+                  (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
+                (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
+                (define-key yas/keymap [tab] 'yas/next-field))))
 
-    ;; Org 文档内容都用 utf-8-unix 编码
-    (add-to-list 'auto-coding-alist '("org\\'" . utf-8-unix))
+  ;; Org 文档内容都用 utf-8-unix 编码
+  (add-to-list 'auto-coding-alist '("org\\'" . utf-8-unix))
 
-    ;; 设置几个方便使用 Org 的全局键绑定和函数
-    (define-key global-map "\C-cl" 'org-store-link)
-    (define-key global-map "\C-ca" 'org-agenda)
+  ;; 设置几个方便使用 Org 的全局键绑定和函数
+  (define-key global-map "\C-cl" 'org-store-link)
+  (define-key global-map "\C-ca" 'org-agenda)
 
-    (defun gtd ()
+  (defun gtd ()
+    (interactive)
+    (find-file "~/.dropbox/GTD/gtd"))
+
+  ;; 微调 Org 中的键绑定的行为
+  (setq org-return-follows-link t)    ; 用 RET 而不是 C-c C-o 打开连接
+  (setq org-special-ctrl-a/e t)
+  (setq org-yank-adjusted-subtrees t)
+
+  ;; 每小时保存一次所有的 org 文件
+  (run-at-time "00:59" 3600 'org-save-all-org-buffers)
+
+  ;;;;;;;;;;;;;;;
+  ;; NOTE 设置 ;;
+  ;;;;;;;;;;;;;;;
+
+  ;; 调整一些内容的显示
+
+  (setq org-hide-block-startup t)       ; 隐藏所有 block
+
+  (defface org-date
+    '((((class color) (background light)) (:foreground "#7f7f7f" :underline t))
+      (((class color) (background dark)) (:foreground "#7f7f7f" :underline t))
+      (t (:underline t)))
+    "Face for org dates.")
+
+  (defface org-embedded-code-face
+    '((t (:foreground "grey40")))
+    "Used in org-mode to indicate code block.")
+
+  (font-lock-add-keywords
+   'org-mode
+   '(("#\\+BEGIN_SRC.*$" (0 'org-embedded-code-face t))
+     ("#\\+END_SRC" (0 'org-embedded-code-face t))
+     ("#\\+BEGIN_EXAMPLE" (0 'org-embedded-code-face t))
+     ("#\\+END_EXAMPLE" (0 'org-embedded-code-face t)))
+   t)
+
+  ;; 利用 iimage 在 Org 文档中显示图片
+  (with-library "iimage"
+    (defun org-toggle-iimage-in-org ()
+      "display images in your org file"
       (interactive)
-      (find-file "~/.dropbox/GTD/gtd"))
+      (if (face-underline-p 'org-link)
+          (set-face-underline-p 'org-link nil)
+        (set-face-underline-p 'org-link t))
+      (iimage-mode)))
 
-    ;; 微调 Org 中的键绑定的行为
-    (setq org-return-follows-link t)    ; 用 RET 而不是 C-c C-o 打开连接
-    (setq org-special-ctrl-a/e t)
-    (setq org-yank-adjusted-subtrees t)
+  ;;;;;;;;;;;;;;;;;
+  ;; EXPORT 设置 ;;
+  ;;;;;;;;;;;;;;;;;
 
-    ;; 每小时保存一次所有的 org 文件
-    (run-at-time "00:59" 3600 'org-save-all-org-buffers)
+  ;; 调整 publish 时的行为
+  (setq org-publish-timestamp-directory "~/.emacs.d/.org-timestamps")
+  (setq org-use-sub-superscripts (quote {})) ; 缺省不把正文中的 ^、_ 作为上下标的标志，要显式 {}
 
-    ;;;;;;;;;;;;;;;
-    ;; NOTE 设置 ;;
-    ;;;;;;;;;;;;;;;
+  ;; HTML 支持 ;;
 
-    ;; 调整一些内容的显示
+  (setq org-export-html-inline-images t) ; 缺省图片都内嵌到文档中
+  ;; org-export-htmlize-output-type
 
-    (setq org-hide-block-startup t)       ; 隐藏所有 block
+  (defun wb-org-remove-html-cjk-space ()
+    "删除输出 HTML 时两行中文之间的空格。"
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward "\\(\\cc\\)\n\\(\\cc\\)" nil t)
+        (unless (get-text-property (match-beginning 0) 'read-only)
+          (replace-match "\\1\\2")))
+      ;; (goto-char (point-min))
+      ;; (while (re-search-forward "\\([^\n]\\)\n\\(.\\)" nil t)
+      ;;   (unless (get-text-property (match-beginning 0) 'read-only)
+      ;;     (replace-match "\\1 \\2")))
+      ))
 
-    (defface org-date
-      '((((class color) (background light)) (:foreground "#7f7f7f" :underline t))
-        (((class color) (background dark)) (:foreground "#7f7f7f" :underline t))
-        (t (:underline t)))
-      "Face for org dates.")
+  (add-hook 'org-export-preprocess-final-hook
+            'wb-org-remove-html-cjk-space)
 
-    (defface org-embedded-code-face
-      '((t (:foreground "grey40")))
-      "Used in org-mode to indicate code block.")
+  ;; LaTeX 支持 ;;
 
-    (font-lock-add-keywords
-     'org-mode
-     '(("#\\+BEGIN_SRC.*$" (0 'org-embedded-code-face t))
-       ("#\\+END_SRC" (0 'org-embedded-code-face t))
-       ("#\\+BEGIN_EXAMPLE" (0 'org-embedded-code-face t))
-       ("#\\+END_EXAMPLE" (0 'org-embedded-code-face t)))
-     t)
+  (require 'org-latex)
 
-    ;; 利用 iimage 在 Org 文档中显示图片
-    (with-library "iimage"
-      (defun org-toggle-iimage-in-org ()
-        "display images in your org file"
-        (interactive)
-        (if (face-underline-p 'org-link)
-            (set-face-underline-p 'org-link nil)
-          (set-face-underline-p 'org-link t))
-        (iimage-mode)))
+  ;; 增加自己输出类。使用方法：#+LaTeX_CLASS: wb-org-articel
+  (add-to-list 'org-export-latex-classes
+               `("wb-org-article"
+                 ,(concat "\\documentclass[a4paper,12pt]{scrartcl}\n"
+                          "\\usepackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}\n"
+                          "\\usepackage[T1]{fontenc}\n"
+                          "\\usepackage{fontspec}\n"
+                          "\\setmainfont[Mapping=tex-text]{Times New Roman}\n"
+                          "\\setsansfont[Mapping=tex-text]{Tahoma}\n"
+                          "\\setmonofont{Courier New}\n"
+                          "\\usepackage{indentfirst}\n"
+                          "\\usepackage{setspace}\n"
+                          "\\onehalfspacing\n"
+                          "\\usepackage[svgnames,table]{xcolor}\n"
+                          "\\usepackage[colorlinks,linkcolor=RoyalBlue,bookmarks]{hyperref}\n"
+                          "\\usepackage{listings}\n"
+                          "\\lstdefinelanguage{lsc-acd}{morecomment=[l]{\\#},morestring=[b]''}\n"
+                          "[NO-DEFAULT-PACKAGES]\n"
+                          "[NO-PACKAGES]")
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
-    ;;;;;;;;;;;;;;;;;
-    ;; EXPORT 设置 ;;
-    ;;;;;;;;;;;;;;;;;
+  ;; 用 listings 输出代码块
+  (add-to-list 'org-export-latex-packages-alist '("" "xcolor"))
+  (add-to-list 'org-export-latex-packages-alist '("" "listings"))
+  (setq org-export-latex-listings t)
+  (setq org-export-latex-listings-options
+        '(("frame"            "shadowbox")
+          ("showstringspaces" "false")
+          ("basicstyle"       "\\small\\ttfamily")
+          ("rulesepcolor"     "\\color{lightgray}")
+          ("columns"          "fullflexible")
+          ("aboveskip"        "1em")
+          ("breaklines"       "true")))
 
-    ;; 调整 publish 时的行为
-    (setq org-publish-timestamp-directory "~/.emacs.d/.org-timestamps")
-    (setq org-use-sub-superscripts (quote {})) ; 缺省不把正文中的 ^、_ 作为上下标的标志，要显式 {}
+  ;; 定义 Org 文档项目 ;;
 
-    ;; HTML 支持 ;;
-
-    (setq org-export-html-inline-images t) ; 缺省图片都内嵌到文档中
-    ;; org-export-htmlize-output-type
-
-    (defun wb-org-remove-html-cjk-space ()
-      "删除输出 HTML 时两行中文之间的空格。"
-      (save-excursion
-        (goto-char (point-min))
-        (while (re-search-forward "\\(\\cc\\)\n\\(\\cc\\)" nil t)
-          (unless (get-text-property (match-beginning 0) 'read-only)
-            (replace-match "\\1\\2")))
-        ;; (goto-char (point-min))
-        ;; (while (re-search-forward "\\([^\n]\\)\n\\(.\\)" nil t)
-        ;;   (unless (get-text-property (match-beginning 0) 'read-only)
-        ;;     (replace-match "\\1 \\2")))
-        ))
-
-    (add-hook 'org-export-preprocess-final-hook
-              'wb-org-remove-html-cjk-space)
-
-    ;; LaTeX 支持 ;;
-
-    (require 'org-latex)
-
-    ;; 增加自己输出类。使用方法：#+LaTeX_CLASS: wb-org-articel
-    (add-to-list 'org-export-latex-classes
-                 `("wb-org-article"
-                   ,(concat "\\documentclass[a4paper,12pt]{scrartcl}\n"
-                            "\\usepackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}\n"
-                            "\\usepackage[T1]{fontenc}\n"
-                            "\\usepackage{fontspec}\n"
-                            "\\setmainfont[Mapping=tex-text]{Times New Roman}\n"
-                            "\\setsansfont[Mapping=tex-text]{Tahoma}\n"
-                            "\\setmonofont{Courier New}\n"
-                            "\\usepackage{indentfirst}\n"
-                            "\\usepackage{setspace}\n"
-                            "\\onehalfspacing\n"
-                            "\\usepackage[svgnames,table]{xcolor}\n"
-                            "\\usepackage[colorlinks,linkcolor=RoyalBlue,bookmarks]{hyperref}\n"
-                            "\\usepackage{listings}\n"
-                            "\\lstdefinelanguage{lsc-acd}{morecomment=[l]{\\#},morestring=[b]''}\n"
-                            "[NO-DEFAULT-PACKAGES]\n"
-                            "[NO-PACKAGES]")
-                   ("\\section{%s}" . "\\section*{%s}")
-                   ("\\subsection{%s}" . "\\subsection*{%s}")
-                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                   ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                   ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-
-    ;; 用 listings 输出代码块
-    (add-to-list 'org-export-latex-packages-alist '("" "xcolor"))
-    (add-to-list 'org-export-latex-packages-alist '("" "listings"))
-    (setq org-export-latex-listings t)
-    (setq org-export-latex-listings-options
-          '(("frame"            "shadowbox")
-            ("showstringspaces" "false")
-            ("basicstyle"       "\\small\\ttfamily")
-            ("rulesepcolor"     "\\color{lightgray}")
-            ("columns"          "fullflexible")
-            ("aboveskip"        "1em")
-            ("breaklines"       "true")))
-
-    ;; 定义 Org 文档项目 ;;
-
-    (setq org-publish-project-alist
-          '(("org-website"
-             :base-directory "~/.emacs.d/muse"
-             :publishing-directory "~/public_html/"
-             :base-extension "org"
-             :recursive t
-             :auto-sitemap t
-             :section-numbers nil
-             :author-info nil
-             :creator-info nil
-             :style-include-default t
-             :auto-preamble nil
-             :auto-postamble nil
-             :publishing-function org-publish-org-to-html
-             :style "<link rel=\"stylesheet\" type=\"text/css\" href=\"../style.css\" />"
-             :preamble "<div class=\"container\">
-                        <div class=\"gfx\"><span></span></div>
-                        <div class=\"top\">
-                          <div class=\"navigation\">
-                            <a href=\"../index.html\" id=\"selected\">Home</a>
-                            <a href=\"../spa/SPA.html\">S.P.A.</a>
-                            <a href=\"../reading/Reading.html\">Reading</a>
-                            <a href=\"../programming/Programming.html\">Programming</a>
-                            <a href=\"../iccad/ICCAD.html\">ICCAD</a>
-                            <a href=\"../computer/Computer.html\">Computer</a>
-                            <a href=\"../emacs/Emacs.html\">Emacs</a>
-                          </div>
-                          <div class=\"pattern\"><span></span></div>
-                          <div class=\"header\">
-                            <h1>The Power of Mind</h1>
-                            <p>Observe, Think and Practise</p>
-                          </div>
-                          <div class=\"pattern\"><span></span></div>
+  (setq org-publish-project-alist
+        '(("org-website"
+           :base-directory "~/.emacs.d/muse"
+           :publishing-directory "~/public_html/"
+           :base-extension "org"
+           :recursive t
+           :auto-sitemap t
+           :section-numbers nil
+           :author-info nil
+           :creator-info nil
+           :style-include-default t
+           :auto-preamble nil
+           :auto-postamble nil
+           :publishing-function org-publish-org-to-html
+           :style "<link rel=\"stylesheet\" type=\"text/css\" href=\"../style.css\" />"
+           :preamble "<div class=\"container\">
+                      <div class=\"gfx\"><span></span></div>
+                      <div class=\"top\">
+                        <div class=\"navigation\">
+                          <a href=\"../index.html\" id=\"selected\">Home</a>
+                          <a href=\"../spa/SPA.html\">S.P.A.</a>
+                          <a href=\"../reading/Reading.html\">Reading</a>
+                          <a href=\"../programming/Programming.html\">Programming</a>
+                          <a href=\"../iccad/ICCAD.html\">ICCAD</a>
+                          <a href=\"../computer/Computer.html\">Computer</a>
+                          <a href=\"../emacs/Emacs.html\">Emacs</a>
                         </div>
-                        <div class=\"content\">
-                        <div class=\"spacer\"></div>"
-             :postamble "  </div>
-                         <div class=\"footer\">
-                           <div class=\"left\">
-                             &copy; 2010
-                             <a href=\"index.html\">Website.com</a>.
-                             Valid
-                             <a href=\"http://jigsaw.w3.org/css-validator/check/referer\">CSS</a>
-                             &amp;
-                             <a href=\"http://validator.w3.org/check?uri=referer\">XHTML</a>
-                           </div>
-                           <div class=\"right\">
-                             <a href=\"index.html\">Website</a>
-                             by
-                             <a href=\"../index.html\">Bo Wang</a>
-                           </div>
+                        <div class=\"pattern\"><span></span></div>
+                        <div class=\"header\">
+                          <h1>The Power of Mind</h1>
+                          <p>Observe, Think and Practise</p>
+                        </div>
+                        <div class=\"pattern\"><span></span></div>
+                      </div>
+                      <div class=\"content\">
+                      <div class=\"spacer\"></div>"
+           :postamble "  </div>
+                       <div class=\"footer\">
+                         <div class=\"left\">
+                           &copy; 2010
+                           <a href=\"index.html\">Website.com</a>.
+                           Valid
+                           <a href=\"http://jigsaw.w3.org/css-validator/check/referer\">CSS</a>
+                           &amp;
+                           <a href=\"http://validator.w3.org/check?uri=referer\">XHTML</a>
                          </div>
-                       </div>")
-            ("org-website-static"
-             :base-directory "~/.emacs.d/muse"
-             :base-extension "png\\|jpg\\|gif\\|pdf"
-             :publishing-directory "~/public_html/"
-             :recursive t
-             :publishing-function org-publish-attachment)
-            ("org-html"
-             :base-directory "~/.emacs.d/muse"
-             :publishing-directory "~/.emacs.d/publish/html/"
-             :base-extension "org"
-             :recursive t
-             :auto-sitemap t
-             :section-numbers nil
-             :author-info nil
-             :creator-info nil
-             :style-include-default t
-             :auto-preamble nil
-             :auto-postamble nil
-             :publishing-function org-publish-org-to-html
-             :preamble nil
-             :postamble nil)
-            ("org-html-static"
-             :base-directory "~/.emacs.d/muse"
-             :base-extension "png\\|jpg\\|gif\\|pdf"
-             :publishing-directory "~/.emacs.d/publish/html/"
-             :recursive t
-             :publishing-function org-publish-attachment)
-            ("org" :components ("org-website" "org-website-static" "org-html" "org-html-static"))
-            ))
+                         <div class=\"right\">
+                           <a href=\"index.html\">Website</a>
+                           by
+                           <a href=\"../index.html\">Bo Wang</a>
+                         </div>
+                       </div>
+                     </div>")
+          ("org-website-static"
+           :base-directory "~/.emacs.d/muse"
+           :base-extension "png\\|jpg\\|gif\\|pdf"
+           :publishing-directory "~/public_html/"
+           :recursive t
+           :publishing-function org-publish-attachment)
+          ("org-html"
+           :base-directory "~/.emacs.d/muse"
+           :publishing-directory "~/.emacs.d/publish/html/"
+           :base-extension "org"
+           :recursive t
+           :auto-sitemap t
+           :section-numbers nil
+           :author-info nil
+           :creator-info nil
+           :style-include-default t
+           :auto-preamble nil
+           :auto-postamble nil
+           :publishing-function org-publish-org-to-html
+           :preamble nil
+           :postamble nil)
+          ("org-html-static"
+           :base-directory "~/.emacs.d/muse"
+           :base-extension "png\\|jpg\\|gif\\|pdf"
+           :publishing-directory "~/.emacs.d/publish/html/"
+           :recursive t
+           :publishing-function org-publish-attachment)
+          ("org" :components ("org-website" "org-website-static" "org-html" "org-html-static"))
+          ))
 
-    ;;;;;;;;;;;;;;;
-    ;; TODO 设置 ;;
-    ;;;;;;;;;;;;;;;
+  ;;;;;;;;;;;;;;;
+  ;; TODO 设置 ;;
+  ;;;;;;;;;;;;;;;
 
-    ;; Capture 设置及模板
-    (global-set-key (kbd "C-M-r") 'org-capture)
-    (setq org-directory "~/.dropbox/GTD/")
-    (setq org-default-notes-file (concat org-directory "/gtd"))
-    (setq org-capture-templates
-          `(("t" "Todo" entry (file+headline "gtd" "Inbox") "* TODO %? %^g\n  %u")
-            ("n" "Note" entry (file "notes") "* %?\n  %T" :prepend t)
-            ("d" "Diary" entry (file+datetree "journal.org.gpg")
-             "* %^{Title} %^g\n%T\n\n  %?" :kill-buffer t)
-            ("o" "DailyLog" entry (file+datetree+prompt "journal.org.gpg")
-             ,(concat "* Daily Log                                                     :DailyLog:\n"
-                      "<%<%Y-%m-%d %a 23:59>>\n"
-                      "\n"
-                      "  %?\n"
-                      "  - 今日计划\n"
-                      "    + \n"
-                      "  - 今日一览\n"
-                      "    + 工作 :: \n"
-                      "    + 亲友 :: \n"
-                      "    + 健康 :: \n"
-                      "    + 学习 :: \n"
-                      "    + 心智 :: \n"
-                      "  - 今日日志\n"
-                      "    + \n"
-                      "  - 今日打分 %u [%]\n"
-                      "    + [ ] 锻炼英语听力\n"
-                      "    + [ ] 学习 10 个新单词、词组\n"
-                      "    + [ ] 复习完背单词软件中的词条\n"
-                      "    + [ ] 执行每次护眼提示\n"
-                      "    + [ ] 只在工作时段末上网\n"
-                      "    + [ ] 对工作进展满意\n"
-                      "    + [ ] 半夜 12 点前睡觉\n"
-                      "    + [ ] 专心上厕所")
-             :kill-buffer t)
-            ("w" "WeeklyReview" entry (file+datetree+prompt "journal.org.gpg")
-             ,(concat "* Weekly Review %<%Y>-W%<%V>                                    :WeeklyReview:\n"
-                      "<%<%Y-%m-%d %a 12:00>>\n"
-                      "\n"
-                      "  本周亮点\n"
-                      "  - %?\n"
-                      "  本周一览\n"
-                      "  - \n"
-                      "  本周遗憾\n"
-                      "  - \n"
-                      "  下周计划\n"
-                      "  - \n")
-             :kill-buffer t)
-            ("m" "MonthlyReview" entry (file+datetree+prompt "journal.org.gpg")
-             ,(concat "* Monthly Review %<%Y>-%<%02m>                                :MonthlyReview:\n"
-                      "<%<%Y-%m-%d %a 23:00>>\n"
-                      "\n"
-                      "  本月亮点\n"
-                      "  - %?\n"
-                      "  本月要点\n"
-                      "  - \n"
-                      "  下月计划\n"
-                      "  - \n")
-             :kill-buffer t)
-            ))
+  ;; Capture 设置及模板
+  (global-set-key (kbd "C-M-r") 'org-capture)
+  (setq org-directory "~/.dropbox/GTD/")
+  (setq org-default-notes-file (concat org-directory "/gtd"))
+  (setq org-capture-templates
+        `(("t" "Todo" entry (file+headline "gtd" "Inbox") "* TODO %? %^g\n  %u")
+          ("n" "Note" entry (file "notes") "* %?\n  %T" :prepend t)
+          ("d" "Diary" entry (file+datetree "journal.org.gpg")
+           "* %^{Title} %^g\n%T\n\n  %?" :kill-buffer t)
+          ("o" "DailyLog" entry (file+datetree+prompt "journal.org.gpg")
+           ,(concat "* Daily Log                                                     :DailyLog:\n"
+                    "<%<%Y-%m-%d %a 23:59>>\n"
+                    "\n"
+                    "  %?\n"
+                    "  - 今日计划\n"
+                    "    + \n"
+                    "  - 今日一览\n"
+                    "    + 工作 :: \n"
+                    "    + 亲友 :: \n"
+                    "    + 健康 :: \n"
+                    "    + 学习 :: \n"
+                    "    + 心智 :: \n"
+                    "  - 今日日志\n"
+                    "    + \n"
+                    "  - 今日打分 %u [%]\n"
+                    "    + [ ] 锻炼英语听力\n"
+                    "    + [ ] 学习 10 个新单词、词组\n"
+                    "    + [ ] 复习完背单词软件中的词条\n"
+                    "    + [ ] 执行每次护眼提示\n"
+                    "    + [ ] 只在工作时段末上网\n"
+                    "    + [ ] 对工作进展满意\n"
+                    "    + [ ] 半夜 12 点前睡觉\n"
+                    "    + [ ] 专心上厕所")
+           :kill-buffer t)
+          ("w" "WeeklyReview" entry (file+datetree+prompt "journal.org.gpg")
+           ,(concat "* Weekly Review %<%Y>-W%<%V>                                    :WeeklyReview:\n"
+                    "<%<%Y-%m-%d %a 12:00>>\n"
+                    "\n"
+                    "  本周亮点\n"
+                    "  - %?\n"
+                    "  本周一览\n"
+                    "  - \n"
+                    "  本周遗憾\n"
+                    "  - \n"
+                    "  下周计划\n"
+                    "  - \n")
+           :kill-buffer t)
+          ("m" "MonthlyReview" entry (file+datetree+prompt "journal.org.gpg")
+           ,(concat "* Monthly Review %<%Y>-%<%02m>                                :MonthlyReview:\n"
+                    "<%<%Y-%m-%d %a 23:00>>\n"
+                    "\n"
+                    "  本月亮点\n"
+                    "  - %?\n"
+                    "  本月要点\n"
+                    "  - \n"
+                    "  下月计划\n"
+                    "  - \n")
+           :kill-buffer t)
+          ))
 
-    ;; 微调 Refile 操作
-    (setq org-refile-targets '((org-agenda-files . (:maxlevel . 2))))
-    (setq org-completion-use-ido t)       ; 使用 ido 方式的补全 (v6.13)
-    (setq org-refile-use-outline-path t)  ; 使用多级的 path（设为 'file 则包括文件名）
-    (setq org-outline-path-complete-in-steps t) ; 多级的 path 依次完成
+  ;; 微调 Refile 操作
+  (setq org-refile-targets '((org-agenda-files . (:maxlevel . 2))))
+  (setq org-completion-use-ido t)       ; 使用 ido 方式的补全 (v6.13)
+  (setq org-refile-use-outline-path t)  ; 使用多级的 path（设为 'file 则包括文件名）
+  (setq org-outline-path-complete-in-steps t) ; 多级的 path 依次完成
 
-    ;; 在 Agenda 中高亮当前行
-    (add-hook 'org-agenda-mode-hook
-              '(lambda ()
-                 (hl-line-mode 1)))
+  ;; 在 Agenda 中高亮当前行
+  (add-hook 'org-agenda-mode-hook
+            '(lambda ()
+               (hl-line-mode 1)))
 
-    ;; 设定 agenda 文件列表
-    (setq org-agenda-files '("~/.dropbox/GTD/gtd"))
+  ;; 设定 agenda 文件列表
+  (setq org-agenda-files '("~/.dropbox/GTD/gtd"))
 
-    ;; Agenda 中不显示某些继承的 tag
-    (setq org-tags-exclude-from-inheritance '("PROJECT"))
+  ;; Agenda 中不显示某些继承的 tag
+  (setq org-tags-exclude-from-inheritance '("PROJECT"))
 
-    ;; 以类似设置 TAG 的界面设置 TODO KEYWORD
-    (setq org-use-fast-todo-selection t)
+  ;; 以类似设置 TAG 的界面设置 TODO KEYWORD
+  (setq org-use-fast-todo-selection t)
 
-    ;; 在 Agenda Overview 中不显示已完成的任务
-    (setq org-agenda-skip-deadline-if-done t)
-    (setq org-agenda-skip-scheduled-if-done t)
-    ;; Agenda Overview 显示的天数
-    (setq org-agenda-ndays 7)
-    ;; Agenda Overview 从周几开始显示，缺省 1 表示周一，nil 表示当天
-    (setq org-agenda-start-on-weekday nil)
+  ;; 在 Agenda Overview 中不显示已完成的任务
+  (setq org-agenda-skip-deadline-if-done t)
+  (setq org-agenda-skip-scheduled-if-done t)
+  ;; Agenda Overview 显示的天数
+  (setq org-agenda-ndays 7)
+  ;; Agenda Overview 从周几开始显示，缺省 1 表示周一，nil 表示当天
+  (setq org-agenda-start-on-weekday nil)
 
-    ;; 设置 TODO 关键字的 face
-    (setq org-todo-keyword-faces
-          '(("TODO"      . org-todo)
-            ("ONGO"      . (:foreground "red" :weight bold))
-            ("WAIT"      . (:foreground "grey80" :background "grey40"))
-            ("DELE"      . (:foreground "grey40"))
-            ("CANCELED"  . (:foreground "blue" :weight bold))))
+  ;; 设置 TODO 关键字的 face
+  (setq org-todo-keyword-faces
+        '(("TODO"      . org-todo)
+          ("ONGO"      . (:foreground "red" :weight bold))
+          ("WAIT"      . (:foreground "grey80" :background "grey40"))
+          ("DELE"      . (:foreground "grey40"))
+          ("CANCELED"  . (:foreground "blue" :weight bold))))
 
-    ;; 设置 TAG 的 face (v6.14)
-    (setq org-tag-faces
-          '(("PROJECT"    . org-level-2)))
+  ;; 设置 TAG 的 face (v6.14)
+  (setq org-tag-faces
+        '(("PROJECT"    . org-level-2)))
 
-    ;; 把任务的状态转换情况记录到 drawer 里，缺省为 LOGBOOK
-    ;; 该变量同时设置 clock 记录位置（org-clock-into-drawer）
-    (setq org-log-into-drawer t)
+  ;; 把任务的状态转换情况记录到 drawer 里，缺省为 LOGBOOK
+  ;; 该变量同时设置 clock 记录位置（org-clock-into-drawer）
+  (setq org-log-into-drawer t)
 
-    ;; 调整 Clock（计时）行为
-    (setq org-clock-persist t) ; 保存计时的内容，以及计时历史；启动 Emacs 时重新载入
-    (setq org-clock-persistence-insinuate) ; Emacs 重启后继续计时
-    (setq org-clock-in-resume t)           ; 计时时继续未完成的计时
-    (setq org-clock-into-drawer t)         ; 计时信息记录到 drawer 里
-    (setq org-clock-out-remove-zero-time-clocks t) ; 如果任务耗时为 0，删去计时内容
+  ;; 调整 Clock（计时）行为
+  (setq org-clock-persist t) ; 保存计时的内容，以及计时历史；启动 Emacs 时重新载入
+  (setq org-clock-persistence-insinuate) ; Emacs 重启后继续计时
+  (setq org-clock-in-resume t)           ; 计时时继续未完成的计时
+  (setq org-clock-into-drawer t)         ; 计时信息记录到 drawer 里
+  (setq org-clock-out-remove-zero-time-clocks t) ; 如果任务耗时为 0，删去计时内容
 
-    ;; 在 Clock Report 中最多显示第 4 级的任务
-    (setq org-agenda-clockreport-parameter-plist '(:link t :maxlevel 4))
+  ;; 在 Clock Report 中最多显示第 4 级的任务
+  (setq org-agenda-clockreport-parameter-plist '(:link t :maxlevel 4))
 
-    ;; 自定义 Agenda Custom View
-    (setq org-agenda-custom-commands
-          '(("c" . "Context Agenda View")
-            ("co" agenda "Office Agenda"
-             ((org-agenda-skip-function
-               (lambda nil
-                 (org-agenda-skip-entry-if 'notregexp "OFFICE")))
-              (org-agenda-ndays 1)
-              (org-agenda-overriding-header "Today's Office tasks: ")))
-            ("cp" agenda "Office+Computer Agenda"
-             ((org-agenda-skip-function
-               (lambda nil
-                 (org-agenda-skip-entry-if 'notregexp "OFFICE\\|COMPUTER")))
-              (org-agenda-ndays 1)
-              (org-agenda-overriding-header "Today's Office+Computer tasks: ")))
-            ("ch" agenda "Home Agenda"
-             ((org-agenda-skip-function
-               (lambda nil
-                 (org-agenda-skip-entry-if 'notregexp "HOME")))
-              (org-agenda-ndays 1)
-              (org-agenda-overriding-header "Today's Office tasks: ")))
-            ("ci" agenda "Home+Computer Agenda"
-             ((org-agenda-skip-function
-               (lambda nil
-                 (org-agenda-skip-entry-if 'notregexp "HOME\\|COMPUTER")))
-              (org-agenda-ndays 1)
-              (org-agenda-overriding-header "Today's Home+Computer tasks: ")))
-            ("ce" agenda "Errand Agenda"
-             ((org-agenda-skip-function
-               (lambda nil
-                 (org-agenda-skip-entry-if 'notregexp "ERRAND")))
-              (org-agenda-ndays 1)
-              (org-agenda-overriding-header "Today's Errand tasks: ")))
-            ("u" alltodo ""
-             ((org-agenda-skip-function
-               (lambda nil
-                 (org-agenda-skip-entry-if 'scheduled 'deadline
-                                           'regexp "<[^>\n]+>")))
-              (org-agenda-overriding-header "Unscheduled TODO entries")))
-            ("x" . "Checklist Exporters")
-            ("xa" agenda "Agenda Checklist"
-             ((org-agenda-prefix-format " [ ] ")
-              (org-agenda-with-colors nil)
-              (org-agenda-remove-tags t)))
-            ("xc" "Context Checklist"
-             ((tags "PROJECT"
-                    ((org-agenda-overriding-header "PROJECT:")))
-              (tags "ANYWHERE"
-                    ((org-agenda-overriding-header "ANYWHERE:")))
-              (tags "OFFICE"
-                    ((org-agenda-overriding-header "OFFICE:")))
-              (tags "COMPUTER"
-                    ((org-agenda-overriding-header "COMPUTER:")))
-              (tags "HOME"
-                    ((org-agenda-overriding-header "HOME:")))
-              (tags "ERRAND"
-                    ((org-agenda-overriding-header "ERRAND:"))))
-             ((org-use-tag-inheritance nil)
-              (org-agenda-prefix-format " [ ] ")
-              (org-agenda-with-colors nil)
-              (org-agenda-remove-tags t)
-              (org-agenda-add-entry-text-maxlines 5)
-              (org-agenda-skip-function
-               (lambda nil
-                 (org-agenda-skip-entry-if 'regexp "DONE"))))))))
+  ;; 自定义 Agenda Custom View
+  (setq org-agenda-custom-commands
+        '(("c" . "Context Agenda View")
+          ("co" agenda "Office Agenda"
+           ((org-agenda-skip-function
+             (lambda nil
+               (org-agenda-skip-entry-if 'notregexp "OFFICE")))
+            (org-agenda-ndays 1)
+            (org-agenda-overriding-header "Today's Office tasks: ")))
+          ("cp" agenda "Office+Computer Agenda"
+           ((org-agenda-skip-function
+             (lambda nil
+               (org-agenda-skip-entry-if 'notregexp "OFFICE\\|COMPUTER")))
+            (org-agenda-ndays 1)
+            (org-agenda-overriding-header "Today's Office+Computer tasks: ")))
+          ("ch" agenda "Home Agenda"
+           ((org-agenda-skip-function
+             (lambda nil
+               (org-agenda-skip-entry-if 'notregexp "HOME")))
+            (org-agenda-ndays 1)
+            (org-agenda-overriding-header "Today's Office tasks: ")))
+          ("ci" agenda "Home+Computer Agenda"
+           ((org-agenda-skip-function
+             (lambda nil
+               (org-agenda-skip-entry-if 'notregexp "HOME\\|COMPUTER")))
+            (org-agenda-ndays 1)
+            (org-agenda-overriding-header "Today's Home+Computer tasks: ")))
+          ("ce" agenda "Errand Agenda"
+           ((org-agenda-skip-function
+             (lambda nil
+               (org-agenda-skip-entry-if 'notregexp "ERRAND")))
+            (org-agenda-ndays 1)
+            (org-agenda-overriding-header "Today's Errand tasks: ")))
+          ("u" alltodo ""
+           ((org-agenda-skip-function
+             (lambda nil
+               (org-agenda-skip-entry-if 'scheduled 'deadline
+                                         'regexp "<[^>\n]+>")))
+            (org-agenda-overriding-header "Unscheduled TODO entries")))
+          ("x" . "Checklist Exporters")
+          ("xa" agenda "Agenda Checklist"
+           ((org-agenda-prefix-format " [ ] ")
+            (org-agenda-with-colors nil)
+            (org-agenda-remove-tags t)))
+          ("xc" "Context Checklist"
+           ((tags "PROJECT"
+                  ((org-agenda-overriding-header "PROJECT:")))
+            (tags "ANYWHERE"
+                  ((org-agenda-overriding-header "ANYWHERE:")))
+            (tags "OFFICE"
+                  ((org-agenda-overriding-header "OFFICE:")))
+            (tags "COMPUTER"
+                  ((org-agenda-overriding-header "COMPUTER:")))
+            (tags "HOME"
+                  ((org-agenda-overriding-header "HOME:")))
+            (tags "ERRAND"
+                  ((org-agenda-overriding-header "ERRAND:"))))
+           ((org-use-tag-inheritance nil)
+            (org-agenda-prefix-format " [ ] ")
+            (org-agenda-with-colors nil)
+            (org-agenda-remove-tags t)
+            (org-agenda-add-entry-text-maxlines 5)
+            (org-agenda-skip-function
+             (lambda nil
+               (org-agenda-skip-entry-if 'regexp "DONE")))))))
 #+END_SRC
 
 ** Anything
