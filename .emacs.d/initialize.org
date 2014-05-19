@@ -3149,6 +3149,9 @@
            (0 'font-lock-warning-face t)))
      (";" ("[* ]\\*[ \t]*\\(\\w.*\\)\\*" nil nil
            (1 'font-lock-warning-face t)))))
+
+  ;; emacs-lisp-example-mode 用于 initialize.org，相应的代码不会用于初始化 Emacs
+  (defalias 'emacs-lisp-mode 'emacs-lisp-example-mode)
 #+END_SRC
 
 ** Ruby 开发环境
