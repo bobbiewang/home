@@ -7,7 +7,6 @@ umask 022
 ######################################################################
 
 export LANG=en_US.UTF-8
-export LC_CTYPE=zh_CN.UTF-8
 export LANGUAGE=en_US:en
 
 TZ='Asia/Shanghai'; export TZ
