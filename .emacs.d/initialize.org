@@ -4070,6 +4070,53 @@ yas-dropdown-prompt 需要 Dropdown List 的支持。
            (setq helm-ff-auto-update-initial-value t))))
 #+END_SRC
 
+** Projectile
+
+  [[https://github.com/bbatsov/projectile][Projectile]] 是 Emacs 的一个项目管理扩展。
+
+  Projectile 根据特定的目录名或者文件名识别一个目录是否是一个项目，可以
+自动支持 git、mercurial、darcs 和 bazaar 等版本库，以及 lein、maven、
+sbt、rebar 和 bundler 项目。如果项目目录不使用以上工具，可以在项目根目
+录下创建一个 .projectile 文件。
+
+  下面是 Projectile 的常用命令。
+
+  | 键绑定    | 命令                            | 描述                                   |
+  |-----------+---------------------------------+----------------------------------------|
+  | C-c p C-h |                                 | 查看 Projectile 所有键绑定             |
+  |-----------+---------------------------------+----------------------------------------|
+  | C-c p f   | projectile-find-file            | 列出当前项目的文件                     |
+  | C-c p d   | projectile-find-dir             | 列出当前项目的目录                     |
+  | C-c p T   | projectile-find-test-file       | 列出测试文件（specs、features）        |
+  | C-c p b   | projectile-switch-to-buffer     | 列出当前项目打开的文件                 |
+  | C-c p S   | projectile-save-project-buffers | 保存所有当前项目的文件                 |
+  |-----------+---------------------------------+----------------------------------------|
+  | C-c p k   | projectile-kill-buffers         | 关闭当前项目打开的文件                 |
+  |-----------+---------------------------------+----------------------------------------|
+  | C-c p g   | projectile-grep                 | 在项目文件中 grep                      |
+  | C-c p a   | projectile-ack                  | 在项目文件中 ack，需要 ack-and-a-half  |
+  | C-c p o   | projectile-multi-occur          | 在当前项目打开的文件中运行 multi-occur |
+  |-----------+---------------------------------+----------------------------------------|
+  | C-c p v   | projectile-vc                   | 在项目根目录运行 vc-dir                |
+  |-----------+---------------------------------+----------------------------------------|
+  | C-c p R   | projectile-regenerate-tags      | 重新生成项目的 TAGS 文件               |
+  | C-c p j   | projectile-find-tag             | 在项目的 TAGS 文件中搜索               |
+  |-----------+---------------------------------+----------------------------------------|
+  | C-c p c   | projectile-compile-project      | 在项目根目录运行编译命令               |
+  | C-c p p   | projectile-test-project         | 在项目根目录运行测试命令               |
+  | C-c p t   |                                 | 在实现文件和测试文件之间切换           |
+  | C-c p !   |                                 | 在项目根目录运行 shell-command         |
+  | C-c p &   |                                 | 在项目根目录运行 async-shell-command   |
+  |-----------+---------------------------------+----------------------------------------|
+
+#+BEGIN_SRC emacs-lisp
+  ;;; 全局使用 Projectile
+  (projectile-global-mode)
+
+  ;;; 使用外部的 find 命令索引文件
+  (setq projectile-indexing-method 'native)
+#+END_SRC
+
 * Tools
 ** Tramp
 
