@@ -2060,7 +2060,7 @@
 
 #+BEGIN_SRC emacs-lisp
   ;; 设置常用的文件和目录，可以用 "C-x r j R" 快速访问
-  (set-register ?e '(file . "~/.emacs.d/elisp-init/wb-emacs-init.el"))
+  (set-register ?e '(file . "~/.emacs.d/initialize.org"))
 
   ;; Emacs 内置的 bookmark
   ;; bookmark-set    C-x r m
