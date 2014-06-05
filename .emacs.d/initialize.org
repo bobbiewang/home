@@ -2972,19 +2972,56 @@ yas-dropdown-prompt 需要 Dropdown List 的支持。
 #+END_SRC
 
 ** C/C++ 开发环境
+*** Doxymacs
+
+  [[http://doxymacs.sourceforge.net/][Doxymacs]] 辅助在 Emacs 中使用 Doxygen，该扩展提供以下功能。
+  - 在 Emacs 中查看 Symbol 的文档
+  - 在源代码中插入 Doxygen 风格的注释
+  - 高亮 Doxygen 关键字
+
+  下面是 Doxymacs 的常用命令。
+
+  | 键绑定    | 命令                                     | 描述                         |
+  |-----------+------------------------------------------+------------------------------|
+  | C-d d RET | doxymacs-insert-command                  | 插入 Doxygen 命令            |
+  | C-c d f   | doxymacs-insert-function-comment         | 插入 Function 注释           |
+  | C-c d i   | doxymacs-insert-file-comment             | 插入 File 注释               |
+  | C-c d ;   | doxymacs-insert-member-comment           | 插入 Member Variable 注释    |
+  | C-d d m   | doxymacs-insert-blank-multiline-comment  | 插入 Multi-line 注释         |
+  | C-d d s   | doxymacs-insert-blank-singleline-comment | 插入 Single-line 注释        |
+  | C-c d @   | doxymacs-insert-grouping-comment         | 插入 Grouping 注释           |
+  |-----------+------------------------------------------+------------------------------|
+  | C-c d ?   | doxymacs-lookup                          | 查找当前 Symbol 的文档       |
+  | C-c d r   | doxymacs-rescan-tags                     | 重新扫描 Doxygen 的 Tag 文件 |
 
 #+BEGIN_SRC emacs-lisp
-  ;; CC Mode 配置  http://cc-mode.sourceforge.net/
-  (robust-require cc-mode)
+  (with-library "doxymacs"
+    ;; 使用 C++ 风格的注释（缺省是 JavaDoc）
+    (setq doxymacs-doxygen-style "C++")
+    (autoload 'doxymacs-mode "doxymacs"
+      "Minor mode for using/creating Doxygen documentation" t))
+#+END_SRC
 
+*** Cscope
+
+#+BEGIN_SRC emacs-lisp-example
   (with-library "xcscope"
     (eval-after-load "xcscope"
       '(progn
          (define-key cscope-list-entry-keymap "q" 'wb-quit-buffer))))
+#+END_SRC
 
+*** Global
+**** gtags
+
+#+BEGIN_SRC emacs-lisp-example
   (with-library "gtags"
       (autoload 'gtags-mode "gtags" "" t))
+#+END_SRC
 
+**** xgtags
+
+#+BEGIN_SRC emacs-lisp-example
   (with-library "xgtags"
     (setq xgtags-overwrite-global-bindings nil) ; 不覆盖 etags 的 M-. M-* 等键绑定
     (autoload 'xgtags-mode "xgtags" "" t)
@@ -3010,21 +3047,38 @@ yas-dropdown-prompt 需要 Dropdown List 的支持。
                    (lambda ()
                      (define-key xgtags-select-mode-map (kbd "o")
                        'xgtags-select-tag-near-point))))))
+#+END_SRC
 
-  (with-library "doxymacs"
-    (setq doxymacs-doxygen-style "C++")
-    (autoload 'doxymacs-mode "doxymacs"
-      "Minor mode for using/creating Doxygen documentation" t))
+**** ggtags
 
-  ;; emacs21 好像没有 number-sequence 函数，那就用其它代替好了。比如
-  ;; (require 'cl) 后用 loop 命令，或者这样
-  (when (not (fboundp 'number-sequence))
-    (defun number-sequence (from &optional to inc)
-      (if (and to (<= from to))
-          (cons from
-                (number-sequence (+ from (or inc 1)) to inc)))))
-  ;; 注意上面的定义虽然比 subr.el 中简洁，但是会出错。只有没有 number-sequence
-  ;; 这个函数时才用。
+  [[https://github.com/leoliu/ggtags][ggtags]] 是 Projectile 的推荐。安装了 ggtags 后，可以使用 Projectile 的
+键绑定 C-c p R 创建 Global 的 Tag 文件。
+
+  下面是 ggtags 的常用命令。
+
+  | 键绑定  | 命令                   | 描述                                              |
+  |---------+------------------------+---------------------------------------------------|
+  | M-.     | ggtags-find-tag-dwim   | 查找 Definition Tag、References 或者 Include File |
+  | C-u M-. |                        | 查找 Definition Tag                               |
+  | M-,     | tags-loop-continue     | 继续搜索 Tag                                      |
+  | M-*     | pop-tag-mark           | 返回搜索开始的地方                                |
+  | C-M-.   | ggtags-find-tag-regexp | 以正则表达式搜索 Tag                              |
+
+  如果找到多条匹配结果，会弹出一个名为 =*ggtags-global*= 的 Buffer，可
+以用 M-n、M-p 浏览，用 RET 选择结果。选择结果后还可以用 M-, 继续搜索。
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'c-mode-common-hook
+            (lambda ()
+              (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
+                (ggtags-mode 1))))
+#+END_SRC
+
+*** CC Mode
+
+#+BEGIN_SRC emacs-lisp
+  ;; CC Mode 配置  http://cc-mode.sourceforge.net/
+  (robust-require cc-mode)
 
   ;; 所有基于 C 的语言的通用设置
   (defun wb-c-mode-common-hook()
@@ -3037,14 +3091,13 @@ yas-dropdown-prompt 需要 Dropdown List 的支持。
             defun-close-semi))
     ;; tab 设置
     (setq tab-width 4)
-    (set (make-local-variable 'tab-stop-list)
-         (number-sequence tab-width 80 tab-width))
     (setq c-basic-offset tab-width)
     ;; xcscope
-    (robust-require xcscope)
+    ;; (robust-require xcscope)
     ;; gtags，优先使用 xgtags-mode
-    (cond ((fboundp 'xgtags-mode) (xgtags-mode 1))
-          ((fboundp 'gtags-mode)  (gtags-mode 1)))
+    ;; (cond ((fboundp 'xgtags-mode) (xgtags-mode 1))
+    ;;      ((fboundp 'gtags-mode)  (gtags-mode 1)))
+    ;; (ggtags-mode 1)
     ;; CEDET
     ;; (if (fboundp 'semantic-mode)
     ;;     (semantic-mode 1))
