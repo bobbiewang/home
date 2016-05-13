@@ -76,8 +76,6 @@ RPROMPT="%{$fg_bold[blue]%}[%*]%{$reset_color%}"
 alias _='sudo'
 alias please='sudo'
 
-alias ls='ls --color=auto'
-
 ######################################################################
 # cd
 ######################################################################
@@ -102,6 +100,17 @@ alias 6='cd -6'
 alias 7='cd -7'
 alias 8='cd -8'
 alias 9='cd -9'
+
+######################################################################
+# ls
+######################################################################
+
+LS_OPTIONS='--color=auto -h'
+
+alias ls="ls $LS_OPTIONS"
+alias  l="ls $LS_OPTIONS"
+alias ll="ls $LS_OPTIONS -l"
+alias la="ls $LS_OPTIONS -lA"
 
 # Local Variables:
 # coding: utf-8-unix
