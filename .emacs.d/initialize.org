@@ -4038,6 +4038,28 @@ yas-dropdown-prompt 需要 Dropdown List 的支持。
                (org-agenda-skip-entry-if 'regexp "DONE")))))))
 #+END_SRC
 
+** Markdown
+
+  在 Markdown Mode 中使用 Org Mode 的表格编辑方式编辑表格，但是在保存
+的时候要将 Org Mode 的表格转换为 Markdown Mode 的表格。
+
+#+BEGIN_SRC emacs-lisp
+  (defun cleanup-org-tables ()
+    (save-excursion
+      (goto-char (point-min))
+      (while (search-forward "-+-" nil t) (replace-match "-|-"))))
+
+  (when (fboundp 'org-mode)
+    (eval-after-load "markdown"
+      '(progn
+         (require 'org-table))))
+
+  (add-hook 'markdown-mode-hook 'orgtbl-mode)
+  (add-hook 'markdown-mode-hook
+            (lambda ()
+              (add-hook 'after-save-hook 'cleanup-org-tables  nil 'make-it-local)))
+#+END_SRC
+
 ** Helm
 
   Helm 是 Anything 的后继者，要逐渐将 Anything 的功能转过来。
