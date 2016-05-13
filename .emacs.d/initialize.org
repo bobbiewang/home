@@ -18,6 +18,87 @@
 #+END_SRC
 
 * 配置辅助函数、变量、常量
+** 判断环境
+
+#+BEGIN_SRC emacs-lisp
+  (defconst *win32p*
+      (eq system-type 'windows-nt)
+    "Are we running on a WinTel system?")
+
+  (defconst *cygwinp*
+      (eq system-type 'cygwin)
+    "Are we running on a WinTel cygwin system?")
+
+  (defconst *linuxp*
+      (or (eq system-type 'gnu/linux)
+          (eq system-type 'linux))
+    "Are we running on a GNU/Linux system?")
+
+  (defconst *unixp*
+    (or (eq system-type 'usg-unix-v)
+        (eq system-type 'berkeley-unix))
+    "Are we running unix")
+
+  (defconst *linux-x-p*
+      (and window-system *linuxp*)
+    "Are we running under X on a GNU/Linux system?")
+
+  (defconst *officep*
+    (or (string-match system-name "phoenix")
+        (string-match system-name "APOLLO")
+        (string-match system-name "linux6")
+        (string-match system-name "linux11"))
+    "Are we running in office?")
+
+  (defconst *homep*
+    (or (string-match system-name "andlinux")
+        (string-match system-name "SUNLAND"))
+    "Are we running at home?")
+
+  (defconst *office-win32-p*
+    (and *officep* *win32p*)
+    "Are we running in office on a WinTel system?")
+
+  (defconst *office-linux-p*
+    (and *officep* *linuxp*)
+    "Are we running in office on a GNU/Linux system?")
+
+  (defconst *home-win32-p*
+    (and *homep* *win32p*)
+    "Are we running at home on a WinTel system?")
+
+  (defconst *home-linux-p*
+    (and *homep* *linuxp*)
+    "Are we running at home on a GNU/Linux system?")
+
+  (defconst *xemacsp* (featurep 'xemacs)
+    "Are we running XEmacs?")
+
+  (defconst *emacs>=21p*
+    (and (not *xemacsp*)
+         (or (= emacs-major-version 21)
+             (= emacs-major-version 22)
+             (= emacs-major-version 23)))
+    "Are we running GNU Emacs 21 or above?")
+
+  (defconst *emacs<=22p*
+    (and (not *xemacsp*)
+         (or (= emacs-major-version 21)
+             (= emacs-major-version 22)))
+    "Are we running GNU Emacs 22 or older?")
+
+  (defconst *emacs>=23p*
+    (and (not *xemacsp*)
+         (>= emacs-major-version 23))
+    "Are we running GNU Emacs 23 or above?")
+
+  (defconst *emacs>=24.4p*
+    (and (not *xemacsp*)
+         (>= emacs-major-version 24)
+         (>= emacs-minor-version 4))
+    "Are we running GNU Emacs 24.4 or above?")
+#+END_SRC
+
 ** 加载管理
 
 #+BEGIN_SRC emacs-lisp
@@ -29,30 +110,36 @@
   (defvar *emacs-load-time-alist* nil "各扩展加载的时间")
 
   (defun deh-log-info (msg)
-    (save-excursion
-      (set-buffer (get-buffer-create "*Messages*"))
-      ;; 输出信息到 minibuffer，这个函数同时将信息输出到 *Messages*
-      (message msg)
-      ;; 删除 *Messages* 中的信息
-      (previous-line)
-      (kill-whole-line 1)
-      ;; 在 *Messages* 中输出彩色信息
-      (put-text-property 0 (length msg) 'face 'font-lock-builtin-face msg)
-      (insert msg)
-      (insert "\n")))
+    (if *emacs>=24.4p*
+        (progn
+          (message msg))
+      (save-excursion
+        (set-buffer (get-buffer-create "*Messages*"))
+        ;; 输出信息到 minibuffer，这个函数同时将信息输出到 *Messages*
+        (message msg)
+        ;; 删除 *Messages* 中的信息
+        (previous-line)
+        (kill-whole-line 1)
+        ;; 在 *Messages* 中输出彩色信息
+        (put-text-property 0 (length msg) 'face 'font-lock-builtin-face msg)
+        (insert msg)
+        (insert "\n"))))
 
   (defun deh-log-warn (msg)
-    (save-excursion
-      (set-buffer (get-buffer-create "*Messages*"))
-      ;; 输出信息到 minibuffer，这个函数同时将信息输出到 *Messages*
-      (message msg)
-      ;; 删除 *Messages* 中的信息
-      (previous-line)
-      (kill-whole-line 1)
-      ;; 在 *Messages* 中输出彩色信息
-      (put-text-property 0 (length msg) 'face 'font-lock-warning-face msg)
-      (insert msg)
-      (insert "\n")))
+    (if *emacs>=24.4p*
+        (progn
+          (message msg))
+      (save-excursion
+        (set-buffer (get-buffer-create "*Messages*"))
+        ;; 输出信息到 minibuffer，这个函数同时将信息输出到 *Messages*
+        (message msg)
+        ;; 删除 *Messages* 中的信息
+        (previous-line)
+        (kill-whole-line 1)
+        ;; 在 *Messages* 中输出彩色信息
+        (put-text-property 0 (length msg) 'face 'font-lock-warning-face msg)
+        (insert msg)
+        (insert "\n"))))
 
   (defun deh-load-time (name)
     "输出加载当前扩展的时间"
@@ -199,81 +286,6 @@
           (display-buffer "*Messages*") ;; display-buffer does the job.
           (redisplay t)
           (setq init-file-had-error t)))))
-#+END_SRC
-
-** 判断环境
-
-#+BEGIN_SRC emacs-lisp
-  (defconst *win32p*
-      (eq system-type 'windows-nt)
-    "Are we running on a WinTel system?")
-
-  (defconst *cygwinp*
-      (eq system-type 'cygwin)
-    "Are we running on a WinTel cygwin system?")
-
-  (defconst *linuxp*
-      (or (eq system-type 'gnu/linux)
-          (eq system-type 'linux))
-    "Are we running on a GNU/Linux system?")
-
-  (defconst *unixp*
-    (or (eq system-type 'usg-unix-v)
-        (eq system-type 'berkeley-unix))
-    "Are we running unix")
-
-  (defconst *linux-x-p*
-      (and window-system *linuxp*)
-    "Are we running under X on a GNU/Linux system?")
-
-  (defconst *officep*
-    (or (string-match system-name "phoenix")
-        (string-match system-name "APOLLO")
-        (string-match system-name "linux6")
-        (string-match system-name "linux11"))
-    "Are we running in office?")
-
-  (defconst *homep*
-    (or (string-match system-name "andlinux")
-        (string-match system-name "SUNLAND"))
-    "Are we running at home?")
-
-  (defconst *office-win32-p*
-    (and *officep* *win32p*)
-    "Are we running in office on a WinTel system?")
-
-  (defconst *office-linux-p*
-    (and *officep* *linuxp*)
-    "Are we running in office on a GNU/Linux system?")
-
-  (defconst *home-win32-p*
-    (and *homep* *win32p*)
-    "Are we running at home on a WinTel system?")
-
-  (defconst *home-linux-p*
-    (and *homep* *linuxp*)
-    "Are we running at home on a GNU/Linux system?")
-
-  (defconst *xemacsp* (featurep 'xemacs)
-    "Are we running XEmacs?")
-
-  (defconst *emacs>=21p*
-    (and (not *xemacsp*)
-         (or (= emacs-major-version 21)
-             (= emacs-major-version 22)
-             (= emacs-major-version 23)))
-    "Are we running GNU Emacs 21 or above?")
-
-  (defconst *emacs<=22p*
-    (and (not *xemacsp*)
-         (or (= emacs-major-version 21)
-             (= emacs-major-version 22)))
-    "Are we running GNU Emacs 22 or older?")
-
-  (defconst *emacs>=23p*
-    (and (not *xemacsp*)
-         (>= emacs-major-version 23))
-    "Are we running GNU Emacs 23 or above?")
 #+END_SRC
 
 * 加载 Custom 文件
@@ -995,8 +1007,9 @@
 
 #+BEGIN_SRC emacs-lisp
   (defvar bw/elpa-packages
-    '(auctex auto-complete color-theme helm ido-vertical-mode magit markdown-mode
-             org projectile smex undo-tree yasnippet)
+    '(ack-and-a-half auctex auto-complete color-theme helm helm-gtags helm-projectile
+                     ido-vertical-mode magit markdown-mode org projectile smex undo-tree
+                     yasnippet)
     "A list of packages those are managed by ELPA.")
 #+END_SRC
 
@@ -2128,7 +2141,6 @@
        (message "Loading file cache...")
        (file-cache-add-directory-using-find "~/.emacs.d/muse/")
        (file-cache-add-directory-list (list "~/" "~/bin"))
-       (file-cache-add-directory "~/.emacs.d/elisp-init")
        (file-cache-add-file-list (list "~/.bash_profile" "~/.bashrc"))))
 
   (defun file-cache-ido-find-file (file)
@@ -2979,6 +2991,13 @@ yas-dropdown-prompt 需要 Dropdown List 的支持。
   - 在源代码中插入 Doxygen 风格的注释
   - 高亮 Doxygen 关键字
 
+  Doxygen 注释有多种风格，Doxymacs 缺省使用 JavaDoc 风格，可选 Qt、C++、
+C++! 等。
+
+#+BEGIN_SRC emacs-lisp-example
+  (setq doxymacs-doxygen-style "C++")
+#+END_SRC
+
   下面是 Doxymacs 的常用命令。
 
   | 键绑定    | 命令                                     | 描述                         |
@@ -2996,8 +3015,6 @@ yas-dropdown-prompt 需要 Dropdown List 的支持。
 
 #+BEGIN_SRC emacs-lisp
   (with-library "doxymacs"
-    ;; 使用 C++ 风格的注释（缺省是 JavaDoc）
-    (setq doxymacs-doxygen-style "C++")
     (autoload 'doxymacs-mode "doxymacs"
       "Minor mode for using/creating Doxygen documentation" t))
 #+END_SRC
@@ -3728,45 +3745,45 @@ yas-dropdown-prompt 需要 Dropdown List 的支持。
 
   ;; LaTeX 支持 ;;
 
-  (require 'org-latex)
-
-  ;; 增加自己输出类。使用方法：#+LaTeX_CLASS: wb-org-articel
-  (add-to-list 'org-export-latex-classes
-               `("wb-org-article"
-                 ,(concat "\\documentclass[a4paper,12pt]{scrartcl}\n"
-                          "\\usepackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}\n"
-                          "\\usepackage[T1]{fontenc}\n"
-                          "\\usepackage{fontspec}\n"
-                          "\\setmainfont[Mapping=tex-text]{Times New Roman}\n"
-                          "\\setsansfont[Mapping=tex-text]{Tahoma}\n"
-                          "\\setmonofont{Courier New}\n"
-                          "\\usepackage{indentfirst}\n"
-                          "\\usepackage{setspace}\n"
-                          "\\onehalfspacing\n"
-                          "\\usepackage[svgnames,table]{xcolor}\n"
-                          "\\usepackage[colorlinks,linkcolor=RoyalBlue,bookmarks]{hyperref}\n"
-                          "\\usepackage{listings}\n"
-                          "\\lstdefinelanguage{lsc-acd}{morecomment=[l]{\\#},morestring=[b]''}\n"
-                          "[NO-DEFAULT-PACKAGES]\n"
-                          "[NO-PACKAGES]")
-                 ("\\section{%s}" . "\\section*{%s}")
-                 ("\\subsection{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-
-  ;; 用 listings 输出代码块
-  (add-to-list 'org-export-latex-packages-alist '("" "xcolor"))
-  (add-to-list 'org-export-latex-packages-alist '("" "listings"))
-  (setq org-export-latex-listings t)
-  (setq org-export-latex-listings-options
-        '(("frame"            "shadowbox")
-          ("showstringspaces" "false")
-          ("basicstyle"       "\\small\\ttfamily")
-          ("rulesepcolor"     "\\color{lightgray}")
-          ("columns"          "fullflexible")
-          ("aboveskip"        "1em")
-          ("breaklines"       "true")))
+  ;;; (require 'org-latex)
+  ;;;
+  ;;; ;; 增加自己输出类。使用方法：#+LaTeX_CLASS: wb-org-articel
+  ;;; (add-to-list 'org-export-latex-classes
+  ;;;              `("wb-org-article"
+  ;;;                ,(concat "\\documentclass[a4paper,12pt]{scrartcl}\n"
+  ;;;                         "\\usepackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}\n"
+  ;;;                         "\\usepackage[T1]{fontenc}\n"
+  ;;;                         "\\usepackage{fontspec}\n"
+  ;;;                         "\\setmainfont[Mapping=tex-text]{Times New Roman}\n"
+  ;;;                         "\\setsansfont[Mapping=tex-text]{Tahoma}\n"
+  ;;;                         "\\setmonofont{Courier New}\n"
+  ;;;                         "\\usepackage{indentfirst}\n"
+  ;;;                         "\\usepackage{setspace}\n"
+  ;;;                         "\\onehalfspacing\n"
+  ;;;                         "\\usepackage[svgnames,table]{xcolor}\n"
+  ;;;                         "\\usepackage[colorlinks,linkcolor=RoyalBlue,bookmarks]{hyperref}\n"
+  ;;;                         "\\usepackage{listings}\n"
+  ;;;                         "\\lstdefinelanguage{lsc-acd}{morecomment=[l]{\\#},morestring=[b]''}\n"
+  ;;;                         "[NO-DEFAULT-PACKAGES]\n"
+  ;;;                         "[NO-PACKAGES]")
+  ;;;                ("\\section{%s}" . "\\section*{%s}")
+  ;;;                ("\\subsection{%s}" . "\\subsection*{%s}")
+  ;;;                ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+  ;;;                ("\\paragraph{%s}" . "\\paragraph*{%s}")
+  ;;;                ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+  ;;;
+  ;;; ;; 用 listings 输出代码块
+  ;;; (add-to-list 'org-export-latex-packages-alist '("" "xcolor"))
+  ;;; (add-to-list 'org-export-latex-packages-alist '("" "listings"))
+  ;;; (setq org-export-latex-listings t)
+  ;;; (setq org-export-latex-listings-options
+  ;;;       '(("frame"            "shadowbox")
+  ;;;         ("showstringspaces" "false")
+  ;;;         ("basicstyle"       "\\small\\ttfamily")
+  ;;;         ("rulesepcolor"     "\\color{lightgray}")
+  ;;;         ("columns"          "fullflexible")
+  ;;;         ("aboveskip"        "1em")
+  ;;;         ("breaklines"       "true")))
 
   ;; 定义 Org 文档项目 ;;
 
@@ -4131,12 +4148,21 @@ sbt、rebar 和 bundler 项目。如果项目目录不使用以上工具，可�
   | C-c p &   |                                 | 在项目根目录运行 async-shell-command   |
   |-----------+---------------------------------+----------------------------------------|
 
+  在安装了 helm-projectile 后，多了下面的命令。
+
+  | 键绑定  | 命令            | 描述                                          |
+  |---------+-----------------+-----------------------------------------------|
+  | C-c p h | helm-projectile | 使用 Helm（替代 ido）的接口列出当前项目的文件 |
+
 #+BEGIN_SRC emacs-lisp
   ;;; 全局使用 Projectile
   (projectile-global-mode)
 
   ;;; 使用外部的 find 命令索引文件
   (setq projectile-indexing-method 'native)
+
+  ;;; 缓存文件索引的结果
+  (setq projectile-enable-caching t)
 #+END_SRC
 
 * Tools
