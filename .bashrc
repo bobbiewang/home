@@ -33,12 +33,6 @@ export LESS_TERMCAP_so=$'\E[38;5;246m'    # begin standout-mode - info box
 export LESS_TERMCAP_ue=$'\E[0m'           # end underline
 export LESS_TERMCAP_us=$'\E[04;38;5;146m' # begin underline
 
-# 如果确定系统安装了 Vim，可以用 Vim 打开 Man Pages
-# function cman() {
-#   /usr/bin/man $* | col -b | /usr/bin/vim -R -c 'set ft=man nomod nolist' -
-# }
-
-
 ######################################################################
 ## Emacs
 ######################################################################
@@ -83,6 +77,11 @@ alias gsr="gem search --remote"
 ######################################################################
 ## Git
 ######################################################################
+
+# 支持 Git 命令行补全
+if [ -f "~/bin/git-completion.bash" ]; then
+    source ~/bin/git-completion.bash
+fi
 
 # 根据是否需要 Proxy，设置 Git 命令的别名
 if [ -n "$http_proxy" ]; then
@@ -316,7 +315,7 @@ safe_rm () {
 ## 把常用目录加入 CDPATH
 ######################################################################
 
-CDPATH=./:../:~:~/devspace/:~/muse/:~/repos:$CDPATH
+CDPATH=./:../:~:$CDPATH
 export CDPATH
 
 # Local Variables:
