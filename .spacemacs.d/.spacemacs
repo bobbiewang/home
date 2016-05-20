@@ -265,8 +265,12 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+
+  ;; 即使在中文操作系统，mode-line 和 dired 等模式下星期、月份等信息不用中文
+  (setq system-time-locale "C")
+
   (when (display-graphic-p)
-    (spacemacs//set-monospaced-font   "Consolas" "微软雅黑" 22 24))
+    (spacemacs//set-monospaced-font   "Consolas" "微软雅黑" 18 20))
   (with-eval-after-load 'org
     (if (getenv "ORG_HOME")
         (setq org-directory (getenv "ORG_HOME"))
