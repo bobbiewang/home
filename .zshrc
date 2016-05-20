@@ -1,3 +1,5 @@
+PATH=/bin:/usr/bin:$PATH
+
 ######################################################################
 # Color
 ######################################################################
@@ -41,10 +43,10 @@ function spectrum_bls() {
 
 COLOR_NUM=8
 if hash tput 2>/dev/null; then
-    # Ê¹ÓÃ tput ÃüÁîÈ·¶¨ÖÕ¶ËÖ§³ÖµÄÑÕÉ«ÊıÄ¿
+    # ä½¿ç”¨ tput å‘½ä»¤ç¡®å®šç»ˆç«¯æ”¯æŒçš„é¢œè‰²æ•°ç›®
     COLOR_NUM=$(tput colors)
 elif echo $TERM | grep -E -e "-[0-9]+color$" > /dev/null 2>&1; then
-    # Í¨¹ı½âÎö TERM »·¾³±äÁ¿È·¶¨ÖÕ¶ËÖ§³ÖµÄÑÕÉ«ÊıÄ¿
+    # é€šè¿‡è§£æ TERM ç¯å¢ƒå˜é‡ç¡®å®šç»ˆç«¯æ”¯æŒçš„é¢œè‰²æ•°ç›®
     # TODO
 fi
    
@@ -75,3 +77,25 @@ alias _='sudo'
 alias please='sudo'
 
 alias ls='ls --color=auto'
+
+######################################################################
+# cd
+######################################################################
+
+setopt auto_pushd
+setopt pushd_ignore_dups
+setopt pushdminus
+alias d='dirs -v | head -10'
+
+alias -g ...='../..'
+alias -g ....='../../..'
+alias -g .....='../../../..'
+alias -g ......='../../../../..'
+
+alias -- -='cd -'
+
+# Local Variables:
+# coding: utf-8-unix
+# mode: outline-minor
+# outline-regexp: "^## "
+# End:
