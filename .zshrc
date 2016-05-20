@@ -1,7 +1,16 @@
-PATH=/bin:/usr/bin:$PATH
+umask 022
 
 ######################################################################
-# Color
+## 语言、时区
+######################################################################
+
+export LANG=en_US.UTF-8
+export LANGUAGE=en_US:en
+
+TZ='Asia/Shanghai'; export TZ
+
+######################################################################
+## Color
 ######################################################################
 
 # A script to make using 256 colors in zsh less painful.
@@ -59,7 +68,7 @@ else
 fi
 
 ######################################################################
-# Prompt
+## Prompt
 ######################################################################
 
 autoload -Uz colors && colors
@@ -69,15 +78,24 @@ PROMPT="
 RPROMPT="%{$fg_bold[blue]%}[%*]%{$reset_color%}"
 
 ######################################################################
-# Alias
+## Alias
 ######################################################################
 
 ## super user alias
 alias _='sudo'
 alias please='sudo'
 
+alias et="emacsclient -t"
+export ALTERNATE_EDITOR=""
+export EDITOR="emacsclient -t"
+export VISUAL="emacsclient -t"
+
+alias so="source"
+alias f="fg"
+alias j="jobs -l"
+
 ######################################################################
-# cd
+## cd
 ######################################################################
 
 setopt auto_pushd
@@ -111,6 +129,14 @@ alias ls="ls $LS_OPTIONS"
 alias  l="ls $LS_OPTIONS"
 alias ll="ls $LS_OPTIONS -l"
 alias la="ls $LS_OPTIONS -lA"
+
+######################################################################
+## 修改一些危险命令的缺省行为
+######################################################################
+
+alias mv='mv -i'
+alias cp='cp -i'
+alias rm='rm -i'
 
 # Local Variables:
 # coding: utf-8-unix
