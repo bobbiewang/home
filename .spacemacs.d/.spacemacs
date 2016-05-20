@@ -331,12 +331,17 @@ you should place your code here."
              :kill-buffer t)
             ))
     )
+
   ;; 使用对称加密
   (setq epa-file-encrypt-to nil)
   ;; 缓存密码
   (setq epa-file-cache-passphrase-for-symmetric-encryption t)
   ;; 允许 auto-saving
   (setq epa-file-inhibit-auto-save nil)
+
+  ;; 最大化 Emacs 窗口
+  (when (display-graphic-p)
+    (toggle-frame-maximized))
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
