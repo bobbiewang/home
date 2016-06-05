@@ -113,15 +113,20 @@ ORPHAN 05;48;5;160;38;5;51      # symlink to nonexistent file, or non-stat'able 
 ### OTHER_WRITABLE 34;42        # dir that is other-writable (o+w) and not sticky
 ### STICKY 37;44                # dir with the sticky bit set (+t) and not other-writable
 EXEC 01;31                      # This is for files with execute permission:
+.exe 01;31
+.bat 01;31
 
 # Programming Source Files
 
-.c               38;5;64
-.cpp             38;5;64
-.h               38;5;64
-*Makefile        38;5;64
-*Rakefile        38;5;64
-*build.xml       38;5;64
+.c              38;5;64
+.cc             38;5;64
+.cpp            38;5;64
+.h              38;5;64
+*Makefile       38;5;64
+*makefile       38;5;64
+*Rakefile       38;5;64
+*make.ut        38;5;64
+*build.xml      38;5;64
 
 # Files of special interest (base1 + bold)
 
@@ -161,9 +166,13 @@ EXEC 01;31                      # This is for files with execute permission:
 .tmp        38;5;240
 .temp       38;5;240
 .o          38;5;240
+.obj        38;5;240
 .pyc        38;5;240
 .class      38;5;240
 .cache      38;5;240
+*GPATH       38;5;240
+*GRTAGS      38;5;240
+*GTAGS       38;5;240
 
 ## Archives or compressed (violet + bold for compression)
 .tar    38;5;61
