@@ -3008,6 +3008,26 @@ yas-dropdown-prompt 需要 Dropdown List 的支持。
 #+END_SRC
 
 ** C/C++ 开发环境
+
+  参考资料：
+  - [[http://tuhdo.github.io/c-ide.html][C/C++ Development Environment for Emacs]]
+  - [[https://github.com/emacs-tw/awesome-emacs][Awesome Emacs]] 推荐的扩展
+    - CC Mode
+    - rtags
+    - ggtags
+    - irony-mode
+    - cmake-font-lock
+    - function-args
+    - Ebrowse
+  - Spacemacs 使用的扩展
+    - flycheck
+    - disaster
+    - clang-format
+    - Semantic
+    - cscope
+    - company-clang
+    - company-ycmd
+
 *** Doxymacs
 
   [[http://doxymacs.sourceforge.net/][Doxymacs]] 辅助在 Emacs 中使用 Doxygen，该扩展提供以下功能。
