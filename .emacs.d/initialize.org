@@ -2473,33 +2473,25 @@
          ;; 禁掉，用户需要的话再用 M-x auto-complete-mode 激活
          ;; (global-auto-complete-mode -1)
          ))
-    (require 'auto-complete-config)       ; 直接开启
+    ;; (require 'auto-complete-config)       ; 直接开启
     )
 
-  ;; M-x company-mode 激活，M-n、M-p 在候选内容中选择，C-s、C-r、C-o 在候
-  ;; 选内容中搜索
-  (with-library "company"
-    (autoload 'company-mode "company" nil t)
-    ;; 只使用部分 backend
-    (setq company-backends
-          '(company-elisp
-            ;; company-nxml
-            ;; company-css
-            ;; company-eclim
-            ;; company-semantic
-            ;; company-clang
-            ;; company-xcode
-            ;; company-ropemacs
-            (company-gtags
-             company-etags
-             company-dabbrev-code
-             ;; company-pysmell
-             company-keywords)
-            ;; company-oddmuse
-            company-files
-            company-dabbrev))
-    (setq company-idle-delay t)
-    (setq company-begin-commands '(self-insert-command)))
+#+END_SRC
+
+* Completion
+
+  | M-x company-mode     | 激活 Company 模式      |
+  | M-x company-complete | 补全命令，可以手动激发 |
+  | M-n、M-p             | 在候选内容中选择       |
+  | C-s、C-r、C-o        | 在候选内容中搜索       |
+
+#+BEGIN_SRC emacs-lisp
+    (with-library "company"
+      (autoload 'company-mode "company" nil t)
+      ;; 全局激活 Company Mode
+      (add-hook 'after-init-hook 'global-company-mode)
+      ;; 激发补全前等待时间，缺省是 0.5，修改成 0.1 会快一点
+      (setq company-idle-delay 0.1))
 #+END_SRC
 
 * Yasnippet
