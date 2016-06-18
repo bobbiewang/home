@@ -1132,6 +1132,10 @@
 
 *** 字体
 
+  参考资料
+  - [[https://github.com/tumashu/chinese-fonts-setup][chinese-fonts-setup]]
+  - [[http://baohaojun.github.io/perfect-emacs-chinese-font.html][狠狠地折腾了一把 Emacs 中文字体]]
+
 #+BEGIN_SRC emacs-lisp
   ;; Consolas 和雅黑的 2:1 组合
   ;; 18/20 20/22 22/24
