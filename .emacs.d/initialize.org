@@ -419,7 +419,7 @@
           ;; Don't want to do this to mail messages, etc.
           ;; Would an exclude list be better?
           ;; Error was occurring in VM-mode for some reason.
-          (when (memq major-mode '(emacs-lisp-mode org-mode c-mode c++-mode))
+          (when (memq major-mode '(emacs-lisp-mode c-mode c++-mode))
             (message "Cleaning up whitespace...")
             (delete-trailing-whitespace)
             (message "Cleaning up whitespace...done")
@@ -1136,54 +1136,18 @@
   ;; Consolas 和雅黑的 2:1 组合
   ;; 18/20 20/22 22/24
 
-  (when *win32p*
-    ;; 定义字体
-    (if *emacs<=22p*
-        ;; Emacs 22 定义字体的方法
-        (create-fontset-from-fontset-spec
-         (concat
-          "-outline-Consolas-normal-r-normal-normal-18-97-96-96-c-*-fontset-gbk,"
-          "chinese-gb2312:-outline-微软雅黑-normal-r-normal-*-20-*-96-96-c-*-iso10646-1,"
-          "mule-unicode-0100-24ff:-*-微软雅黑-normal-r-*-*-20-*-96-96-c-*-iso10646-1,"
-          "chinese-cns11643-5:-*-微软雅黑-normal-r-normal-*-20-*-96-96-c-*-iso10646-1,"
-          "chinese-cns11643-6:-*-微软雅黑-normal-r-normal-*-20-*-96-96-c-*-iso10646-1,"
-          "chinese-cns11643-7:-*-微软雅黑-normal-r-normal-*-20-*-96-96-c-*-iso10646-1"))
-      ;; Emacs 23 定义字体的方法
-      (create-fontset-from-fontset-spec
-       "-*-Consolas-normal-r-*-*-18-*-*-*-c-*-fontset-gbk")
-      (set-fontset-font
-       "fontset-default" nil
-       "-*-微软雅黑-normal-r-*-*-20-*-*-*-*-*-iso10646-1" nil 'prepend)
-      (set-fontset-font
-       "fontset-gbk" 'chinese-big5-1
-       "-*-微软雅黑-normal-r-*-*-20-*-*-*-*-*-iso10646-1" nil 'prepend)
-      (set-fontset-font
-       "fontset-gbk" 'chinese-big5-2
-       "-*-微软雅黑-normal-r-*-*-20-*-*-*-*-*-iso10646-1" nil 'prepend)
-      (set-fontset-font
-       "fontset-gbk" 'kana
-       "-*-微软雅黑-normal-r-*-*-20-*-*-*-*-*-iso10646-1" nil 'prepend)
-      (set-fontset-font
-       "fontset-gbk" 'han
-       "-*-微软雅黑-normal-r-*-*-20-*-*-*-*-*-iso10646-1" nil 'prepend)
-      (set-fontset-font
-       "fontset-gbk" 'gb18030
-       "-*-微软雅黑-normal-r-*-*-20-*-*-*-*-*-iso10646-1" nil 'prepend)
-      (set-fontset-font
-       "fontset-gbk" 'cjk-misc
-       "-*-微软雅黑-normal-r-*-*-20-*-*-*-*-*-iso10646-1" nil 'prepend)
-      (set-fontset-font
-       "fontset-gbk" 'symbol
-       "-*-微软雅黑-normal-r-*-*-20-*-*-*-*-*-iso10646-1" nil 'prepend))
+  (defun wb-set-mono-font ()
+    (interactive)
+    (progn
+      (set-frame-font "-outline-Consolas-normal-r-normal-normal-18-*-*-*-c-*-iso10646-1")
+      (dolist (charset '(kana han symbol cjk-misc bopomofo))
+        (set-fontset-font (frame-parameter nil 'font)
+                          charset (font-spec :family "Microsoft Yahei" :size 20)))))
+#+END_SRC
 
-    ;; 使用字体
-    (set-default-font "fontset-gbk")
+*** 其他
 
-    ;; 在 C-x 5 2 打开的 Frame 中也正常显示字体
-    (setq default-frame-alist
-          (append
-           '((font . "fontset-gbk")) default-frame-alist)))
-
+#+BEGIN_SRC emacs-lisp
   (when *win32p*
     ;; Windows 环境下使用 unical 识别编码
     (robust-require unicad))
@@ -2486,12 +2450,30 @@
   | C-s、C-r、C-o        | 在候选内容中搜索       |
 
 #+BEGIN_SRC emacs-lisp
-    (with-library "company"
-      (autoload 'company-mode "company" nil t)
-      ;; 全局激活 Company Mode
-      (add-hook 'after-init-hook 'global-company-mode)
-      ;; 激发补全前等待时间，缺省是 0.5，修改成 0.1 会快一点
-      (setq company-idle-delay 0.1))
+  (with-library "company"
+                (autoload 'company-mode "company" nil t)
+                ;; 使用支持的 Backends
+                (setq company-backends '(company-elisp
+                                         company-nxml
+                                         company-css
+                                         company-eclim
+                                         company-semantic
+                                         company-clang
+                                         company-xcode
+                                         ;; company-ropemacs
+                                         (company-gtags
+                                          company-etags
+                                          company-dabbrev-code
+                                          ;; company-pysmell
+                                          ;; company-keywords-alist
+                                          )
+                                         company-oddmuse
+                                         company-files
+                                         companiy-dabbrev))
+    ;; 全局激活 Company Mode
+    (add-hook 'after-init-hook 'global-company-mode)
+    ;; 激发补全前等待时间，缺省是 0.5，修改成 0.1 会快一点
+    (setq company-idle-delay 0.1))
 #+END_SRC
 
 * Yasnippet
@@ -4663,10 +4645,6 @@ sbt、rebar 和 bundler 项目。如果项目目录不使用以上工具，可�
 * tail
 
 #+BEGIN_SRC emacs-lisp
-  ;; 最大化 Frame
-  (when *win32p*
-    (wb-maximize-frame))
-
   ;; desktop 保存打开的文件列表
   (robust-require desktop
     ;; 启用 desktop save mode
@@ -4687,6 +4665,11 @@ sbt、rebar 和 bundler 项目。如果项目目录不使用以上工具，可�
     ;; emacs 了
     (add-to-list 'session-globals-exclude 'org-mark-ring)
     (add-hook 'after-init-hook 'session-initialize))
+
+  ;; 最大化 Frame
+  (when *win32p*
+    (wb-set-mono-font)
+    (toggle-frame-maximized))
 #+END_SRC
 
 * 加载完毕，输出 Emacs 统计数据
