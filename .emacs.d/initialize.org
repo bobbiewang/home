@@ -1043,8 +1043,36 @@
 #+END_SRC
 
 ** I18N
+*** 编码
+
+  参考 [[https://github.com/hick/emacs-chinese][emacs-chinese]]。
+
+  缺省使用 UTF-8 编码、Unix 风格的换行。
 
 #+BEGIN_SRC emacs-lisp
+  (set-language-environment "UTF-8")
+  (set-default-coding-systems 'utf-8)
+  (set-buffer-file-coding-system 'utf-8-unix)
+  (set-clipboard-coding-system 'utf-8-unix)
+  (set-file-name-coding-system 'utf-8-unix)
+  (set-keyboard-coding-system 'utf-8-unix)
+  (set-next-selection-coding-system 'utf-8-unix)
+  (set-selection-coding-system 'utf-8-unix)
+  (set-terminal-coding-system 'utf-8-unix)
+  (setq locale-coding-system 'utf-8)
+  (prefer-coding-system 'utf-8)
+#+END_SRC
+
+  Windows 环境使用 GBK，这里设置 cmdproxy.exe 使用 GBK 编码。
+
+#+BEGIN_SRC emacs-lisp
+  (when (eq system-type 'windows-nt)
+    (set-default 'process-coding-system-alist
+                 '(("[pP][lL][iI][nN][kK]" gbk-dos . gbk-dos)
+                   ("[cC][mM][dD][pP][rR][oO][xX][yY]" gbk-dos . gbk-dos))))
+#+END_SRC
+
+#+BEGIN_EXAMPLE
   (when *emacs<=22p*
     (robust-require mule-gbk))
 
@@ -1100,7 +1128,11 @@
     ;; (setq-default buffer-file-coding-system 'utf-8-unix)
     ;; (setq save-buffer-coding-system 'utf-8-unix)
     )
+#+END_EXAMPLE
 
+*** 字体
+
+#+BEGIN_SRC emacs-lisp
   ;; Consolas 和雅黑的 2:1 组合
   ;; 18/20 20/22 22/24
 
