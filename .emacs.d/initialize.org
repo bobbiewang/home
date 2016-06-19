@@ -2458,12 +2458,12 @@
                 (autoload 'company-mode "company" nil t)
                 ;; 使用支持的 Backends
                 (setq company-backends '(company-elisp
-                                         company-nxml
-                                         company-css
-                                         company-eclim
+                                         ;; company-nxml
+                                         ;; company-css
+                                         ;; company-eclim
                                          company-semantic
                                          company-clang
-                                         company-xcode
+                                         ;; company-xcode
                                          ;; company-ropemacs
                                          (company-gtags
                                           company-etags
@@ -2471,7 +2471,7 @@
                                           ;; company-pysmell
                                           ;; company-keywords-alist
                                           )
-                                         company-oddmuse
+                                         ;; company-oddmuse
                                          company-files
                                          companiy-dabbrev))
     ;; 全局激活 Company Mode
