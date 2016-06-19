@@ -299,6 +299,8 @@
 ** Infrastructure
 
 #+BEGIN_SRC emacs-lisp
+  (robust-require cl)
+
   (defun wb-get-symbol-at-point (&optional msg-prompt prompt-always no-regexp-quote)
     (interactive)
     (let* ((region-string (if mark-active
@@ -1003,13 +1005,12 @@
               (untrace-function function)))))
 #+END_SRC
 
-** 包管理
+* 包管理
 
 #+BEGIN_SRC emacs-lisp
-  (defvar bw/elpa-packages
+  (defvar wb-elpa-packages
     '(anything
       avy
-      color-theme
       company
       company-irony
       ggtags
@@ -1019,19 +1020,30 @@
       ido-vertical-mode
       magit
       markdown-mode
+      monokai-theme
       org
       projectile
       smex
       undo-tree
       yasnippet)
     "A list of packages those are managed by ELPA.")
-#+END_SRC
 
-#+BEGIN_SRC emacs-lisp-example
-  (package-refresh-contents)
-  (dolist (package bw/elpa-packages)
-    (when (not (package-installed-p package))
-      (package-install package)))
+  (defun wb-elpa-packages-installed-p ()
+    "Check if all ELPA packages listed in `wb-elpa-packages' are installed."
+    (every #'package-installed-p wb-elpa-packages))
+
+  (defun wb-install-elpa-packages ()
+    "Install all ELPA packages listed in `wb-elpa-packages'."
+    (interactive)
+    (unless (wb-elpa-packages-installed-p)
+      (message "%s" "Refreshing package database...")
+      (package-refresh-contents)
+      (message "%s" " done.")
+      (dolist (package wb-elpa-packages)
+        (when (not (package-installed-p package))
+          (package-install package)))))
+
+  (wb-install-elpa-packages)
 #+END_SRC
 
 * std
