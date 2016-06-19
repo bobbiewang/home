@@ -2996,44 +2996,6 @@ C++! 等。
 #+END_SRC
 
 *** Global
-**** gtags
-
-#+BEGIN_SRC emacs-lisp-example
-  (with-library "gtags"
-      (autoload 'gtags-mode "gtags" "" t))
-#+END_SRC
-
-**** xgtags
-
-#+BEGIN_SRC emacs-lisp-example
-  (with-library "xgtags"
-    (setq xgtags-overwrite-global-bindings nil) ; 不覆盖 etags 的 M-. M-* 等键绑定
-    (autoload 'xgtags-mode "xgtags" "" t)
-
-    (eval-after-load "xgtags"
-      '(progn
-         (defun xgtags-pop-stack ()
-           "Move to previous point on the stack."
-           (interactive)
-           (let ((delete (and xgtags-kill-buffers
-                              (not (xgtags--stacked-p (current-buffer)))))
-                 (context (xgtags--pop-context)))
-             (assert context nil "The tags stack is empty")
-             (when delete
-               (kill-buffer (current-buffer)))
-             (when (> (count-windows) 1)       ; 增加这两行代码，退出 xgtags 时
-               (delete-window))                ; 关闭因为 xgtags 弹出的 window
-             (xgtags--update-buffer context)
-             (switch-to-buffer (xgtags--context-buffer context))
-             (goto-char (xgtags--context-point context))))
-
-         (add-hook 'xgtags-select-mode-hook
-                   (lambda ()
-                     (define-key xgtags-select-mode-map (kbd "o")
-                       'xgtags-select-tag-near-point))))))
-#+END_SRC
-
-**** ggtags
 
   [[https://github.com/leoliu/ggtags][ggtags]] 是 Projectile 的推荐。安装了 ggtags 后，可以使用 Projectile 的
 键绑定 C-c p R 创建 Global 的 Tag 文件。
