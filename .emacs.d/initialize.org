@@ -1007,13 +1007,28 @@
 
 #+BEGIN_SRC emacs-lisp
   (defvar bw/elpa-packages
-    '(ack-and-a-half auctex auto-complete color-theme helm helm-gtags helm-projectile
-                     ido-vertical-mode magit markdown-mode org projectile smex undo-tree
-                     yasnippet)
+    '(anything
+      avy
+      color-theme
+      company
+      company-irony
+      ggtags
+      helm
+      helm-gtags
+      helm-projectile
+      ido-vertical-mode
+      magit
+      markdown-mode
+      org
+      projectile
+      smex
+      undo-tree
+      yasnippet)
     "A list of packages those are managed by ELPA.")
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp-example
+  (package-refresh-contents)
   (dolist (package bw/elpa-packages)
     (when (not (package-installed-p package))
       (package-install package)))
@@ -2380,24 +2395,6 @@
 #+BEGIN_SRC emacs-lisp
   (with-library "company"
                 (autoload 'company-mode "company" nil t)
-                ;; 使用支持的 Backends
-                (setq company-backends '(company-elisp
-                                         ;; company-nxml
-                                         ;; company-css
-                                         ;; company-eclim
-                                         company-semantic
-                                         company-clang
-                                         ;; company-xcode
-                                         ;; company-ropemacs
-                                         (company-gtags
-                                          company-etags
-                                          company-dabbrev-code
-                                          ;; company-pysmell
-                                          ;; company-keywords-alist
-                                          )
-                                         ;; company-oddmuse
-                                         company-files
-                                         companiy-dabbrev))
     ;; 全局激活 Company Mode
     (add-hook 'after-init-hook 'global-company-mode)
     ;; 激发补全前等待时间，缺省是 0.5，修改成 0.1 会快一点
@@ -4109,14 +4106,13 @@ sbt、rebar 和 bundler 项目。如果项目目录不使用以上工具，可�
   | C-c p h | helm-projectile | 使用 Helm（替代 ido）的接口列出当前项目的文件 |
 
 #+BEGIN_SRC emacs-lisp
-  ;;; 全局使用 Projectile
-  (projectile-global-mode)
-
-  ;;; 使用外部的 find 命令索引文件
-  (setq projectile-indexing-method 'native)
-
-  ;;; 缓存文件索引的结果
-  (setq projectile-enable-caching t)
+  (with-library "projectile"
+    ;; 全局使用 Projectile
+    (projectile-global-mode)
+    ;; 使用外部的 find 命令索引文件
+    (setq projectile-indexing-method 'native)
+    ;; 缓存文件索引的结果
+    (setq projectile-enable-caching t))
 #+END_SRC
 
 * Tools
