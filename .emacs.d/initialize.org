@@ -2951,6 +2951,12 @@ yas-dropdown-prompt 需要 Dropdown List 的支持。
     - cscope
     - company-clang
     - company-ycmd
+*** irony
+
+#+BEGIN_SRC emacs-lisp
+  (with-library "irony"
+    (setq irony-user-dir (locate-user-emacs-file ".irony/")))
+#+END_SRC
 
 *** Doxymacs
 
