@@ -1011,9 +1011,11 @@
   (defvar wb-elpa-packages
     '(avy
       bm
+      cmake-font-lock
       company
       company-irony
       evil
+      function-args
       ggtags
       helm
       helm-gtags
