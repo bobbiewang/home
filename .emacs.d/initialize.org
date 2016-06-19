@@ -1009,10 +1009,11 @@
 
 #+BEGIN_SRC emacs-lisp
   (defvar wb-elpa-packages
-    '(anything
-      avy
+    '(avy
+      bm
       company
       company-irony
+      evil
       ggtags
       helm
       helm-gtags
