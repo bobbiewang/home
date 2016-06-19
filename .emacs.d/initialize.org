@@ -1045,90 +1045,14 @@
 ** I18N
 *** 编码
 
-  参考 [[https://github.com/hick/emacs-chinese][emacs-chinese]]。
-
-  缺省使用 UTF-8 编码、Unix 风格的换行。
+  [[https://github.com/hick/emacs-chinese][emacs-chinese]] 上写了很多，但如果按照其设置，在 Windows 上使用遇到许
+多问题（比如 magit 不能用中文）。后来研究 Spacemacs 的设置，发现只要设
+置 prefer-coding-system 就可以了。
 
 #+BEGIN_SRC emacs-lisp
-  (set-language-environment "UTF-8")
-  (set-default-coding-systems 'utf-8)
-  (set-buffer-file-coding-system 'utf-8-unix)
-  (set-clipboard-coding-system 'utf-8-unix)
-  (set-file-name-coding-system 'utf-8-unix)
-  (set-keyboard-coding-system 'utf-8-unix)
-  (set-next-selection-coding-system 'utf-8-unix)
-  (set-selection-coding-system 'utf-8-unix)
-  (set-terminal-coding-system 'utf-8-unix)
-  (setq locale-coding-system 'utf-8)
+  ;; 显式声明 Emacs 优先使用 utf-8，这个在 Windows 上尤其重要
   (prefer-coding-system 'utf-8)
 #+END_SRC
-
-  Windows 环境使用 GBK，这里设置 cmdproxy.exe 使用 GBK 编码。
-
-#+BEGIN_SRC emacs-lisp
-  (when (eq system-type 'windows-nt)
-    (set-default 'process-coding-system-alist
-                 '(("[pP][lL][iI][nN][kK]" gbk-dos . gbk-dos)
-                   ("[cC][mM][dD][pP][rR][oO][xX][yY]" gbk-dos . gbk-dos))))
-#+END_SRC
-
-#+BEGIN_EXAMPLE
-  (when *emacs<=22p*
-    (robust-require mule-gbk))
-
-  (if (and *win32p* (or *emacs>=23p* (and *emacs<=22p* (fboundp 'mule-gbk-selection-setup))))
-      ;; Windows 环境使用 chinese-gbk 编码
-      (progn
-        ;; Setup GBK environment
-        (set-terminal-coding-system 'chinese-gbk)
-        (set-keyboard-coding-system 'chinese-gbk)
-        (set-language-environment 'chinese-gbk)
-        (setq locale-coding-system 'chinese-gbk)
-        ;; Setup X Selection for mule-gbk
-        (if *emacs<=22p* (mule-gbk-selection-setup))
-        ;; Unicode support, for Emacs CVS (21.3.50) only
-        (when (fboundp 'utf-translate-cjk-mode)
-          ;; Load modified utf-translate-cjk-mode
-          (require 'gbk-utf-mode)
-          (utf-translate-cjk-load-tables)
-          ;; Turn on utf-translate-cjk-mode
-          (utf-translate-cjk-mode 1)
-          ;; Setup X selection for unicode encoding
-          (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
-
-        (define-coding-system-alias 'chinese-iso-8bit 'chinese-gbk)
-        (define-coding-system-alias 'cn-gb-2312 'chinese-gbk)
-        (define-coding-system-alias 'euc-china 'chinese-gbk)
-        (define-coding-system-alias 'euc-cn 'chinese-gbk)
-        (define-coding-system-alias 'cn-gb 'chinese-gbk)
-        (define-coding-system-alias 'gb2312 'chinese-gbk)
-        (define-coding-system-alias 'cp936 'chinese-gbk)
-        (define-coding-system-alias 'gb18030 'chinese-gbk)
-        (define-coding-system-alias 'GB18030 'chinese-gbk)
-        (define-coding-system-alias 'chinese-gb18030 'chinese-gbk)
-        (define-coding-system-alias 'cn-gb18030 'chinese-gbk)
-
-        (setq w32-charset-info-alist
-              (cons '("gbk" w32-charset-gb2312 . 936) w32-charset-info-alist))
-
-        ;; Windows 环境要用 GB2312 作为 Selection Coding System
-        (set-selection-coding-system 'gb2312))
-    ;; *nix 环境使用 UTF-8 编码
-    (setq locale-coding-system 'utf-8)
-    (set-language-environment 'utf-8)
-    (prefer-coding-system 'utf-8-unix)
-    ;; (set-terminal-coding-system 'utf-8-unix)
-    ;; (set-keyboard-coding-system 'utf-8-unix)
-    ;; (set-buffer-file-coding-system 'utf-8)
-    ;; (set-file-name-coding-system 'utf-8)
-    ;; (set-selection-coding-system 'utf-8)
-    ;; (set-clipboard-coding-system 'utf-8)
-    ;; (setq-default pathname-coding-system 'utf-8)
-    ;; (setq default-buffer-file-coding-system 'utf-8-unix)
-    ;; (setq-default buffer-file-coding-system 'utf-8-unix)
-    ;; (setq save-buffer-coding-system 'utf-8-unix)
-    )
-#+END_EXAMPLE
 
 *** 字体
 
