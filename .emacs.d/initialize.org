@@ -1018,7 +1018,6 @@
       helm
       helm-gtags
       helm-projectile
-      ido-vertical-mode
       magit
       markdown-mode
       monokai-theme
@@ -2082,221 +2081,222 @@
 ** Buffers, Files, Dired
 
 #+BEGIN_SRC emacs-lisp
-  ;; 当打开两个同名的文件，在 buffer 名字前面加上目录名
-  (robust-require uniquify
-    (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
-    ;; rename after killing uniquified
-    (setq uniquify-after-kill-buffer-p t)
-    ;; don't muck with special buffers
-    (setq uniquify-ignore-buffers-re "^\\*"))
+   ;; 当打开两个同名的文件，在 buffer 名字前面加上目录名
+   (robust-require uniquify
+     (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
+     ;; rename after killing uniquified
+     (setq uniquify-after-kill-buffer-p t)
+     ;; don't muck with special buffers
+     (setq uniquify-ignore-buffers-re "^\\*"))
 
-  ;; 把常用文件加入 File Name Cache
+   ;; 把常用文件加入 File Name Cache
 
-  (eval-after-load "filecache"
-    '(progn
-       (message "Loading file cache...")
-       (file-cache-add-directory-using-find "~/.emacs.d/muse/")
-       (file-cache-add-directory-list (list "~/" "~/bin"))
-       (file-cache-add-file-list (list "~/.bash_profile" "~/.bashrc"))))
+   (eval-after-load "filecache"
+     '(progn
+        (message "Loading file cache...")
+        ;; (file-cache-add-directory-using-find "~/.emacs.d/muse/")
+        (file-cache-add-directory-list (list "~/" "~/bin"))
+        (file-cache-add-file-list (list "~/.bash_profile" "~/.bashrc"
+                                        "~/.emacs.d/initialize.org"))))
 
-  (defun file-cache-ido-find-file (file)
-    "Using ido, interactively open file from file cache'.
-  First select a file, matched using ido-switch-buffer against the contents
-  in `file-cache-alist'. If the file exist in more than one
-  directory, select directory. Lastly the file is opened."
-    (interactive
-     (list (file-cache-ido-read
-            "File: "
-            (mapcar (lambda (x) (car x))
-                    (progn (require 'filecache) file-cache-alist)))))
-    (let* ((record (assoc file file-cache-alist)))
-      (find-file
-       (expand-file-name
-        file
-        (if (= (length record) 2)
-            (car (cdr record))
-          (file-cache-ido-read
-           (format "Find %s in dir: " file) (cdr record)))))))
+   (defun file-cache-ido-find-file (file)
+     "Using ido, interactively open file from file cache'.
+   First select a file, matched using ido-switch-buffer against the contents
+   in `file-cache-alist'. If the file exist in more than one
+   directory, select directory. Lastly the file is opened."
+     (interactive
+      (list (file-cache-ido-read
+             "File: "
+             (mapcar (lambda (x) (car x))
+                     (progn (require 'filecache) file-cache-alist)))))
+     (let* ((record (assoc file file-cache-alist)))
+       (find-file
+        (expand-file-name
+         file
+         (if (= (length record) 2)
+             (car (cdr record))
+           (file-cache-ido-read
+            (format "Find %s in dir: " file) (cdr record)))))))
 
-  (defun file-cache-ido-read (prompt choices)
-    (let ((ido-make-buffer-list-hook
-           (lambda ()
-             (setq ido-temp-list choices))))
-      (ido-read-buffer prompt)))
+   (defun file-cache-ido-read (prompt choices)
+     (let ((ido-make-buffer-list-hook
+            (lambda ()
+              (setq ido-temp-list choices))))
+       (ido-read-buffer prompt)))
 
-  ;; ido
-  (robust-require ido
-    (setq ido-save-directory-list-file    ; 自定义 ido 文件的路径
-          (expand-file-name "~/.emacs.d/.ido.last"))
-    (ido-mode 1)                         ; 启用 ido mode
-    (setq ido-enable-flex-matching t)    ; 可以用 wei 匹配文件名 wb-emacs-init.el
-    (setq ido-create-new-buffer 'always) ; 没有名字匹配的 buffer 时，直接创建新 buffer
-    ;; (setq ido-use-filename-at-point t)   ; 先查找光标处文件，可以用于替换 ffap
-    (ido-everywhere t)                   ; 在任何读取文件、目录的地方使用 ido
-    (add-hook 'ido-setup-hook
-              (lambda ()
-                ;(define-key ido-completion-map [tab] 'ido-complete)
-                (define-key ido-completion-map "\C-h" 'ido-delete-backward-updir)
-                ;; 缺省为 C-s 和 C-r，不习惯，增加 C-n 和 C-p
-                (define-key ido-completion-map "\C-n" 'ido-next-match)
-                (define-key ido-completion-map "\C-p" 'ido-prev-match))))
+   ;; ido
+   (robust-require ido
+     (setq ido-save-directory-list-file    ; 自定义 ido 文件的路径
+           (expand-file-name "~/.emacs.d/.ido.last"))
+     (ido-mode 1)                         ; 启用 ido mode
+     (setq ido-enable-flex-matching t)    ; 可以用 wei 匹配文件名 wb-emacs-init.el
+     (setq ido-create-new-buffer 'always) ; 没有名字匹配的 buffer 时，直接创建新 buffer
+     ;; (setq ido-use-filename-at-point t)   ; 先查找光标处文件，可以用于替换 ffap
+     (ido-everywhere t)                   ; 在任何读取文件、目录的地方使用 ido
+     (add-hook 'ido-setup-hook
+               (lambda ()
+                 ;(define-key ido-completion-map [tab] 'ido-complete)
+                 (define-key ido-completion-map "\C-h" 'ido-delete-backward-updir)
+                 ;; 缺省为 C-s 和 C-r，不习惯，增加 C-n 和 C-p
+                 (define-key ido-completion-map "\C-n" 'ido-next-match)
+                 (define-key ido-completion-map "\C-p" 'ido-prev-match))))
 
-  ;; 垂直方式显示 ido 候选列表
-  (robust-require ido-vertical-mode
-    (ido-vertical-mode))
+   ;; 垂直方式显示 ido 候选列表
+   (robust-require ido-vertical-mode
+     (ido-vertical-mode))
 
-  ;; saveplace，打开文件的时候，光标自动跳转到上次退出的地方
-  (robust-require saveplace
-    (setq-default save-place t)
-    (setq save-place-file (expand-file-name "~/.emacs.d/.emacs-places")))
+   ;; saveplace，打开文件的时候，光标自动跳转到上次退出的地方
+   (robust-require saveplace
+     (setq-default save-place t)
+     (setq save-place-file (expand-file-name "~/.emacs.d/.emacs-places")))
 
-  ;; ibuffer
-  (with-library "ibuffer"
-    (autoload 'ibuffer "ibuffer" "Dired lik Ibuffer." t)
-    (global-set-key (kbd "C-x C-b") 'ibuffer)
-    (setq ibuffer-saved-filter-groups
-          (quote (("default"
-                   ("C/C++" (or
-                             (mode . c-mode)
-                             (mode . c++-mode)))
-                   ("Org" (mode . org-mode))
-                   ("Emacs" (or
-                             (name . "^\\*scratch\\*$")
-                             (name . "^\\*Messages\\*$")
-                             (mode . emacs-lisp-mode)))
-                   ("LSC" (or
-                           (mode . lsc-acd-mode)
-                           (mode . lsc-bfd-mode)
-                           (mode . lsc-mrp-mode)
-                           (mode . lsc-par-mode)
-                           (mode . lsc-ncl-mode)))
-                   ("Dired" (mode . dired-mode))
-                   ("Gnus" (or
-                            (mode . message-mode)
-                            (mode . bbdb-mode)
-                            (mode . mail-mode)
-                            (mode . gnus-group-mode)
-                            (mode . gnus-summary-mode)
-                            (mode . gnus-article-mode)
-                            (name . "^\\.bbdb$")
-                            (name . "^\\.newsrc-dribble")))))))
-    (add-hook 'ibuffer-mode-hook
-              (lambda ()
-                (ibuffer-switch-to-saved-filter-groups "default"))))
+   ;; ibuffer
+   (with-library "ibuffer"
+     (autoload 'ibuffer "ibuffer" "Dired lik Ibuffer." t)
+     (global-set-key (kbd "C-x C-b") 'ibuffer)
+     (setq ibuffer-saved-filter-groups
+           (quote (("default"
+                    ("C/C++" (or
+                              (mode . c-mode)
+                              (mode . c++-mode)))
+                    ("Org" (mode . org-mode))
+                    ("Emacs" (or
+                              (name . "^\\*scratch\\*$")
+                              (name . "^\\*Messages\\*$")
+                              (mode . emacs-lisp-mode)))
+                    ("LSC" (or
+                            (mode . lsc-acd-mode)
+                            (mode . lsc-bfd-mode)
+                            (mode . lsc-mrp-mode)
+                            (mode . lsc-par-mode)
+                            (mode . lsc-ncl-mode)))
+                    ("Dired" (mode . dired-mode))
+                    ("Gnus" (or
+                             (mode . message-mode)
+                             (mode . bbdb-mode)
+                             (mode . mail-mode)
+                             (mode . gnus-group-mode)
+                             (mode . gnus-summary-mode)
+                             (mode . gnus-article-mode)
+                             (name . "^\\.bbdb$")
+                             (name . "^\\.newsrc-dribble")))))))
+     (add-hook 'ibuffer-mode-hook
+               (lambda ()
+                 (ibuffer-switch-to-saved-filter-groups "default"))))
 
-  ;; 一些 buffer 长时间不用的话自动关闭
+   ;; 一些 buffer 长时间不用的话自动关闭
 
-  ;; midnight 是 Emacs 自带的扩展，可以用一系列 clean-buffer-list- 变量，
-  ;; 根据 buffer 的名字设置或排除需要自动关闭的 buffer。缺省在半夜进行
-  ;; buffer 的清理，也可以直接运行命令 clean-buffer-list 手动关闭设置的
-  ;; buffer
-  (robust-require midnight
-    ;; 关闭超过 30 天没有使用的 buffer
-    (setq clean-buffer-list-delay-general 30)
-  )
-  ;; tempbuf 可以指定需要处理的 mode
-  ;; 可以用 (mapc (lambda (x) (add-hook x 'turn-on-tempbuf-mode))
-  ;;         '(dired-mode-hook custom-mode-hook)))
-  ;; 方式批量设置，但可读性还是分开设置的好
-  (robust-require tempbuf
-    (setq tempbuf-minimum-timeout 3600)
-    (add-hook 'dired-mode-hook 'turn-on-tempbuf-mode)
-    (add-hook 'custom-mode-hook 'turn-on-tempbuf-mode)
-    (add-hook 'w3-mode-hook 'turn-on-tempbuf-mode)
-    (add-hook 'Man-mode-hook 'turn-on-tempbuf-mode))
+   ;; midnight 是 Emacs 自带的扩展，可以用一系列 clean-buffer-list- 变量，
+   ;; 根据 buffer 的名字设置或排除需要自动关闭的 buffer。缺省在半夜进行
+   ;; buffer 的清理，也可以直接运行命令 clean-buffer-list 手动关闭设置的
+   ;; buffer
+   (robust-require midnight
+     ;; 关闭超过 30 天没有使用的 buffer
+     (setq clean-buffer-list-delay-general 30)
+   )
+   ;; tempbuf 可以指定需要处理的 mode
+   ;; 可以用 (mapc (lambda (x) (add-hook x 'turn-on-tempbuf-mode))
+   ;;         '(dired-mode-hook custom-mode-hook)))
+   ;; 方式批量设置，但可读性还是分开设置的好
+   (robust-require tempbuf
+     (setq tempbuf-minimum-timeout 3600)
+     (add-hook 'dired-mode-hook 'turn-on-tempbuf-mode)
+     (add-hook 'custom-mode-hook 'turn-on-tempbuf-mode)
+     (add-hook 'w3-mode-hook 'turn-on-tempbuf-mode)
+     (add-hook 'Man-mode-hook 'turn-on-tempbuf-mode))
 
-  ;; 在保存文件时，如果目录不存在（如打开 foo/bar 文件），则自动创建目录
-  (add-hook 'before-save-hook
-            '(lambda ()
-               (or (file-exists-p (file-name-directory buffer-file-name))
-                   (make-directory (file-name-directory buffer-file-name) t))))
+   ;; 在保存文件时，如果目录不存在（如打开 foo/bar 文件），则自动创建目录
+   (add-hook 'before-save-hook
+             '(lambda ()
+                (or (file-exists-p (file-name-directory buffer-file-name))
+                    (make-directory (file-name-directory buffer-file-name) t))))
 
-  ;; 删除文件、目录时移动到垃圾箱
-  ;; ~/.local/share/Trash 或 ~/.Trash，可以通过变量 trash-directory 自定义
-  ;; (setq delete-by-moving-to-trash t)   ; 和 Emacs Daemon 冲突，禁止
+   ;; 删除文件、目录时移动到垃圾箱
+   ;; ~/.local/share/Trash 或 ~/.Trash，可以通过变量 trash-directory 自定义
+   ;; (setq delete-by-moving-to-trash t)   ; 和 Emacs Daemon 冲突，禁止
 
-  ;; Dired Settings
+   ;; Dired Settings
 
-  ;; 设置 ls 的参数（缺省为 -al），显示易读的大小，按版本排序
-  (setq dired-listing-switches "-avhl")
+   ;; 设置 ls 的参数（缺省为 -al），显示易读的大小，按版本排序
+   (setq dired-listing-switches "-avhl")
 
-  ;; dired-mode 下不折行显示
-  (defun wb-dired-long-lines ()
-    (setq truncate-lines t))
-  (add-hook 'dired-after-readin-hook 'wb-dired-long-lines)
+   ;; dired-mode 下不折行显示
+   (defun wb-dired-long-lines ()
+     (setq truncate-lines t))
+   (add-hook 'dired-after-readin-hook 'wb-dired-long-lines)
 
-  ;; 复制和删除时递归处理子目录
-  (setq dired-recursive-copies 'top)
-  (setq dired-recursive-deletes 'top)
+   ;; 复制和删除时递归处理子目录
+   (setq dired-recursive-copies 'top)
+   (setq dired-recursive-deletes 'top)
 
-  ;; 复制和移动时把当前 emacs 中另一个窗口中的目录为对象。这通常是我们希望的方式。
-  (setq dired-dwim-target t)
+   ;; 复制和移动时把当前 emacs 中另一个窗口中的目录为对象。这通常是我们希望的方式。
+   (setq dired-dwim-target t)
 
-  (add-hook 'dired-load-hook
-            '(lambda ()
-               (load "dired-x")
-               ;; wdired 把 dired buffer 当作一般的文本处理，修改 buffer
-               ;; 后 C-c C-c 修改文件名（C-c ESC 取消修改）
-               (if (fboundp 'wdired-change-to-wdired-mode)
-                        (define-key dired-mode-map "r" 'wdired-change-to-wdired-mode))))
+   (add-hook 'dired-load-hook
+             '(lambda ()
+                (load "dired-x")
+                ;; wdired 把 dired buffer 当作一般的文本处理，修改 buffer
+                ;; 后 C-c C-c 修改文件名（C-c ESC 取消修改）
+                (if (fboundp 'wdired-change-to-wdired-mode)
+                         (define-key dired-mode-map "r" 'wdired-change-to-wdired-mode))))
 
-  ;; 另外 dired-mode 下还有不常用但是比较有用的命令。比如
-  ;; dired-compare-directories 可以用于比较文件夹。
+   ;; 另外 dired-mode 下还有不常用但是比较有用的命令。比如
+   ;; dired-compare-directories 可以用于比较文件夹。
 
-  ;; dired-x 是 dired-mode 的一个扩展。提供了许多很有用的命令和特性。
-  ;; 1. 隐藏配置文件和其它类型的文件。通过设置 dired-omit-extensions 和
-  ;;    dired-omit-files
-  ;; 2. 把文件和特定的 shell 程序关联。通过设置
-  ;;    dired-guess-shell-alist-default 或 dired-guess-shell-alist-user，
-  ;;    在文件上使用 ! 会调用相应的命令
+   ;; dired-x 是 dired-mode 的一个扩展。提供了许多很有用的命令和特性。
+   ;; 1. 隐藏配置文件和其它类型的文件。通过设置 dired-omit-extensions 和
+   ;;    dired-omit-files
+   ;; 2. 把文件和特定的 shell 程序关联。通过设置
+   ;;    dired-guess-shell-alist-default 或 dired-guess-shell-alist-user，
+   ;;    在文件上使用 ! 会调用相应的命令
 
-  (with-library "dired-x"
-    (eval-after-load "dired-x"
-      '(progn
-         (add-hook 'dired-mode-hook
-                   (lambda ()
-                     (setq dired-omit-files-p t)))
+   (with-library "dired-x"
+     (eval-after-load "dired-x"
+       '(progn
+          (add-hook 'dired-mode-hook
+                    (lambda ()
+                      (setq dired-omit-files-p t)))
 
-         ;; 忽略指定名字的目录和后缀文件
-         (setq dired-omit-extensions
-               '("CVS/" ".o" "~" ".bak" ".obj" ".map"))
-         ;; 隐藏 . 和 ..，以及以 . 引导的目录/文件，以# 引导的文件，以 ~ 引导
-         ;; 的文件等，可以使用 M-o 切换隐藏和显示
-         (setq dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$\\|^\\.\\|^~")
-         ;; 设置文件对应的命令
-         (setq dired-guess-shell-alist-user
-               (list
-                (list "\\.tar\\.bz2$" "tar jxvf * &")
-                '("\\.tar\\.gz$" "tar zxvf * &")
-                '("\\.chm$" "chmsee * &")
-                '("\\.tar$" "tar xvvf * &")
-                '("\\.ps$" "gv * &")
-                '("\\.html?$" "firefox * &" "urxvt -e w3m * &")
-                '("\\.pdf$" "acroread * &" "evince * &")
-                '("\\.\\(jpe?g\\|gif\\|png\\|bmp\\|xbm\\|xpm\\|fig\\|eps\\)$"
-                  "gthumb * &" "gqview *  &" "display *   &" "xloadimage *   &" )
-                '("\\.\\([Ww][Mm][Vv]\\|[Vv][Oo][Bb]\\|[Mm][Pp][Ee]?[Gg]\\|asf\\|[Rr][Aa]?[Mm]\\)$"
-                  "mplayer * &")
-                '("\\.rmvb$" "mplayer * &")
-                '("\\.RMVB$" "mplayer * &")))
-         (add-to-list 'dired-guess-shell-alist-default '("\\.dvi$" "dvipdfmx"))
-         (add-to-list 'dired-guess-shell-alist-default '("\\.pl$" "perltidy")))))
+          ;; 忽略指定名字的目录和后缀文件
+          (setq dired-omit-extensions
+                '("CVS/" ".o" "~" ".bak" ".obj" ".map"))
+          ;; 隐藏 . 和 ..，以及以 . 引导的目录/文件，以# 引导的文件，以 ~ 引导
+          ;; 的文件等，可以使用 M-o 切换隐藏和显示
+          (setq dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$\\|^\\.\\|^~")
+          ;; 设置文件对应的命令
+          (setq dired-guess-shell-alist-user
+                (list
+                 (list "\\.tar\\.bz2$" "tar jxvf * &")
+                 '("\\.tar\\.gz$" "tar zxvf * &")
+                 '("\\.chm$" "chmsee * &")
+                 '("\\.tar$" "tar xvvf * &")
+                 '("\\.ps$" "gv * &")
+                 '("\\.html?$" "firefox * &" "urxvt -e w3m * &")
+                 '("\\.pdf$" "acroread * &" "evince * &")
+                 '("\\.\\(jpe?g\\|gif\\|png\\|bmp\\|xbm\\|xpm\\|fig\\|eps\\)$"
+                   "gthumb * &" "gqview *  &" "display *   &" "xloadimage *   &" )
+                 '("\\.\\([Ww][Mm][Vv]\\|[Vv][Oo][Bb]\\|[Mm][Pp][Ee]?[Gg]\\|asf\\|[Rr][Aa]?[Mm]\\)$"
+                   "mplayer * &")
+                 '("\\.rmvb$" "mplayer * &")
+                 '("\\.RMVB$" "mplayer * &")))
+          (add-to-list 'dired-guess-shell-alist-default '("\\.dvi$" "dvipdfmx"))
+          (add-to-list 'dired-guess-shell-alist-default '("\\.pl$" "perltidy")))))
 
-  ;; List directories first in dired mode
-  (defun sof/dired-sort ()
-    "Dired sort hook to list directories first."
-    (save-excursion
-      (let (buffer-read-only)
-        (forward-line 2) ;; beyond dir. header
-        (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max))))
-    (and (featurep 'xemacs)
-         (fboundp 'dired-insert-set-properties)
-         (dired-insert-set-properties (point-min) (point-max)))
-    (set-buffer-modified-p nil))
-  (add-hook 'dired-after-readin-hook 'sof/dired-sort)
+   ;; List directories first in dired mode
+   (defun sof/dired-sort ()
+     "Dired sort hook to list directories first."
+     (save-excursion
+       (let (buffer-read-only)
+         (forward-line 2) ;; beyond dir. header
+         (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max))))
+     (and (featurep 'xemacs)
+          (fboundp 'dired-insert-set-properties)
+          (dired-insert-set-properties (point-min) (point-max)))
+     (set-buffer-modified-p nil))
+   (add-hook 'dired-after-readin-hook 'sof/dired-sort)
 
-  ;; image-dired
-  (setq image-dired-dir "~/.emacs.d/.image-dired/")
+   ;; image-dired
+   (setq image-dired-dir "~/.emacs.d/.image-dired/")
 #+END_SRC
 
 ** Command
@@ -2403,6 +2403,7 @@
 #+END_SRC
 
 * Completion
+** Company
 
   | M-x company-mode     | 激活 Company 模式      |
   | M-x company-complete | 补全命令，可以手动激发 |
@@ -2416,6 +2417,41 @@
     (add-hook 'after-init-hook 'global-company-mode)
     ;; 激发补全前等待时间，缺省是 0.5，修改成 0.1 会快一点
     (setq company-idle-delay 0.1))
+#+END_SRC
+
+** Helm
+
+  Helm 前身是 Anything。
+
+#+BEGIN_SRC emacs-lisp
+  (with-library "helm"
+    ;; Helm 缺省 Prefix 是 C-x c，和 C-x C-c 太相似，换为 C-c h
+    (global-set-key (kbd "C-c h") 'helm-command-prefix)
+    (global-unset-key (kbd "C-x c"))
+
+    (autoload 'helm-mini "helm-imenu" "helm mini use imenu source." t)
+
+    (eval-after-load "helm"
+        '(progn
+           (require 'helm-config)
+
+           (setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
+                 helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
+                 helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
+                 helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
+                 helm-ff-file-name-history-use-recentf t)
+
+           ;; 全局打开 Helm 功能
+           (helm-mode 1)
+
+           ;; 设置 helm-mini 包括的内容
+           (setq helm-mini-default-sources '(helm-source-buffers-list
+                                             helm-source-recentf
+                                             helm-source-file-cache
+                                             helm-source-buffer-not-found))
+
+           ;; find file 时开启目录自动补全模式，也可以 C-backspace 切换
+           (setq helm-ff-auto-update-initial-value t))))
 #+END_SRC
 
 * Yasnippet
@@ -4011,38 +4047,6 @@ C++! 等。
   (add-hook 'markdown-mode-hook
             (lambda ()
               (add-hook 'after-save-hook 'cleanup-org-tables  nil 'make-it-local)))
-#+END_SRC
-
-** Helm
-
-  Helm 是 Anything 的后继者，要逐渐将 Anything 的功能转过来。
-
-#+BEGIN_SRC emacs-lisp
-  (with-library "helm"
-    ;; helm-for-files 支持 Cache，覆盖了 file-cache-ido-find-file 的功能
-    (global-set-key (kbd "ESC ESC f") 'helm-for-files)
-
-    ;; 先绑定到 helm-mini 试用
-    (global-set-key (kbd "C-c h") 'helm-mini)
-
-    (autoload 'helm-mini "helm-imenu" "helm mini use imenu source." t)
-
-    (eval-after-load "helm"
-        '(progn
-           (require 'helm-config)
-
-           ;; 全局打开 Helm 功能
-           (helm-mode 1)
-
-           ;; 设置 helm-mini 包括的内容
-           (setq helm-mini-default-sources '(helm-source-buffers-list
-                                             helm-source-recentf
-                                             helm-source-file-cache
-                                             helm-source-imenu
-                                             helm-source-buffer-not-found))
-
-           ;; find file 时开启目录自动补全模式，也可以 C-backspace 切换
-           (setq helm-ff-auto-update-initial-value t))))
 #+END_SRC
 
 ** Projectile
