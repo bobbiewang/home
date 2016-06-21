@@ -1,0 +1,13 @@
+#!/bin/env sh
+
+USER_EMACS_DIR=~/.emacs.d/
+# USER_EMACS_DIR=`emacs --batch -Q --eval '(princ (file-truename user-emacs-directory))'`
+cd ${USER_EMACS_DIR}
+
+find .elpa/* -maxdepth 0 -type d |
+    grep -v '^.elpa/archives$' |
+    sort |
+    sed 's|^.elpa/||' |
+    rev |
+    cut -d '-' -f 2- |
+    rev
