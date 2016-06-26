@@ -2973,6 +2973,8 @@ yas-dropdown-prompt 需要 Dropdown List 的支持。
 
   参考资料：
   - [[http://tuhdo.github.io/c-ide.html][C/C++ Development Environment for Emacs]]
+  - [[https://github.com/mawenbao/emacs.d][awenbao/emacs.d]] 以上文为基础配置的 C/C++、Golang 和 Python 的开发
+    环境
   - [[https://github.com/emacs-tw/awesome-emacs][Awesome Emacs]] 推荐的扩展
     - CC Mode
     - rtags
