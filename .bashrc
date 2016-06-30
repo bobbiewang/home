@@ -166,20 +166,6 @@ function gg { find . -type f \( -name '*.hpp' -o -name '*.cpp' \) -print |\
                grep -v include | grep -v rcs | xargs grep "$1"; }
 
 ######################################################################
-## apt 命令别名
-######################################################################
-
-alias ac='apt-cache'
-alias ag='apt-get'
-alias acs='apt-cache search'
-alias acp='apt-cache policy'
-alias agu='sudo apt-get update'
-alias agg='sudo apt-get upgrade'
-alias agd='sudo apt-get dist-upgrade'
-alias agi='sudo apt-get install'
-alias agr='sudo apt-get remove'
-
-######################################################################
 ## 其他常用命令别名和自定义函数
 ######################################################################
 
