@@ -1020,6 +1020,8 @@
       helm
       helm-gtags
       helm-projectile
+      ido-ubiquitous
+      ido-vertical-mode
       magit
       markdown-mode
       monokai-theme
