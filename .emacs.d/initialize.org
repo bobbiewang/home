@@ -3239,6 +3239,31 @@ C++! 等。
 
 ** Ruby 开发环境
 
+  - [[https://github.com/emacs-tw/awesome-emacs][Awesome Emacs]] 推荐的扩展
+    - rvm - Ruby versions manager within Emacs.
+    - bundler - Interact with gem Bundler from Emacs.
+    - inf-ruby - REPL buffer connected to a Ruby subprocess.
+    - enhanced-ruby-mode - Enhanced Ruby Mode replaces the emacs ruby
+      mode that comes with ruby. It uses the Ripper class found in
+      ruby 1.9.2 (and later) to parse and indent the source code.
+    - yari - Yet Another RI interface for Emacs.
+    - robe - Code navigation, documentation lookup and completion for
+      Ruby.
+    - rubocop - A Ruby static code analyzer, based on the community
+      Ruby style guide.
+    - motion-mode - A package to provide emacs' major mode for
+      RubyMotion enviroment.
+    - rspec-mode - An RSpec minor mode for Emacs.
+    - feature-mode - Emacs mode for editing Cucumber plain text
+      stories.
+    - rinari - Rinari Is Not A Rails IDE (it is an Emacs minor mode
+      for Rails).
+  - [[http://spacemacs.org/layers/+lang/ruby/README.html][Spacemacs]] 使用的扩展
+    - rbenv, rvm or chruby - version manager
+    - ruby-test and rspec - test runner
+    - rubocop - linter (rubocop)
+    - robe - interactive REPL and code navigation
+
 #+BEGIN_SRC emacs-lisp
   (with-library "ruby-mode"
     (autoload 'ruby-mode     "ruby-mode" "Mode for editing ruby source files" t)
