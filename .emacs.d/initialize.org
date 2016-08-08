@@ -3904,7 +3904,10 @@ Windows 平台使用 pdb 调试 Python 代码的时候，会因为找不到 pdb.
 
   ;; Capture 设置及模板
   (global-set-key (kbd "C-M-r") 'org-capture)
-  (setq org-directory "~/.dropbox/GTD/")
+  (if (getenv "ORG_DIRECTORY")
+      (setq org-directory (getenv "ORG_DIRECTORY"))
+      (setq org-directory "~/.dropbox/GTD/"))
+  ;; (setq org-directory "~/.dropbox/GTD/")
   (setq org-default-notes-file (concat org-directory "/gtd"))
   (setq org-capture-templates
         `(("t" "Todo" entry (file+headline "gtd" "Inbox") "* TODO %? %^g\n  %u")
