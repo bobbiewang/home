@@ -1009,10 +1009,12 @@
 
 #+BEGIN_SRC emacs-lisp
   (defvar wb-elpa-packages
-    '(avy
+    '(anaconda-mode
+      avy
       bm
       cmake-font-lock
       company
+      company-anaconda
       company-irony
       evil
       function-args
@@ -2414,11 +2416,15 @@
 
 #+BEGIN_SRC emacs-lisp
   (with-library "company"
-                (autoload 'company-mode "company" nil t)
+    (autoload 'company-mode "company" nil t)
     ;; 全局激活 Company Mode
     (add-hook 'after-init-hook 'global-company-mode)
     ;; 激发补全前等待时间，缺省是 0.5，修改成 0.1 会快一点
     (setq company-idle-delay 0.1))
+
+  (with-library "company-anaconda"
+    (eval-after-load "company"
+      '(add-to-list 'company-backends 'company-anaconda)))
 #+END_SRC
 
 ** Helm
@@ -2975,6 +2981,7 @@ yas-dropdown-prompt 需要 Dropdown List 的支持。
   - [[http://tuhdo.github.io/c-ide.html][C/C++ Development Environment for Emacs]]
   - [[https://github.com/mawenbao/emacs.d][awenbao/emacs.d]] 以上文为基础配置的 C/C++、Golang 和 Python 的开发
     环境
+  - [[https://vxlabs.com/2016/04/11/step-by-step-guide-to-c-navigation-and-completion-with-emacs-and-the-clang-based-rtags/][C++ navigation and completion with Emacs and the Clang-based rtags]]
   - [[https://github.com/emacs-tw/awesome-emacs][Awesome Emacs]] 推荐的扩展
     - CC Mode
     - rtags
@@ -3327,7 +3334,54 @@ C++! 等。
 
 ** Python 开发环境
 
+  参考资料
+  - [[https://www.emacswiki.org/emacs/PythonProgrammingInEmacs][EmacsWiki: Python Programming In Emacs]]
+  - [[https://realpython.com/blog/python/emacs-the-best-python-editor/][Emacs - the Best Python Editor? - Real Python]]
+  - [[https://github.com/emacs-tw/awesome-emacs][Awesome Emacs]] 推荐的扩展
+    - Jedi - A Python auto-completion package.
+    - Elpy - An Emacs Python development environment.
+    - anaconda-mode - Code navigation, documentation lookup and
+      completion for Python.
+    - virtualenvwrapper.el - Manage virtualenv from inside Emacs.
+  - Spacemacs 使用的扩展
+    - anaconda-mode - auto-complete, code navigation, documentation
+      lookup
+    - pylookup - documentation lookup
+    - nose.el, pytest - test runner
+    - pyvenv, pyenv - virtual environment
+    - YAPF - PEP8 compliant formatting
+    - autoflake - suppression of unused import
+    - evil-matchit - use the % key to jump between blocks
+
+  anaconda-mode 支持代码浏览、文档查找和代码补全等功能。安装、设置也很
+简单，通过 ELPA 安装 anaconda-mode，然后在 python-mode 中激活
+anaconda-mode 和 anaconda-eldoc-mode 就可以了。实际上其功能是通过一些
+Python 包完成的，在运行 anaconda-mode 的命令时会自动通过 pip 安装这些
+包（如 anaconda-mode、jedi 等）。值得注意的是，pip 在 Windows 平台会自
+动读取 IE 设置的代理，要确保代理是可用的。
+
+  anaconda-mode 支持如下命令。
+
+  | Keybinding | Description                    |
+  |------------+--------------------------------|
+  | C-M-i      | anaconda-mode-complete         |
+  | M-.        | anaconda-mode-find-definitions |
+  | M-,        | anaconda-mode-find-assignments |
+  | M-r        | anaconda-mode-find-references  |
+  | M-*        | anaconda-mode-go-back          |
+  | M-?        | anaconda-mode-show-doc         |
+
+  可以通过 company-anaconda，将 anaconda-mode 的补全集成到 company。
+
+  Python 自带调试器 pdb，在 Emacs 中可以通过 M-x pdb 调用。但是，在
+Windows 平台使用 pdb 调试 Python 代码的时候，会因为找不到 pdb.py的位置
+在导致出错。解决方法是，在 M-x pdb 后输入 python -i -m pdb file.py，这
+样就可以了。
+
 #+BEGIN_SRC emacs-lisp
+  (with-library "anaconda-mode"
+      (setq anaconda-mode-installation-directory (locate-user-emacs-file ".anaconda-mode/")))
+
   (with-library "python-mode"
     (autoload 'python-mode "python-mode" "Python editing mode." t)
 
@@ -3361,17 +3415,15 @@ C++! 等。
                 ;; "[^ \t]\\|[ \t]*\\(def\\|class\\) "
                 ;; "[^ \t\n]\\|[ \t]*\\(def[ \t]+\\|class[ \t]+\\)"
                 (set (make-local-variable 'outline-regexp) "[ \t]*\\(def[ \t]+\\|class[ \t]+\\)")
-                ; 以行首的空格数目作为 outline level
+                ;; 以行首的空格数目作为 outline level
                 (set (make-local-variable 'outline-level) 'py-outline-level)
-                (hide-body)  ; 开始的时候隐藏所有函数的 body
+                ;; (hide-body)  ; 开始的时候隐藏所有函数的 body
                 (abbrev-mode)
                 (setq py-indent-offset 4)
-                ;; 自动输入反括号
-                (define-key py-mode-map "\"" 'electric-pair)
-                (define-key py-mode-map "\'" 'electric-pair)
-                (define-key py-mode-map "(" 'electric-pair)
-                (define-key py-mode-map "[" 'electric-pair)
-                (define-key py-mode-map "{" 'electric-pair))))
+                ;; 在 Windows 系统设置为 nil 正确找到 Python Shell 的提示符
+                (setq python-shell-unbuffered nil)
+                (when (featurep 'anaconda-mode)
+                  (anaconda-mode 1)))))
 #+END_SRC
 
 ** Perl 开发环境
