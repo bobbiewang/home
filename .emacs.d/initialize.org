@@ -1016,6 +1016,7 @@
       company
       company-anaconda
       company-irony
+      enh-ruby-mode
       evil
       function-args
       ggtags
@@ -1024,11 +1025,15 @@
       helm-projectile
       ido-ubiquitous
       ido-vertical-mode
+      inf-ruby
       magit
       markdown-mode
       monokai-theme
       org
       projectile
+      rhtml-mode
+      robe
+      ruby-electric
       smex
       undo-tree
       yasnippet)
@@ -3265,21 +3270,13 @@ C++! 等。
     - robe - interactive REPL and code navigation
 
 #+BEGIN_SRC emacs-lisp
-  (with-library "ruby-mode"
-    (autoload 'ruby-mode     "ruby-mode" "Mode for editing ruby source files" t)
-    (autoload 'ruby-electric-mode "ruby-electric" "Ruby Electric minor mode" t)
-    (autoload 'run-ruby      "inf-ruby"  "Run an inferior Ruby process")
-    (autoload 'inf-ruby-keys "inf-ruby"  "Set local key defs for inf-ruby in ruby-mode")
-    (autoload 'rubydb        "rubydb3x"  "Ruby debugger" t)
+  (with-library "enh-ruby-mode"
+    (add-to-list 'auto-mode-alist '("\\.rb$" . enh-ruby-mode))
+    (add-to-list 'interpreter-mode-alist '("ruby" . enh-ruby-mode))
 
-    (setq auto-mode-alist
-          (append '(("\\.rb$" . ruby-mode)) auto-mode-alist))
-    (setq interpreter-mode-alist
-          (append '(("ruby" . ruby-mode)) interpreter-mode-alist))
-
-    (setq ri-ruby-script
-          (expand-file-name "~/.emacs.d/elisp-3rdparty/ruby/ri-emacs/ri-emacs.rb"))
-    (autoload 'ri "ri-ruby" nil t)
+    ;; (setq ri-ruby-script
+    ;;       (expand-file-name "~/.emacs.d/elisp-3rdparty/ruby/ri-emacs/ri-emacs.rb"))
+    ;; (autoload 'ri "ri-ruby" nil t)
 
     (fset 'ruby-hash-header
           "#!/usr/bin/env ruby\C-m\C-m")
@@ -3288,14 +3285,14 @@ C++! 等。
       "Evaluate the buffer with ruby."
       (shell-command-on-region (point-min) (point-max) "ruby" "*ruby-output*"))
 
-    (defun ruby-xmp-region (reg-start reg-end)
-      "Pipe the region through Ruby's xmp utility and replace
-     the region with the result."
-      (interactive "r")
-      (shell-command-on-region
-       reg-start reg-end
-       "ruby -r xmp -I/users/bowang/local/lin/lib/ruby/1.8/irb/ -n -e 'xmp($_, \"%l\t\t# %r\n\")'"
-       t))
+    ;; (defun ruby-xmp-region (reg-start reg-end)
+    ;;   "Pipe the region through Ruby's xmp utility and replace
+    ;;  the region with the result."
+    ;;   (interactive "r")
+    ;;   (shell-command-on-region
+    ;;    reg-start reg-end
+    ;;    "ruby -r xmp -I/users/bowang/local/lin/lib/ruby/1.8/irb/ -n -e 'xmp($_, \"%l\t\t# %r\n\")'"
+    ;;    t))
 
     ;; 支持 outline-minor-mode
     (defun rb-outline-level ()
@@ -3306,7 +3303,7 @@ C++! 等。
           (skip-chars-forward "\t ")
           (current-column))))
 
-    (add-hook 'ruby-mode-hook
+    (add-hook 'enh-ruby-mode-hook
               '(lambda ()
                  ;; 启动 outline-minor-mode
                  (outline-minor-mode 1)
@@ -3315,37 +3312,47 @@ C++! 等。
                  ;; 以行首的空格数目作为 outline level
                  (set (make-local-variable 'outline-level) 'rb-outline-level)
                  ;; (hide-body)             ; 开始的时候隐藏所有函数的 body
-                 (inf-ruby-keys)
-                 (ruby-electric-mode 1)
+                 ;; (when (featurep 'inf-ruby) (inf-ruby-minor-mode 1))
+                 (when (featurep 'ruby-electric) (ruby-electric-mode 1))
                  (setq abbrev-mode 1)
                  (local-set-key "\C-c\C-c" 'ruby-eval-buffer)
                  (local-set-key "\C-[#"    'ruby-hash-header)
                  ;; Rails 开发环境
-                 (robust-require rinari
-                   (setq rinari-tags-file-name "TAGS"))))
+                 ;; (robust-require rinari
+                 ;;   (setq rinari-tags-file-name "TAGS"))
+                   ))
 
     ;; ruby-electric-simple-keywords-re 要在加载 ruby-electric 后才有效
-    (eval-after-load "ruby-electric"
-      '(progn
-         ;; 支持 Hide-show
-         (add-to-list 'hs-special-modes-alist
-                      (list 'ruby-mode
-                            (concat "\\(^\\s-*"
-                                    ruby-electric-simple-keywords-re
-                                    "\\|{\\|\\[\\)")
-                            "end\\|\\]\\|}" "#"
-                            'ruby-forward-sexp nil)))))
+    ;; (eval-after-load "ruby-electric"
+    ;;   '(progn
+    ;;      ;; 支持 Hide-show
+    ;;      (add-to-list 'hs-special-modes-alist
+    ;;                   (list 'ruby-mode
+    ;;                         (concat "\\(^\\s-*"
+    ;;                                 ruby-electric-simple-keywords-re
+    ;;                                 "\\|{\\|\\[\\)")
+    ;;                         "end\\|\\]\\|}" "#"
+    ;;                         'ruby-forward-sexp nil))))
+    )
+
+  ;; (with-library "inf-ruby"
+  ;;   (add-hook 'compilation-filter-hook 'inf-ruby-auto-enter)
+    
+  ;;   (eval-after-load 'inf-ruby
+  ;;     '(define-key inf-ruby-minor-mode-map
+  ;;        (kbd "C-c C-s") 'inf-ruby-console-auto)))
 
   (with-library "rhtml-mode"
     (autoload 'rhtml-mode "rhtml-mode" "rhtml mode")
     (add-to-list 'auto-mode-alist '("\.rhtml$". rhtml-mode))
     (add-to-list 'auto-mode-alist '("\.html\.erb$". rhtml-mode))
-    (add-hook 'rhtml-mode-hook
-              (lambda ()
-                ;; Rails 开发环境
-                 (robust-require rinari
-                   (setq rinari-tags-file-name "TAGS"))
-                (rinari-launch))))
+    ;; (add-hook 'rhtml-mode-hook
+    ;;           (lambda ()
+    ;;             ;; Rails 开发环境
+    ;;              (robust-require rinari
+    ;;                (setq rinari-tags-file-name "TAGS"))
+    ;;              (rinari-launch)))
+    )
 
   ;; YAML 支持
   (with-library "yaml-mode"
