@@ -1,10 +1,11 @@
+# coding: utf-8
 # -*- ruby -*-
 
 require 'rubygems'
 
 # 支持用 Tab 完成输入
-require 'irb/completion'
-IRB.conf[:USE_READLINE] = true
+# require 'irb/completion'
+# IRB.conf[:USE_READLINE] = true
 
 # 设置保存历史记录
 require 'irb/ext/save-history'
