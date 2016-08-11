@@ -3268,6 +3268,10 @@ C++! 等。
     - ruby-test and rspec - test runner
     - rubocop - linter (rubocop)
     - robe - interactive REPL and code navigation
+    - bundler, rspec-mode, ruby-test-mode, ruby-tools
+  - [[https://emacs.zeef.com/ehartc][Emacs by Ernst de Hart]] 收集的扩展
+    - RVM, Bundler, inf-ruby, Rubocop, chruby, Ruby Refactor,
+      enhanced-ruby-mode, Yari
 
   enh-ruby-mode 提供了比 ruby-mode 更强大的功能。ehm 使用 Ruby 自带的
 Ripper 解析代码，从而能够更准确地分析代码，而且提供了语法检查的功能。
