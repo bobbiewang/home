@@ -3285,15 +3285,6 @@ C++! 等。
       "Evaluate the buffer with ruby."
       (shell-command-on-region (point-min) (point-max) "ruby" "*ruby-output*"))
 
-    ;; (defun ruby-xmp-region (reg-start reg-end)
-    ;;   "Pipe the region through Ruby's xmp utility and replace
-    ;;  the region with the result."
-    ;;   (interactive "r")
-    ;;   (shell-command-on-region
-    ;;    reg-start reg-end
-    ;;    "ruby -r xmp -I/users/bowang/local/lin/lib/ruby/1.8/irb/ -n -e 'xmp($_, \"%l\t\t# %r\n\")'"
-    ;;    t))
-
     ;; 支持 outline-minor-mode
     (defun rb-outline-level ()
       "This gets called by outline to deteremine the level. Just use
@@ -3303,24 +3294,28 @@ C++! 等。
           (skip-chars-forward "\t ")
           (current-column))))
 
-    (add-hook 'enh-ruby-mode-hook
-              '(lambda ()
-                 ;; 启动 outline-minor-mode
-                 (outline-minor-mode 1)
-                 (set (make-local-variable 'outline-regexp)
-                      "^if[ \t]\\| *\\(module[ \t]+\\|class[ \t]+\\|def[ \t]+\\)")
-                 ;; 以行首的空格数目作为 outline level
-                 (set (make-local-variable 'outline-level) 'rb-outline-level)
-                 ;; (hide-body)             ; 开始的时候隐藏所有函数的 body
-                 ;; (when (featurep 'inf-ruby) (inf-ruby-minor-mode 1))
-                 (when (featurep 'ruby-electric) (ruby-electric-mode 1))
-                 (setq abbrev-mode 1)
-                 (local-set-key "\C-c\C-c" 'ruby-eval-buffer)
-                 (local-set-key "\C-[#"    'ruby-hash-header)
-                 ;; Rails 开发环境
-                 ;; (robust-require rinari
-                 ;;   (setq rinari-tags-file-name "TAGS"))
-                   ))
+    (defun wb-ruby-mode-hook ()
+         ;; 启动 outline-minor-mode
+         (outline-minor-mode 1)
+         (set (make-local-variable 'outline-regexp)
+              "^if[ \t]\\| *\\(module[ \t]+\\|class[ \t]+\\|def[ \t]+\\)")
+         ;; 以行首的空格数目作为 outline level
+         (set (make-local-variable 'outline-level) 'rb-outline-level)
+         ;; (hide-body)             ; 开始的时候隐藏所有函数的 body
+         (when (featurep 'inf-ruby)
+           (inf-ruby-minor-mode 1))
+         (when (featurep 'ruby-electric)
+           (ruby-electric-mode 1))
+         (setq abbrev-mode 1)
+         (local-set-key "\C-c\C-c" 'ruby-eval-buffer)
+         (local-set-key "\C-[#"    'ruby-hash-header)
+         ;; Rails 开发环境
+         ;; (robust-require rinari
+         ;;   (setq rinari-tags-file-name "TAGS"))
+         )
+
+    (add-hook 'ruby-mode-hook 'wb-ruby-mode-hook)
+    (add-hook 'enh-ruby-mode-hook 'wb-ruby-mode-hook)
 
     ;; ruby-electric-simple-keywords-re 要在加载 ruby-electric 后才有效
     ;; (eval-after-load "ruby-electric"
