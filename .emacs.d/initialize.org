@@ -1009,7 +1009,8 @@
 
 #+BEGIN_SRC emacs-lisp
   (defvar wb-elpa-packages
-    '(anaconda-mode
+    '(ag
+      anaconda-mode
       avy
       bm
       cmake-font-lock
@@ -4389,6 +4390,13 @@ sbt、rebar 和 bundler 项目。如果项目目录不使用以上工具，可�
     (autoload 'sdcv-search "sdcv-mode" "Search word by sdcv" t)
     ;; (global-set-key (kbd "C-c d") 'sdcv-search)
     )
+#+END_SRC
+
+** ag
+
+#+BEGIN_SRC emacs-lisp
+  (with-library "ag"
+    (setq ag-highlight-search t))
 #+END_SRC
 
 * kbd
