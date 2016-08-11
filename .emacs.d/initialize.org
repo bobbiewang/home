@@ -3272,6 +3272,9 @@ C++! 等。
   enh-ruby-mode 提供了比 ruby-mode 更强大的功能。ehm 使用 Ruby 自带的
 Ripper 解析代码，从而能够更准确地分析代码，而且提供了语法检查的功能。
 
+  robe 提供了代码浏览、代码补全、文档查找等功能。使用 robe 之前，要安
+装 pry、pry-doc、method_source 等 Gem。
+
 #+BEGIN_SRC emacs-lisp
   (with-library "enh-ruby-mode"
     (add-to-list 'auto-mode-alist '("\\.rb$" . enh-ruby-mode))
@@ -3309,6 +3312,8 @@ Ripper 解析代码，从而能够更准确地分析代码，而且提供了语�
            (inf-ruby-minor-mode 1))
          (robust-require smartparens-config
            (smartparens-mode 1))
+         (when (fboundp 'robe-mode)
+           (robe-mode 1))
          (setq abbrev-mode 1)
          ;; 设置几个快捷键
          (local-set-key "\C-c\C-c" 'ruby-eval-buffer)
@@ -3325,6 +3330,10 @@ Ripper 解析代码，从而能够更准确地分析代码，而且提供了语�
     (eval-after-load 'inf-ruby
       '(define-key inf-ruby-minor-mode-map
          (kbd "C-c C-s") 'inf-ruby-console-auto)))
+
+  (with-library "robe"
+    (eval-after-load "robe"
+      '(add-to-list 'company-backends 'company-robe)))
 
   (with-library "rhtml-mode"
     (autoload 'rhtml-mode "rhtml-mode" "rhtml mode")
