@@ -1033,7 +1033,7 @@
       projectile
       rhtml-mode
       robe
-      ruby-electric
+      smartparens
       smex
       undo-tree
       yasnippet)
@@ -3269,6 +3269,9 @@ C++! 等。
     - rubocop - linter (rubocop)
     - robe - interactive REPL and code navigation
 
+  enh-ruby-mode 提供了比 ruby-mode 更强大的功能。ehm 使用 Ruby 自带的
+Ripper 解析代码，从而能够更准确地分析代码，而且提供了语法检查的功能。
+
 #+BEGIN_SRC emacs-lisp
   (with-library "enh-ruby-mode"
     (add-to-list 'auto-mode-alist '("\\.rb$" . enh-ruby-mode))
@@ -3304,31 +3307,15 @@ C++! 等。
          ;; (hide-body)             ; 开始的时候隐藏所有函数的 body
          (when (featurep 'inf-ruby)
            (inf-ruby-minor-mode 1))
-         (when (featurep 'ruby-electric)
-           (ruby-electric-mode 1))
+         (robust-require smartparens-config
+           (smartparens-mode 1))
          (setq abbrev-mode 1)
+         ;; 设置几个快捷键
          (local-set-key "\C-c\C-c" 'ruby-eval-buffer)
-         (local-set-key "\C-[#"    'ruby-hash-header)
-         ;; Rails 开发环境
-         ;; (robust-require rinari
-         ;;   (setq rinari-tags-file-name "TAGS"))
-         )
+         (local-set-key "\C-[#"    'ruby-hash-header))
 
     (add-hook 'ruby-mode-hook 'wb-ruby-mode-hook)
-    (add-hook 'enh-ruby-mode-hook 'wb-ruby-mode-hook)
-
-    ;; ruby-electric-simple-keywords-re 要在加载 ruby-electric 后才有效
-    ;; (eval-after-load "ruby-electric"
-    ;;   '(progn
-    ;;      ;; 支持 Hide-show
-    ;;      (add-to-list 'hs-special-modes-alist
-    ;;                   (list 'ruby-mode
-    ;;                         (concat "\\(^\\s-*"
-    ;;                                 ruby-electric-simple-keywords-re
-    ;;                                 "\\|{\\|\\[\\)")
-    ;;                         "end\\|\\]\\|}" "#"
-    ;;                         'ruby-forward-sexp nil))))
-    )
+    (add-hook 'enh-ruby-mode-hook 'wb-ruby-mode-hook))
 
   (with-library "inf-ruby"
     ;; 如果安装了 pry，则使用 pry
