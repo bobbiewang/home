@@ -3335,12 +3335,14 @@ C++! 等。
     ;;                         'ruby-forward-sexp nil))))
     )
 
-  ;; (with-library "inf-ruby"
-  ;;   (add-hook 'compilation-filter-hook 'inf-ruby-auto-enter)
-    
-  ;;   (eval-after-load 'inf-ruby
-  ;;     '(define-key inf-ruby-minor-mode-map
-  ;;        (kbd "C-c C-s") 'inf-ruby-console-auto)))
+  (with-library "inf-ruby"
+    ;; 如果安装了 pry，则使用 pry
+    (when (executable-find "pry")
+      (setq inf-ruby-default-implementation "pry"))
+    (add-hook 'compilation-filter-hook 'inf-ruby-auto-enter)
+    (eval-after-load 'inf-ruby
+      '(define-key inf-ruby-minor-mode-map
+         (kbd "C-c C-s") 'inf-ruby-console-auto)))
 
   (with-library "rhtml-mode"
     (autoload 'rhtml-mode "rhtml-mode" "rhtml mode")
