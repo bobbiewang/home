@@ -1037,6 +1037,7 @@
       smartparens
       smex
       undo-tree
+      yari
       yasnippet)
     "A list of packages those are managed by ELPA.")
 
@@ -3282,7 +3283,7 @@ Ripper 解析代码，从而能够更准确地分析代码，而且提供了语�
 
 #+BEGIN_SRC emacs-lisp
   (with-library "enh-ruby-mode"
-    (add-to-list 'auto-mode-alist '("\\.rb$" . enh-ruby-mode))
+    (add-to-list 'auto-mode-alist '("\\.\\(rb\\|irbrc\\|pryrc\\)$" . enh-ruby-mode))
     (add-to-list 'interpreter-mode-alist '("ruby" . enh-ruby-mode))
 
     ;; (setq ri-ruby-script
