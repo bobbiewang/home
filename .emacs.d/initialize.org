@@ -3278,6 +3278,31 @@ C++! 等。
   enh-ruby-mode 提供了比 ruby-mode 更强大的功能。ehm 使用 Ruby 自带的
 Ripper 解析代码，从而能够更准确地分析代码，而且提供了语法检查的功能。
 
+  inf-ruby 可以在 Emacs 中运行 Ruby 的交互界面。inf-ruby 缺省运行 irb，
+如果要运行 pry，可以将 inf-ruby-default-implementation 设置为 pry。但
+这在 Windows 上有问题：在 Emacs 中启动 pry 后会挂住。后来在 Spacemacs
+[[https://github.com/syl20bnr/spacemacs/issues/1584][Issue #1584]] 找到解决方法：安装 pry-byebug Gem，并在.pryrc 中进行如下设
+置，这样 pry 就可以在 Emacs 中使用了。为了输出更美观的内容，该解决方法
+还建议安装 awesome_print Gem。
+
+#+BEGIN_SRC ruby
+  class Emacsable
+    def self.readline(prompt)
+      print prompt
+      (gets || '').chomp
+    end
+  end
+  Pry.config.input = Emacsable
+
+  Pry.config.pager = false if ENV["INSIDE_EMACS"]
+  Pry.config.correct_indent = false if ENV["INSIDE_EMACS"]
+  Pry.config.print = proc { |output, value| output.puts "=> #{value.inspect}" }
+  Pry.config.exception_handler = proc do |output, exception, _|
+    output.puts "#{exception.class}: #{exception.message}"
+    output.puts "from #{exception.backtrace.first}"
+  end
+#+END_SRC
+
   robe 提供了代码浏览、代码补全、文档查找等功能。使用 robe 之前，要安
 装 pry、pry-doc、method_source 等 Gem。
 
