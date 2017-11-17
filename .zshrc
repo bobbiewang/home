@@ -98,7 +98,8 @@ alias j="jobs -l"
 ## cd
 ######################################################################
 
-setopt auto_pushd
+setopt auto_cd                  # 输入目录直接切换到目录
+setopt auto_pushd               # 切换目录时自动将目录加到目录栈中
 setopt pushd_ignore_dups
 setopt pushdminus
 alias d='dirs -v | head -10'
