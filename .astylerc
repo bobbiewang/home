@@ -1,8 +1,15 @@
+--style=kr
 --indent=spaces=4
---brackets=linux
---indent-namespaces
---indent-preprocessor
+--attach-namespaces
+--attach-inlines
+--indent-switches
+--min-conditional-indent=0
 --pad-oper
-# --lineend=linux     # astyle 1.24 才支持
-#--align-pointer=name # astyle 1.24 才支持
---suffix=none
+--pad-header
+--unpad-paren
+--align-pointer=name
+--align-reference=name
+# --remove-braces
+--max-code-length=90
+--lineend=linux
+--keep-one-line-blocks
