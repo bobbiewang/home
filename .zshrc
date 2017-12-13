@@ -73,7 +73,7 @@ fi
 ## 命令行提示符和其他预置格式字符串
 ######################################################################
 
-autoload -Uz colors && colors
+autoload -U colors && colors
 
 # 左侧显示用户名、机器名、当前目录
 PROMPT="
@@ -92,6 +92,9 @@ user: %U  system: %S  cpu: %P  total: %*E"
 
 # 初始化补全环境，数据会缓存到 $ZDOTDIR/.zcompdump
 autoload -U compinit && compinit
+
+# 按两次 tab 进入选择模式，可以通过方向键或者 Ctrl+n/p/b/f 浏览选项
+zstyle ':completion:*' menu select
 
 ######################################################################
 ## Emacs
