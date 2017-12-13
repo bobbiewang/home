@@ -50,17 +50,18 @@ function spectrum_bls() {
   done
 }
 
+# 通过 tput 程序或者 TERM 环境变量得到终端支持的颜色数目（缺省为 8）
 COLOR_NUM=8
 if hash tput 2>/dev/null; then
     # 使用 tput 命令确定终端支持的颜色数目
     COLOR_NUM=$(tput colors)
 elif echo $TERM | grep -E -e "-[0-9]+color$" > /dev/null 2>&1; then
     # 通过解析 TERM 环境变量确定终端支持的颜色数目
-    # TODO
+    COLOR_NUM=$(echo $TERM | sed 's/^.*-//' | sed 's/color$//')
 fi
-   
+
+# 根据终端支持的颜色数目，使用相应的 .dircolors 文件
 dircolors_database=$HOME/.dircolors-$(tput colors)
-  
 if [[ -f $dircolors_database ]]; then
     eval $(dircolors -b $dircolors_database)
 else
