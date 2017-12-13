@@ -11,7 +11,7 @@ export LANGUAGE=en_US:en
 export TZ='Asia/Shanghai'
 
 ######################################################################
-## Color
+## 颜色
 ######################################################################
 
 # A script to make using 256 colors in zsh less painful.
@@ -70,10 +70,11 @@ else
 fi
 
 ######################################################################
-## 命令行提示符
+## 命令行提示符和其他预置格式字符串
 ######################################################################
 
 autoload -Uz colors && colors
+
 # 左侧显示用户名、机器名、当前目录
 PROMPT="
 %{$fg[green]%}%n@%m%{$reset_color%} %{$fg[magenta]%}%~%{$reset_color%}
@@ -81,22 +82,18 @@ PROMPT="
 # 右侧显示当前时间
 RPROMPT="%{$fg_bold[blue]%}[%*]%{$reset_color%}"
 
-######################################################################
-## Alias
-######################################################################
+# 设置内置 time 命令的输出
+TIMEFMT="\"%J\"
+user: %U  system: %S  cpu: %P  total: %*E"
 
-## super user alias
-alias _='sudo'
-alias please='sudo'
+######################################################################
+## Emacs
+######################################################################
 
 alias et="emacsclient -t"
 export ALTERNATE_EDITOR=""
 export EDITOR="emacsclient -t"
 export VISUAL="emacsclient -t"
-
-alias so="source"
-alias f="fg"
-alias j="jobs -l"
 
 ######################################################################
 ## cd
@@ -104,7 +101,7 @@ alias j="jobs -l"
 
 setopt auto_cd                  # 输入目录直接切换到目录
 setopt auto_pushd               # 切换目录时自动将目录加到目录栈中
-setopt pushd_ignore_dups
+setopt pushd_ignore_dups        # 不将目录重复加到栈
 setopt pushdminus
 alias d='dirs -v | head -10'
 
@@ -142,6 +139,14 @@ alias la="ls $LS_OPTIONS -lA"
 alias mv='mv -i'
 alias cp='cp -i'
 alias rm='rm -i'
+
+######################################################################
+## 其他别名
+######################################################################
+
+alias so="source"
+alias f="fg"
+alias j="jobs -l"
 
 # Local Variables:
 # coding: utf-8-unix
