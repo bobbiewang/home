@@ -113,7 +113,24 @@ setopt auto_cd                  # 输入目录直接切换到目录
 setopt auto_pushd               # 切换目录时自动将目录加到目录栈中
 setopt pushd_ignore_dups        # 不将目录重复加到栈
 setopt pushdminus
-alias d='dirs -v | head -10'
+# alias d='dirs -v | head -10'
+
+d () {
+    IFS=$'\n'
+    lines=($(dirs -v | head -10))
+    unset IFS
+
+    for line in $lines;
+    do
+        index=${lines[(i)$line]}
+        if [ $(($index % 2)) -eq 1 ];
+        then
+            print -P -- "$line%{$reset_color%}"
+        else
+            print -P -- "%{$FG[240]%}$line%{$reset_color%}"
+        fi
+    done;
+}
 
 alias -g ...='../..'
 alias -g ....='../../..'
