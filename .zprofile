@@ -1,4 +1,6 @@
-# -*- coding: utf-8-unix -*-
+if [ -f ~/.zsh-preprocess ]; then
+    . ~/.zsh-preprocess
+fi
 
 if [ -f ~/.zshrc ]; then
     . ~/.zshrc
