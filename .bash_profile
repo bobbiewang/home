@@ -102,8 +102,13 @@ function set_prompts()
     PS2="$PS_CONT$PS_COLON$PS_SPACE"
     PS4="$PS_PLUS$PS_SPACE"
 }
-set_prompts
-export PS1 PS2 PS4
+
+if [ -n "$INSIDE_EMACS" ]; then
+    set_prompts
+    export PS1 PS2 PS4
+else
+    export PS1="$"
+fi
 
 # .bashrc 要在 .privatebashrc 后加载，因为可能要用到前者的一些设置
 if [ -f ~/.bashrc ]; then
