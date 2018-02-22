@@ -10,12 +10,9 @@
 # 些系统没有这些文件的写权限，所以在 $HOME 下增加这个文件。
 # 这个文件的属性应该设为 600，不进行版本控制
 # ~/.bashrc-preprocess 文件应该设置如下环境变量：
-#   - EMACS_SERVER_MODE，可选项有 daemon、screen、dtach 等
-#   - Proxy 账号、密码
+#   - http_proxy
 if [ -f ~/.bashrc-preprocess ]; then
     . ~/.bashrc-preprocess
-else
-    EMACS_SERVER_MODE="daemon"
 fi
 
 ######################################################################
