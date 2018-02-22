@@ -100,11 +100,12 @@ function set_prompts()
     PS4="$PS_PLUS$PS_SPACE"
 }
 
-if [ -n "$INSIDE_EMACS" ]; then
+if [ -z "$INSIDE_EMACS" ]; then
     set_prompts
     export PS1 PS2 PS4
 else
-    export PS1="$"
+    # 在 Emacs 里运行 Shell，会自动设置 INSIDE_EMACS 环境变量
+    export PS1="$ "
 fi
 
 # .bashrc 要在 .privatebashrc 后加载，因为可能要用到前者的一些设置
