@@ -10,12 +10,9 @@
 # 些系统没有这些文件的写权限，所以在 $HOME 下增加这个文件。
 # 这个文件的属性应该设为 600，不进行版本控制
 # ~/.bashrc-preprocess 文件应该设置如下环境变量：
-#   - EMACS_SERVER_MODE，可选项有 daemon、screen、dtach 等
-#   - Proxy 账号、密码
+#   - http_proxy
 if [ -f ~/.bashrc-preprocess ]; then
     . ~/.bashrc-preprocess
-else
-    EMACS_SERVER_MODE="daemon"
 fi
 
 ######################################################################
@@ -102,8 +99,14 @@ function set_prompts()
     PS2="$PS_CONT$PS_COLON$PS_SPACE"
     PS4="$PS_PLUS$PS_SPACE"
 }
-set_prompts
-export PS1 PS2 PS4
+
+if [ -z "$INSIDE_EMACS" ]; then
+    set_prompts
+    export PS1 PS2 PS4
+else
+    # 在 Emacs 里运行 Shell，会自动设置 INSIDE_EMACS 环境变量
+    export PS1="$ "
+fi
 
 # .bashrc 要在 .privatebashrc 后加载，因为可能要用到前者的一些设置
 if [ -f ~/.bashrc ]; then
