@@ -30,7 +30,7 @@ lsc:\
 # 将 .c .h 扩展名的文件设为 C++ 文件
 #---------------------------------------------------------------------
 common_skip:\
-    :skip=GPATH,GTAGS,GRTAGS,GSYMS,HTML/,html/,tags,TAGS,ID,y.tab.c,y.tab.h,.notfunction,cscope.out,.gdbinit,ntopt/,linopt/,solopt/,lin64opt/,smoke/,SCCS/,RCS/,CVS/,CVSROOT/,{arch}/,.svn/,.cvsrc,.cvsignore,.cvspass,.cvswrappers,.deps/,autom4te.cache/,.snprj/:
+    :skip=GPATH,GTAGS,GRTAGS,GSYMS,HTML/,html/,tags,TAGS,ID,y.tab.c,y.tab.h,.notfunction,cscope.out,.gdbinit,ntopt/,linopt/,solopt/,lin64opt/,smoke/,SCCS/,RCS/,CVS/,CVSROOT/,{arch}/,.svn/,.cvsrc,.cvsignore,.cvspass,.cvswrappers,.deps/,autom4te.cache/,.snprj/,build/:
 
 common_langmap:\
     :langmap=c\:.c.h,yacc\:.y,asm\:.s.S,java\:.java,cpp\:.c++.cc.cpp.cxx.hxx.hpp.C.H,php\:.php.php3.phtml:
