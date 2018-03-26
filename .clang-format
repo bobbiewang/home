@@ -1,7 +1,7 @@
 ---
 Language:        Cpp
 # public 等访问限定符顶格
-AccessModifierOffset: -1
+AccessModifierOffset: -4
 # 对齐函数形参
 AlignAfterOpenBracket: Align
 # 对齐连续的赋值表达式的赋值符号
