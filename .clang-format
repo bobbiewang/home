@@ -44,7 +44,7 @@ BraceWrapping:
   # enum 定义后的括号在同一行
   AfterEnum:       false
   # 函数定义后的括号另起一行
-  AfterFunction:   false
+  AfterFunction:   true
   # namespace 后的括号在同一行
   AfterNamespace:  false
   AfterObjCDeclaration: false
@@ -67,7 +67,7 @@ BraceWrapping:
 # 二元操作符语句在二元操作符后换行
 BreakBeforeBinaryOperators: None
 # ？？？需要再看看
-BreakBeforeBraces: Attach
+BreakBeforeBraces: Custom
 # 继承表达式不换行
 BreakBeforeInheritanceComma: false
 # 三元操作符后换行
