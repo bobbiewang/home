@@ -56,7 +56,7 @@ BraceWrapping:
   BeforeCatch:     false
   # else 和前面的括号在同一行
   BeforeElse:      false
-  # 
+  #
   IndentBraces:    false
   # 空函数体的括号放在两行
   SplitEmptyFunction: true
@@ -66,13 +66,13 @@ BraceWrapping:
   SplitEmptyNamespace: true
 # 二元操作符语句在二元操作符后换行
 BreakBeforeBinaryOperators: None
-# ？？？需要再看看
+# Custom 表示通过 BraceWrapping 详细自定义
 BreakBeforeBraces: Custom
 # 继承表达式不换行
 BreakBeforeInheritanceComma: false
 # 三元操作符后换行
 BreakBeforeTernaryOperators: false
-# 
+#
 BreakConstructorInitializersBeforeComma: false
 BreakConstructorInitializers: BeforeColon
 BreakAfterJavaFieldAnnotations: false
@@ -92,27 +92,27 @@ ConstructorInitializerIndentWidth: 4
 ContinuationIndentWidth: 4
 # 使用 C++ 的 {...} 风格，{} 内没有空格
 Cpp11BracedListStyle: true
-# 分析文件，自动判断 * 和 & 的对齐
-DerivePointerAlignment: true
+# 分析文件，自动判断 * 和 & 的对齐，关掉
+DerivePointerAlignment: false
 # 自动分析函数参数风格，试验特性，不使用
 ExperimentalAutoDetectBinPacking: false
 # 自动在 namespace 结束加一条注释
 FixNamespaceComments: true
 # foreach 宏的列表
-ForEachMacros:   
+ForEachMacros:
   - foreach
   - Q_FOREACH
   - BOOST_FOREACH
 # Include 语句的优先级，可以用来排序
-IncludeCategories: 
-  - Regex:           '^<.*\.h>'
-    Priority:        1
-  - Regex:           '^<.*'
-    Priority:        2
-  - Regex:           '.*'
-    Priority:        3
+# IncludeCategories:
+#   - Regex:           '^<.*\.h>'
+#     Priority:        1
+#   - Regex:           '^<.*'
+#     Priority:        2
+#   - Regex:           '.*'
+#     Priority:        3
 # ？？？
-IncludeIsMainRegex: '([-_](test|unittest))?$'
+# IncludeIsMainRegex: '([-_](test|unittest))?$'
 # switch 和 case 对齐
 IndentCaseLabels: false
 # 缩进 4 格
@@ -132,7 +132,7 @@ MaxEmptyLinesToKeep: 2
 # namespace 内不缩进
 NamespaceIndentation: None
 # 指针的 * 右对齐
-PointerAlignment: Right
+PointerAlignment: Left
 # 格式化注释
 ReflowComments:  true
 # 不对 Include 语句排序
@@ -167,4 +167,3 @@ TabWidth:        4
 # 不使用制表符
 UseTab:          Never
 ...
-
