@@ -90,6 +90,8 @@ user: %U  system: %S  cpu: %P  total: %*E"
 ## 补全
 ######################################################################
 
+fpath=(~/.zsh/completions $fpath)
+
 # 初始化补全环境，数据会缓存到 $ZDOTDIR/.zcompdump
 autoload -U compinit && compinit
 
