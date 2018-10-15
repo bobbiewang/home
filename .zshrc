@@ -181,11 +181,10 @@ alias j="jobs -l"
 ## 加载插件
 ######################################################################
 
-plugins=(zsh-autosuggestions)
+plugins=(zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search)
 for plugin ($plugins); do
     local plugin_init_file=~/.zsh/plugins/$plugin/init.zsh
-    echo "source $plugin_init_file"
-    [ -f $plugin_init_file ] && . $plugin_init_file
+    [ -f $plugin_init_file ] && source $plugin_init_file
 done
 
 # Local Variables:
