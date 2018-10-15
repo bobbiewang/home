@@ -179,6 +179,16 @@ alias so="source"
 alias f="fg"
 alias j="jobs -l"
 
+######################################################################
+## 加载插件
+######################################################################
+
+plugins=(zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search)
+for plugin ($plugins); do
+    local plugin_init_file=~/.zsh/plugins/$plugin/init.zsh
+    [ -f $plugin_init_file ] && source $plugin_init_file
+done
+
 # Local Variables:
 # coding: utf-8-unix
 # mode: outline-minor
