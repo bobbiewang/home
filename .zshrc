@@ -185,8 +185,13 @@ alias j="jobs -l"
 
 plugins=(zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search)
 for plugin ($plugins); do
-    local plugin_init_file=~/.zsh/plugins/$plugin/init.zsh
-    [ -f $plugin_init_file ] && source $plugin_init_file
+    if [ -r ~/.zsh/plugins/$plugin/init.zsh ]; then
+        source ~/.zsh/plugins/$plugin/init.zsh
+    elif [ -r ~/.zsh/plugins/$plugin/$plugin.zsh ]; then
+        source ~/.zsh/plugins/$plugin/$plugin.zsh
+    else
+        echo "ERROR: Plugin '$plugin' is not installed."
+    fi
 done
 
 # Local Variables:
