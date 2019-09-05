@@ -193,10 +193,22 @@ alias f="fg"
 alias j="jobs -l"
 
 ######################################################################
+# 其他工具
+######################################################################
+
+# ag
+alias ag="ag --follow"
+# rg
+export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
+# fd
+alias fd="fd --follow"
+
+######################################################################
 ## 加载插件
 ######################################################################
 
-plugins=(zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search)
+# plugins=(zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search)
+plugins=(zsh-autosuggestions zsh-history-substring-search)
 for plugin ($plugins); do
     if [ -r ~/.zsh/plugins/$plugin/init.zsh ]; then
         source ~/.zsh/plugins/$plugin/init.zsh
