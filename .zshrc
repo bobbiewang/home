@@ -93,7 +93,7 @@ user: %U  system: %S  cpu: %P  total: %*E"
 fpath=(~/.zsh/completions $fpath)
 
 # 初始化补全环境，数据会缓存到 $ZDOTDIR/.zcompdump
-autoload -U compinit && compinit
+autoload -U compinit && compinit -d ~/.zsh/.zcompdump
 
 # 按两次 tab 进入选择模式，可以通过方向键或者 Ctrl+n/p/b/f 浏览选项
 zstyle ':completion:*' menu select
