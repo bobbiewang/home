@@ -102,10 +102,23 @@ zstyle ':completion:*' menu select
 ## Emacs
 ######################################################################
 
-alias et="emacsclient -t"
 export ALTERNATE_EDITOR=""
 export EDITOR="emacsclient -t"
 export VISUAL="emacsclient -t"
+
+alias et="emacsclient -t"
+eg() {
+    local file
+    local line
+
+    # read -r file line <<<"$(rg --no-heading --line-number $@ | fzf -0 -1 | awk -F: '{print $1, $2}')"
+    read -r file line <<<"$(rg --no-heading --line-number $@ | fzf -0 -1 --preview '__file="$(echo {} | cut -d: -f1)";__line="$(echo {} | cut -d: -f2)"; bat ${__file} --color=always --line-range=${__line}:' | awk -F: '{print $1, $2}')"
+
+    if [[ -n $file ]]
+    then
+        et +$line $file
+    fi
+}
 
 ######################################################################
 ## cd
