@@ -1,0 +1,19 @@
+set nocompatible       " 关闭 vi 兼容模式
+syntax on              " 开启语法高亮
+set number             " 显示行号，通过 set nonumber 关闭
+set cursorline         " 突出显示当前行
+set hlsearch           " 搜索时高亮显示匹配结果
+set incsearch          " 搜索每输入一个字符，自动跳到第一个匹配的结果
+set showmatch          " 光标遇到括号时，自动高亮对应的另一个括号
+set autoindent         " 自动缩进
+
+set shiftwidth=4       " 增加、减少一级缩进时的每级空格数 
+set softtabstop=4      " 按下 Tab 键时对应的空格数
+set tabstop=4          " 显示 Tab 字符时对应的空格数
+set expandtab          " 自动将 Tab 转为空格
+
+if has('multi_byte')
+    set encoding=utf-8
+    set fileencoding=utf-8
+    set fileencodings=ucs-bom,utf-8,gbk,gb18030,big5,euc-jp,latin1
+endif
