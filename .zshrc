@@ -112,7 +112,7 @@ eg() {
     local line
 
     # read -r file line <<<"$(rg --no-heading --line-number $@ | fzf -0 -1 | awk -F: '{print $1, $2}')"
-    read -r file line <<<"$(rg --no-heading --line-number $@ | fzf -0 -1 --preview '__file="$(echo {} | cut -d: -f1)";__line="$(echo {} | cut -d: -f2)"; bat ${__file} --color=always --line-range=${__line}:' | awk -F: '{print $1, $2}')"
+    read -r file line <<<"$(rg --no-heading --line-number $@ | fzf -0 -1 --preview '__file="$(echo {} | cut -d: -f1)";__hline="$(echo {} | cut -d: -f2)";__line=$((__hline-10));if [ $__line -lt 0 ];then __line=0; fi; bat ${__file} --color=always --line-range=${__line}: --highlight-line ${__hline}' | awk -F: '{print $1, $2}')"
 
     if [[ -n $file ]]
     then
