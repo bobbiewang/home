@@ -10,3 +10,8 @@ Rxvt.foreground: gray80
 Rxvt.colorBD:    yellow
 Rxvt.colorIT:    magenta
 Rxvt.colorUL:    green
+
+xterm*font: -misc-fixed-*-*-*-*-*-*-100-100-*-*-*-2
+# xterm*font: xft:DejaVu Sans Mono:size=12
+xterm*foreground: gray80
+xterm*background: black
