@@ -12,7 +12,7 @@ set incsearch           " 搜索每输入一个字符，自动跳到第一个匹
 set autoindent          " 开新行时复制上一行的缩进
 set cindent             " 打开 C/C++ 语言自动缩进
 
-set shiftwidth=4        " 增加、减少一级缩进时的每级空格数 
+set shiftwidth=4        " 用 >> 或 << 增加或减少一级缩进时的每级空格数 
 set softtabstop=4       " 按下 Tab 键时对应的空格数
 set tabstop=4           " 显示 Tab 字符时对应的空格数
 set expandtab           " 自动将 Tab 转为空格
@@ -23,13 +23,17 @@ if has('folding')
   set foldlevel=99      " 默认打开所有折叠
 endif
 
+set noswapfile          " 不创建交换文件
+set autochdir           " 自动根据当前 Buffer 切换工作目录
+set autoread            " 文件发生外部改变时发出提示
 " }
 
 " UI 设置 {
 
 set background=dark
-colorscheme desert
+colorscheme wildcharm   " 内置的 slate、wildcharm 都可以
 
+set laststatus=2        " 始终显示状态栏
 set number              " 显示行号
 set cursorline          " 突出显示当前行
 set showcmd             " 在右下角显示命令
@@ -41,6 +45,14 @@ if has('syntax')
   syntax on             " 开启语法高亮
 endif
 
+set mouse=a             " 支持鼠标
+set scrolloff=3         " 垂直滚动时，光标距离顶部或底部的行数
+set sidescrolloff=10    " 水平滚动时，光标距离行首或行尾的字符数
+
+set wildmenu            " 命令模式下，按 Tab 在上方显示所有可匹配清单
+set wildmode=list:longest,full " 显示可匹配清单，匹配最长子串
+set wildignore=*.o,*.obj       " 在文件匹配列表中忽略指定类型的文件
+
 " }
 
 " 编码设置 {
@@ -50,7 +62,7 @@ if has('multi_byte')
   set encoding=utf-8
   " 默认文件编码
   set fileencoding=utf-8
-  " 打开文件时按照下面地顺序尝试编码
+  " 打开文件时按照下面的顺序尝试编码
   set fileencodings=ucs-bom,utf-8,gbk,gb18030,big5,euc-jp,latin1
 endif
 
@@ -77,6 +89,9 @@ else
   Plug 'ctrlpvim/ctrlp.vim'
 endif
 
+" Statusline/Tabline 增强
+Plug 'itchyny/lightline.vim'
+
 call plug#end()
 
 " }
@@ -84,5 +99,7 @@ call plug#end()
 " 键绑定设置 {
 
 let g:mapleader = "\<Space>"
+nnoremap ; :
+xnoremap ; :
 
 " }
