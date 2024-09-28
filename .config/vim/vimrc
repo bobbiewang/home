@@ -1,19 +1,88 @@
-set nocompatible       " 关闭 vi 兼容模式
-syntax on              " 开启语法高亮
-set number             " 显示行号，通过 set nonumber 关闭
-set cursorline         " 突出显示当前行
-set hlsearch           " 搜索时高亮显示匹配结果
-set incsearch          " 搜索每输入一个字符，自动跳到第一个匹配的结果
-set showmatch          " 光标遇到括号时，自动高亮对应的另一个括号
-set autoindent         " 自动缩进
+" vim: set foldmarker={,} foldlevel=0 foldmethod=marker:
 
-set shiftwidth=4       " 增加、减少一级缩进时的每级空格数 
-set softtabstop=4      " 按下 Tab 键时对应的空格数
-set tabstop=4          " 显示 Tab 字符时对应的空格数
-set expandtab          " 自动将 Tab 转为空格
+" 基础设置 {
+
+set nocompatible       "  关闭 vi 兼容模式
+
+set ignorecase          " 搜索时忽略大小写
+set smartcase           " 搜索时智能大小写判断，默认忽略大小写，除非搜索内容包含大写字母
+set hlsearch            " 搜索时高亮显示匹配结果
+set incsearch           " 搜索每输入一个字符，自动跳到第一个匹配的结果
+
+set autoindent          " 开新行时复制上一行的缩进
+set cindent             " 打开 C/C++ 语言自动缩进
+
+set shiftwidth=4        " 增加、减少一级缩进时的每级空格数 
+set softtabstop=4       " 按下 Tab 键时对应的空格数
+set tabstop=4           " 显示 Tab 字符时对应的空格数
+set expandtab           " 自动将 Tab 转为空格
+
+if has('folding')
+  set foldenable        " 允许代码折叠
+  set foldmethod=indent " 根据缩进折叠代码
+  set foldlevel=99      " 默认打开所有折叠
+endif
+
+" }
+
+" UI 设置 {
+
+set background=dark
+colorscheme desert
+
+set number              " 显示行号
+set cursorline          " 突出显示当前行
+set showcmd             " 在右下角显示命令
+set showmatch           " 光标遇到括号时，自动高亮对应的另一个括号
+set nowrap              " 关闭自动折行
+
+if has('syntax')
+  syntax enable
+  syntax on             " 开启语法高亮
+endif
+
+" }
+
+" 编码设置 {
 
 if has('multi_byte')
-    set encoding=utf-8
-    set fileencoding=utf-8
-    set fileencodings=ucs-bom,utf-8,gbk,gb18030,big5,euc-jp,latin1
+  " 内部工作编码
+  set encoding=utf-8
+  " 默认文件编码
+  set fileencoding=utf-8
+  " 打开文件时按照下面地顺序尝试编码
+  set fileencodings=ucs-bom,utf-8,gbk,gb18030,big5,euc-jp,latin1
 endif
+
+" }
+
+" 插件设置 {
+
+" 自动下载 vim-plug 插件
+let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.config/vim'
+if empty(glob(data_dir . '/autoload/plug.vim'))
+  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin()
+
+" 全文快速移动
+Plug 'easymotion/vim-easymotion'
+
+" 文件模糊匹配，tags/函数名选择
+if has('python3')
+  Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
+else
+  Plug 'ctrlpvim/ctrlp.vim'
+endif
+
+call plug#end()
+
+" }
+
+" 键绑定设置 {
+
+let g:mapleader = "\<Space>"
+
+" }
