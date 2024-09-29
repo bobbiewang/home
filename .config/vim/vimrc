@@ -26,6 +26,10 @@ endif
 set noswapfile          " 不创建交换文件
 set autochdir           " 自动根据当前 Buffer 切换工作目录
 set autoread            " 文件发生外部改变时发出提示
+
+au BufNewFile,BufRead *.vm set filetype=verilog
+au BufNewFile,BufRead *.vo set filetype=verilog
+
 " }
 
 " UI 设置 {
@@ -99,7 +103,10 @@ call plug#end()
 " 键绑定设置 {
 
 let g:mapleader = "\<Space>"
+
 nnoremap ; :
 xnoremap ; :
+
+nnoremap <esc> :nohl<cr>       " 搜索后按 ESC 去掉高亮
 
 " }
