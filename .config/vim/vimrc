@@ -1,5 +1,3 @@
-" vim: set foldmarker={,} foldlevel=0 foldmethod=marker:
-
 " 基础设置 {
 
 set nocompatible       "  关闭 vi 兼容模式
@@ -23,12 +21,22 @@ if has('folding')
   set foldlevel=99      " 默认打开所有折叠
 endif
 
+set lazyredraw          " 延迟绘制（提升性能）
 set noswapfile          " 不创建交换文件
-set autochdir           " 自动根据当前 Buffer 切换工作目录
 set autoread            " 文件发生外部改变时发出提示
 
-au BufNewFile,BufRead *.vm set filetype=verilog
-au BufNewFile,BufRead *.vo set filetype=verilog
+set tags=./tags;,tags   " 从当前文件所在目录向上搜索 tags 文件，或 Vim 当前目录
+
+augroup InitFileTypeGroup
+  au!
+
+  " C/C++ 文件使用 // 作为注释
+  au FileType c,cpp setlocal commentstring=//\ %s
+
+  " 设置某些扩展名的文件类型
+  au BufNewFile,BufRead *.vm setlocal filetype=verilog
+  au BufNewFile,BufRead *.vo setlocal filetype=verilog
+augroup END
 
 " }
 
@@ -72,29 +80,35 @@ endif
 
 " }
 
-" 插件设置 {
+" 安装插件 {
 
 " 自动下载 vim-plug 插件
 let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.config/vim'
 if empty(glob(data_dir . '/autoload/plug.vim'))
-  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
 call plug#begin()
 
-" 全文快速移动
-Plug 'easymotion/vim-easymotion'
+  " 全文快速移动
+  Plug 'easymotion/vim-easymotion'
 
-" 文件模糊匹配，tags/函数名选择
-if has('python3')
-  Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
-else
-  Plug 'ctrlpvim/ctrlp.vim'
-endif
+  " 自动高亮光标处单词
+  Plug 'RRethy/vim-illuminate'
 
-" Statusline/Tabline 增强
-Plug 'itchyny/lightline.vim'
+  " 文件模糊匹配，tags/函数名选择
+  if has('python3')
+    Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
+  else
+    Plug 'ctrlpvim/ctrlp.vim'
+  endif
+
+  " 基于 ack/ag/pt/rg 进行文件搜索
+  Plug 'dyng/ctrlsf.vim'
+
+  " Statusline/Tabline 增强
+  Plug 'itchyny/lightline.vim'
 
 call plug#end()
 
@@ -109,4 +123,43 @@ xnoremap ; :
 
 nnoremap <esc> :nohl<cr>       " 搜索后按 ESC 去掉高亮
 
+
 " }
+
+" 插件设置 {
+
+function! HasPlugin(name)
+  return index(g:plugs_order, a:name) > 0
+endfunction
+
+if HasPlugin('vim-illuminate')
+  let g:Illuminate_delay = 200
+  augroup illuminate_augroup
+    autocmd!
+    autocmd VimEnter * hi illuminatedWord ctermfg=yellow ctermbg=darkgray
+  augroup END
+endif
+
+if HasPlugin('LeaderF')
+  let g:Lf_ShortcutF = "<leader>ff"
+  noremap <leader>fb :<C-U><C-R>=printf("Leaderf buffer %s", "")<CR><CR>
+  noremap <leader>fr :<C-U><C-R>=printf("Leaderf mru %s", "")<CR><CR>
+  noremap <leader>ft :<C-U><C-R>=printf("Leaderf bufTag %s", "")<CR><CR>
+  noremap <leader>fl :<C-U><C-R>=printf("Leaderf line %s", "")<CR><CR>
+  noremap <leader>fr :<C-U><C-R>=printf("Leaderf! rg -e %s ", expand("<cword>"))<CR>
+  noremap <leader>fgd :<C-U><C-R>=printf("Leaderf! gtags -d %s --auto-jump", expand("<cword>"))<CR><CR>
+  noremap <leader>fgr :<C-U><C-R>=printf("Leaderf! gtags -r %s --auto-jump", expand("<cword>"))<CR><CR>
+  noremap <leader>fgs :<C-U><C-R>=printf("Leaderf! gtags -s %s --auto-jump", expand("<cword>"))<CR><CR>
+endif
+
+if HasPlugin('ctrlsf.vim')
+  let g:ctrlsf_auto_focus = { "at": "start" }
+  let g:ctrlsf_auto_preview = 1
+
+  noremap <leader>ss <Plug>CtrlSFPrompt
+  noremap <leader>sw <Plug>CtrlSFCCwordPath
+endif
+
+" }
+
+" vim: set softtabstop=2 foldmarker={,} foldlevel=0 foldmethod=marker:
