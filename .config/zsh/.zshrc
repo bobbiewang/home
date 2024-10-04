@@ -50,10 +50,10 @@ user: %U  system: %S  cpu: %P  total: %*E"
 ## 补全
 ######################################################################
 
-fpath=(~/.zsh/completions $fpath)
+fpath=(~/.cache/zsh/completions $fpath)
 
-# 初始化补全环境，数据会缓存到 $ZDOTDIR/.zcompdump
-autoload -U compinit && compinit -d ~/.zsh/.zcompdump
+# 初始化补全环境，数据会缓存到 zcompdump 文件
+autoload -U compinit && compinit -d ~/.cache/zsh/zcompdump
 
 # 按两次 tab 进入选择模式，可以通过方向键或者 Ctrl+n/p/b/f 浏览选项
 zstyle ':completion:*' menu select
@@ -170,10 +170,10 @@ alias fd="fd --follow"
 # plugins=(zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search)
 plugins=(zsh-autosuggestions zsh-history-substring-search)
 for plugin ($plugins); do
-    if [ -r ~/.zsh/plugins/$plugin/init.zsh ]; then
-        source ~/.zsh/plugins/$plugin/init.zsh
-    elif [ -r ~/.zsh/plugins/$plugin/$plugin.zsh ]; then
-        source ~/.zsh/plugins/$plugin/$plugin.zsh
+    if [ -r ~/.local/share/zsh/plugins/$plugin/init.zsh ]; then
+        source ~/.local/share/zsh/plugins/$plugin/init.zsh
+    elif [ -r ~/.local/share/zsh/plugins/$plugin/$plugin.zsh ]; then
+        source ~/.local/share/zsh/plugins/$plugin/$plugin.zsh
     else
         echo "ERROR: Plugin '$plugin' is not installed."
     fi
