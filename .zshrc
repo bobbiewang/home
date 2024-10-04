@@ -75,12 +75,19 @@ fi
 
 autoload -U colors && colors
 
-# 左侧显示用户名、机器名、当前目录
-PROMPT="
-%{$fg[green]%}%n@%m%{$reset_color%} %{$fg[magenta]%}%~%{$reset_color%}
-%(!.#.$) "
-# 右侧显示当前时间
-RPROMPT="%{$fg_bold[blue]%}[%*]%{$reset_color%}"
+autoload -Uz vcs_info
+precmd_vcs_info() { vcs_info }
+precmd_functions+=( precmd_vcs_info )
+setopt prompt_subst
+zstyle ':vcs_info:git:*' formats '%s<%b>'
+
+# PROMPT 里显示用户名、机器名、当前目录、时间
+PROMPT='
+%F{green}%n@%m %F{magenta}${vcs_info_msg_0_} %F{yellow}%~
+%F{red}%(?..:( )%F{green}%B%# %f'
+_lineup=$'\e[1A'
+_linedown=$'\e[1B'
+RPROMPT='%{${_lineup}%}%F{blue}%*%{${_linedown}%}%f'
 
 # 设置内置 time 命令的输出
 TIMEFMT="\"%J\"
