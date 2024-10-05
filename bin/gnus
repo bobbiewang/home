@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-if [ -z $http_proxy ]; then
-    emacs -nw --no-desktop -f gnus-plugged
-else
-    proxychains emacs -nw --no-desktop -f gnus-plugged
-fi
