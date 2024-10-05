@@ -167,8 +167,7 @@ alias fd="fd --follow"
 ## 加载插件
 ######################################################################
 
-# plugins=(zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search)
-plugins=(zsh-autosuggestions zsh-history-substring-search)
+plugins=(zsh-autosuggestions zsh-history-substring-search zsh-syntax-highlighting)
 for plugin ($plugins); do
     if [ -r ~/.local/share/zsh/plugins/$plugin/init.zsh ]; then
         source ~/.local/share/zsh/plugins/$plugin/init.zsh
