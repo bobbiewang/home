@@ -1,6 +1,0 @@
-* Setup
-
-#+BEGIN_SRC sh
-  git submodule init
-  git submodule update
-#+END_SRC
