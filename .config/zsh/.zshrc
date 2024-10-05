@@ -23,7 +23,7 @@ export TZ='Asia/Shanghai'
 ######################################################################
 
 # 通过 tput 得到终端支持的颜色数目，使用相应的 .dircolors 文件
-dircolors_database=$HOME/.dircolors-$(tput colors)
+dircolors_database=$ZDOTDIR/dircolors-$(tput colors)
 if [[ -f $dircolors_database ]]; then
     eval $(dircolors -b $dircolors_database)
 else
