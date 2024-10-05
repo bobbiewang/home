@@ -55,9 +55,5 @@ screen -t shell 1
 # screen -t su 3 sudo su -
 select 0
 
-# 用于显示额外信息的外部程序
-backtick 1 5 5 $HOME/bin/sc_sysload
-backtick 2 5 5 $HOME/bin/sc_free
-
 # 在屏幕底端显示 Hardware Status Line
 hardstatus alwayslastline '%{Yk}%-w%{.Yk}%n %t%{-}%+w %=%{.w} %{.Yr}%1` %{.Yb}%2`M %{kY}%0c'
