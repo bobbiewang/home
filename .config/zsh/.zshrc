@@ -1,3 +1,11 @@
+######################################################################
+## 本地 Prev 脚本
+######################################################################
+
+if [ -f $ZDOTDIR/zshrc.local.prev ]; then
+    . $ZDOTDIR/zshrc.local.prev
+fi
+
 # 新建文件的权限：u=rwx,g=rx,o=rx
 umask 0022
 
@@ -177,6 +185,14 @@ for plugin ($plugins); do
         echo "ERROR: Plugin '$plugin' is not installed."
     fi
 done
+
+######################################################################
+## 本地 Post 脚本
+######################################################################
+
+if [ -f $ZDOTDIR/zshrc.local.post ]; then
+    . $ZDOTDIR/zshrc.local.post
+fi
 
 # Local Variables:
 # coding: utf-8-unix
