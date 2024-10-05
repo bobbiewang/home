@@ -166,8 +166,6 @@ alias j="jobs -l"
 
 # ag
 alias ag="ag --follow"
-# rg
-export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
 # fd
 alias fd="fd --follow"
 
