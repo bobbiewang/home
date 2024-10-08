@@ -173,12 +173,14 @@ alias fd="fd --follow"
 ## 加载插件
 ######################################################################
 
-plugins=(zsh-autosuggestions zsh-history-substring-search zsh-syntax-highlighting)
+plugins=(zsh-autosuggestions zsh-history-substring-search zsh-syntax-highlighting zsh-bd)
 for plugin ($plugins); do
     if [ -r ~/.local/share/zsh/plugins/$plugin/init.zsh ]; then
         source ~/.local/share/zsh/plugins/$plugin/init.zsh
     elif [ -r ~/.local/share/zsh/plugins/$plugin/$plugin.zsh ]; then
         source ~/.local/share/zsh/plugins/$plugin/$plugin.zsh
+    elif [ -r ~/.local/share/zsh/plugins/$plugin/${plugin#zsh-}.zsh ]; then
+        source ~/.local/share/zsh/plugins/$plugin/${plugin#zsh-}.zsh
     else
         echo "ERROR: Plugin '$plugin' is not installed."
     fi
