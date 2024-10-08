@@ -1,9 +1,12 @@
-[submodule ".zsh/plugins/zsh-autosuggestions"]
+[submodule "zsh-autosuggestions"]
 	path = .local/share/zsh/plugins/zsh-autosuggestions
 	url = https://github.com/zsh-users/zsh-autosuggestions.git
-[submodule ".zsh/plugins/zsh-syntax-highlighting"]
+[submodule "zsh-syntax-highlighting"]
 	path = .local/share/zsh/plugins/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
-[submodule ".zsh/plugins/zsh-history-substring-search"]
+[submodule "zsh-history-substring-search"]
 	path = .local/share/zsh/plugins/zsh-history-substring-search
 	url = https://github.com/zsh-users/zsh-history-substring-search.git
+[submodule "zsh-bd"]
+	path = .local/share/zsh/plugins/zsh-bd
+	url = https://github.com/Tarrasch/zsh-bd.git
