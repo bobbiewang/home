@@ -135,14 +135,15 @@ alias 9='cd -9'
 # ls
 ######################################################################
 
-LS_OPTIONS='--color=auto -h'
+LS_OPTIONS='--color=auto'
 
-alias ls="ls $LS_OPTIONS"
-alias  l="ls $LS_OPTIONS"
-alias ll="ls $LS_OPTIONS -l"
-alias la="ls $LS_OPTIONS -lA"
-alias lt='ls $LS_OPTIONS -ltr --time-style=long-iso' # -t 按照时间排序
-alias lsr='ls $LS_OPTIONS -lSr'                      # -S 按照大小排序
+alias  ls="ls $LS_OPTIONS"
+alias   l="ls $LS_OPTIONS"
+alias  ll="ls $LS_OPTIONS -l"
+alias  la="ls $LS_OPTIONS -lA"
+alias  lt='ls $LS_OPTIONS -lt --time-style=long-iso'  # -t 按照时间排序
+alias ltr='ls $LS_OPTIONS -ltr --time-style=long-iso'
+alias lsr='ls $LS_OPTIONS -lSr'                       # -S 按照大小排序
 
 ######################################################################
 ## 修改一些危险命令的缺省行为
