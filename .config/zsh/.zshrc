@@ -160,6 +160,8 @@ alias rm='rm -i'
 alias so="source"
 alias f="fg"
 alias j="jobs -l"
+alias cctags="ctags -R --languages=c++ --langmap=c++:.c.h.cpp.cc"
+alias cetags="ctags -eR --languages=c++ --langmap=c++:.c.h.cpp.cc"
 
 ######################################################################
 # 其他工具
