@@ -162,6 +162,7 @@ alias f="fg"
 alias j="jobs -l"
 alias cctags="ctags -R --languages=c++ --langmap=c++:.c.h.cpp.cc"
 alias cetags="ctags -eR --languages=c++ --langmap=c++:.c.h.cpp.cc"
+alias homegit="git --git-dir=$HOME/.home.git --work-tree=$HOME"
 
 ######################################################################
 # 其他工具
