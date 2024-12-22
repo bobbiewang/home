@@ -191,11 +191,15 @@ for plugin ($plugins); do
 done
 
 ######################################################################
-## 本地 Post 脚本
+## 本地 Post 脚本及其他
 ######################################################################
 
 if [ -f $ZDOTDIR/zshrc.local.post ]; then
     . $ZDOTDIR/zshrc.local.post
+fi
+
+if command -v direnv >/dev/null; then
+    eval "$(direnv hook zsh)"
 fi
 
 # Local Variables:
