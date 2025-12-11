@@ -5,6 +5,10 @@
 # 缺省的 umask 在文件 /etc/login.defs 中设置
 #umask 022
 
+if [ -f ~/.profile ]; then
+    . ~/.profile
+fi
+
 # ~/.bashrc-preprocess 负责和 site 相关的设置，在 ~/.bashrc 之前读取。
 # 这些设置本来应该放在 /etc/profile 或者 /etc/bash.bashrc 中，但因为某
 # 些系统没有这些文件的写权限，所以在 $HOME 下增加这个文件。
